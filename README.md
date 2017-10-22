@@ -33,6 +33,8 @@ a Study of Clickjacking Vulnerabilities on Popular Sites") **--> TODO**
   - See: https://github.com/v8/v8/tree/master/test/fuzzer
   - Video Talk: https://www.youtube.com/watch?v=qTkYDA0En6U
 
+- Change the domain of the document to try to set it to the victim's origin by doing `document.domain="victim.com%3A80"` since `document.domain` set an empty port by default :x:
+
 ## Resources
 
 ### IE
