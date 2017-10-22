@@ -1,5 +1,8 @@
 # UXSS-Vulnerabilities-Project
-This project is carried by Antoine Rondelet and Ndeye Khady Ngom and ought to study and find UXSS vulnerabilities in the Brave Browser
+This project is carried by Antoine Rondelet and Ndeye Khady Ngom and ought to study and find UXSS vulnerabilities in the Brave Browser.
+
+Here is the version of Brave we are using to carry out our project:
+![Brave version](.github/BraveVersion.png)
 
 ## Ideas to explore to try to find vulnerabilities:
 *Legend:* :x: means that we tried but this was unsuccessful, :white_check_mark: means that we tried, and it worked.
