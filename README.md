@@ -28,3 +28,19 @@ a Study of Clickjacking Vulnerabilities on Popular Sites") **--> TODO**
     - %4A%41%56%41%53%43%52%49%50%54 (URL encoding of "JAVASCRIPT") :x:
 
 - Embed a page with a X-Frame-Options: SAMEORIGIN header. Change the location of the current tab and block it directly via a javascript event, so that the parent's origin can match the origin of the website we try to embed, and abort the chnage of location instantaneously to stay on "malicious" page and have the good origin to bypass the SOP :x:
+
+## Resources
+
+### IE
+
+- https://www.brokenbrowser.com/revealing-the-content-of-the-address-bar-ie/
+
+### Safari - Webkit
+
+- https://github.com/Bo0oM/CVE-2017-7089/blob/master/index.html
+
+### Chrome
+
+- https://blogs.technet.microsoft.com/mmpc/2017/10/18/browser-security-beyond-sandboxing/
+- https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2016-5181
+
