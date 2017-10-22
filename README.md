@@ -29,6 +29,8 @@ a Study of Clickjacking Vulnerabilities on Popular Sites") **--> TODO**
 
 - Embed a page with a X-Frame-Options: SAMEORIGIN header. Change the location of the current tab and block it directly via a javascript event, so that the parent's origin can match the origin of the website we try to embed, and abort the chnage of location instantaneously to stay on "malicious" page and have the good origin to bypass the SOP :x:
 
+- Find more information about "Fuzzing" and try to see whether we could apply this method in our case (generate semi-valid JS to corrumpt V8 for instance) **--> TODO**
+
 ## Resources
 
 ### IE
