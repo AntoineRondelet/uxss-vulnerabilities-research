@@ -11,12 +11,12 @@ This project is carried by Antoine Rondelet and Ndeye Khady Ngom and ought to st
   - Using character escaping technics specified in https://www.owasp.org/index.php/XSS_Filter_Evasion_Cheat_Sheet :x:
   - Using "js-fuck" syntax (Javascript code written using only symbols) :x:
 
-- Brave comes with some supported extensions. We should try to find if some vulnerabilities can be exploited in these extensions, and see if they can constitute a threat for the browser (like in https://events.ccc.de/congress/2006/Fahrplan/attachments/1158-Subverting_Ajax.pdf for instance) * --> TODO *
+- Brave comes with some supported extensions. We should try to find if some vulnerabilities can be exploited in these extensions, and see if they can constitute a threat for the browser (like in https://events.ccc.de/congress/2006/Fahrplan/attachments/1158-Subverting_Ajax.pdf for instance) **--> TODO**
 
 - Test whether it is possible to prevent Frame Busting scripts from working by doing variable clobbering (like in paper "Busting Frame Busting:
-a Study of Clickjacking Vulnerabilities on Popular Sites") * --> TODO *
+a Study of Clickjacking Vulnerabilities on Popular Sites") **--> TODO**
 
-- Look at headers management on the code source of the browser and see if we can modify the "Referer" and/or the "User-Agent" * --> TODO *
+- Look at headers management on the code source of the browser and see if we can modify the "Referer" and/or the "User-Agent" **--> TODO**
 
 - In the Brave code base, they escape "javascript" to avoid any javascript URL, using a non-case sensitive regex and an exact match on "javascript": Is there anything we can do to try to bypass such a regex ? Look into it
   - Already tried:
