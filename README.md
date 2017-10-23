@@ -35,6 +35,8 @@ a Study of Clickjacking Vulnerabilities on Popular Sites") **--> TODO**
 
 - Change the domain of the document to try to set it to the victim's origin by doing `document.domain="victim.com%3A80"` since `document.domain` set an empty port by default :x:
 
+- Investigate whether we could trigger a malicious behavior after bookmarking a page launched from a maliciously crafted URL (see: https://bugs.chromium.org/p/chromium/issues/detail?id=639126)
+
 ## Resources
 
 ### IE
