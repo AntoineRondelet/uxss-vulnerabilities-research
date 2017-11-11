@@ -33,6 +33,10 @@ a Study of Clickjacking Vulnerabilities on Popular Sites") **--> TODO**
   - See: https://github.com/v8/v8/tree/master/test/fuzzer
   - Video Talk: https://www.youtube.com/watch?v=qTkYDA0En6U
 
+- Using dialog box: freezes the browser and allow to bypass SOP
+
+### Bonus : If no vulnerabilities found, inject a vulnerable plugin and proceed to UXSS attack. (Usable in the real world through phishing)
+
 ## Resources
 
 ### IE
