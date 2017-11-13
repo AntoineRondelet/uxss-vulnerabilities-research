@@ -37,12 +37,17 @@ a Study of Clickjacking Vulnerabilities on Popular Sites") **--> TODO**
 
 - Change the domain of the document to try to set it to the victim's origin by doing `document.domain="victim.com%3A80"` since `document.domain` set an empty port by default :x:
 
-- Investigate whether we could trigger a malicious behavior after bookmarking a page launched from a maliciously crafted URL (see: https://bugs.chromium.org/p/chromium/issues/detail?id=639126)
-- Using dialog box: freezes the browser and allow to bypass SOP
+- Investigate whether we could trigger a malicious behavior after bookmarking a page launched from a maliciously crafted URL (see: https://bugs.chromium.org/p/chromium/issues/detail?id=639126) **--> TODO**
+
+- Using dialog box: freezes the browser and allow to bypass SOP **--> TODO**
 
 ### Bonus : If no vulnerabilities found, inject a vulnerable plugin and proceed to UXSS attack. (Usable in the real world through phishing)
 
 ## Resources
+
+### Interesting resources
+
+- https://www.linkedin.com/pulse/abusing-insecure-cors-bypassing-csrf-protection-without-pundir
 
 ### IE
 
