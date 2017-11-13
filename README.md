@@ -82,6 +82,8 @@ window.setTimeout('alert("Blocking"); document.location.protocol = "http:"; var 
 
 - Impossible to reproduce: https://www.brokenbrowser.com/sop-bypass-uxss-stealing-credentials-pretty-fast/ :x:
 
+- See whether we could include the `about:passwords` into the `about:blank` page and try to execute malicious javascript that could retrieve the victim's data. I don't know whether it's possible or not. I tried to include `about:passwords` into a frame on the `about:blank` page, and it didn't work. Then I tried to clobber the `location` variable to prevent any frame busting from `about:passwords`. But this didn't work either. In order to clobber the `location` variable, I did `var location = 'test'`, but it changes the location of the document (looks like `location` is a singleton). Moreover, I tried to do `window.__defineSetter("location", function(){})` but it didn't work either (error message saying thta I couldn't redefine `location`). I don't know whether focusing on these `"about:"` URI could be a good idea or not, but since they have no domain and the same protocol, we migth manage to do something. **--> TODO some more research needed**
+
 
 ### Bonus : If no vulnerabilities found, inject a vulnerable plugin and proceed to UXSS attack. (Usable in the real world through phishing)
 
