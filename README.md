@@ -78,6 +78,8 @@ window.setTimeout('alert("Blocking"); document.location.protocol = "http:"; var 
 
 - To explore: if we enter: `data:text/html,<script>alert("test")</script>`, then this code is executed in the browser. See what we can do with it (access some sensitive data ? escape from sandbox ? Read some data on other tabs ? Create a tab using this script and read data in it ? Embed a page and execute malicious code ?) **--> TODO**
 
+- If we set the URL to `data:text/html,`, then if we open the developer console, and we do `document.body.innerHTML = '<iframe src="http://www.bing.com/images/search?q=microsoft+edge"></iframe>'`, then we can embed Bing on this page. I don't know what we can do with it, we need to investigate. At least, we should remember that we can execute some javascript under the `data:text/html,` URI. This can be useful... **--> TODO: Further research**
+
 - Impossible to reproduce: https://www.brokenbrowser.com/sop-bypass-uxss-stealing-credentials-pretty-fast/ :x:
 
 
