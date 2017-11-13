@@ -19,7 +19,7 @@ Here is the version of Brave we are using to carry out our project:
 - Brave comes with some supported extensions. We should try to find if some vulnerabilities can be exploited in these extensions, and see if they can constitute a threat for the browser (like in https://events.ccc.de/congress/2006/Fahrplan/attachments/1158-Subverting_Ajax.pdf for instance) **--> TODO**
 
 - Test whether it is possible to prevent Frame Busting scripts from working by doing variable clobbering (like in paper "Busting Frame Busting:
-a Study of Clickjacking Vulnerabilities on Popular Sites") **--> TODO**
+a Study of Clickjacking Vulnerabilities on Popular Sites") :x: This won't work since, it will only prevent some websites to escape the iFrame (Only the websites that don't use the `X-Frame-Options` header will be affected). However, this is NOT a vulnerability of the browser since the SOP is not bypassed once we embedded the website. So this is not going to help us trying to bypass the SOP for instance.
 
 - Look at headers management on the code source of the browser and see if we can modify the "Referer" and/or the "User-Agent" **--> TODO**
 
