@@ -1,0 +1,52 @@
+<!DOCTYPE hxtml>
+<html>
+  <head>
+  </head>
+  <body>
+    <h1> Here there ! Welcome on my malicious website ;p </h1>
+    <p> This is some content </p>
+    <div class="maliciousFrame">
+      <iframe id="mFrameWindow" name="mFrameWindow"></iframe>
+    </div>
+
+    <div class="targetFrame">
+      <iframe id="tFrameWindow" name="tFrameWindow" src=""></iframe>
+    </div>
+
+    <script>
+      // Trying to do a CORS request with XMLHTTPRequest
+      var xhr = new XMLHttpRequest();
+      xhr.open("GET", "http://www.google.co.kr", true);
+      xhr.setRequestHeader('TEST', 'TestValue');
+      xhr.setRequestHeader('DUMMYHEADER', 'DummyValue%0AUser-Agent: curl/7.54.0');
+      xhr.onreadystatechange = function () {
+        if (xhr.readyState == XMLHttpRequest.DONE) {
+          if (xhr.status != 200 && xhr.status != 206) {
+            alert("Oops ! Something went wrong :( (Status: " + xhr.status + ", Response: " + xhr.responseText + ")");
+          } else {
+            document.getElementById("tFrameWindow").innerHTML = xhr.responseText;
+          }
+          return;
+        }
+      };
+      xhr.send();
+    </script>
+    <script>
+      // Trying to do a CORS request using the fetch API, doesn't work either...
+      var headers = new Headers();
+      headers.append('TEST', 'test');
+      // Trying to modify the User-Agent using a trick which consists in adding it into the value of another header.
+      headers.append('DUMMYHEADER', 'DummyValue%0AUser-Agent: curl/7.54.0');
+
+      // Unfortunately this doesn't work since I try to fetch a resource from another origin, so the browser blocks it by default. I tried to use "no-cors" but here, the browser doesnt include my headers...
+      var request = new Request('https://google.co.kr', {
+            mode: 'no-cors',
+            headers: new Headers({
+                'TEST': 'test'
+              })
+            });
+
+      var test = fetch(request).then(function(Response) { console.log("Response Status is " + Response.status + " And " + Response.statusText); }).catch(function(err) { return "Error " + err.toString()});
+    </script>
+  </body>
+</html>

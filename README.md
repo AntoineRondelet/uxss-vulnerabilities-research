@@ -9,6 +9,8 @@ Here is the version of Brave we are using to carry out our project:
 
 - Tried to embed a website into an iFrame using XMLHttpRequest and tried to modify the headers of the request to try to modify the "Referer" and "User-Agent" headers and thus bypass the X-Frame-Options header of the "victim"/embedded website :x:
 
+- Tried to bypass CORS using both XMLHTTPRequest and the fetch API, with custom headers but couldn't manage to have my request AND my crafted headers sent... (see: ./playground/corsByPassing.html for the code of my attempt) :x:
+
 - Tried to add JS payload in the form of `testwebsite.com/test.pdf#<javascriptPayload>`
   - Without using any character escaping :x:
   - Using character escaping technics specified in https://www.owasp.org/index.php/XSS_Filter_Evasion_Cheat_Sheet :x:
