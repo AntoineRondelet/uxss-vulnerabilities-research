@@ -41,6 +41,8 @@ a Study of Clickjacking Vulnerabilities on Popular Sites") **--> TODO**
 
 - Using dialog box: freezes the browser and allow to bypass SOP **--> TODO**
 
+- Couldn't manage to reproduce https://www.brokenbrowser.com/uxss-edge-domainless-world/ the domain is empty when I swith to `about:blank` using a link. Thus, when I try to embed a website into the iFrame -> frame busting since origins are different. :x:
+
 ### Bonus : If no vulnerabilities found, inject a vulnerable plugin and proceed to UXSS attack. (Usable in the real world through phishing)
 
 ## Resources
