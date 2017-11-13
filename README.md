@@ -41,7 +41,41 @@ a Study of Clickjacking Vulnerabilities on Popular Sites") **--> TODO**
 
 - Using dialog box: freezes the browser and allow to bypass SOP **--> TODO**
 
-- Couldn't manage to reproduce https://www.brokenbrowser.com/uxss-edge-domainless-world/ the domain is empty when I swith to `about:blank` using a link. Thus, when I try to embed a website into the iFrame -> frame busting since origins are different. :x:
+- Tried to create a domainless `about:blank` page: Couldn't manage to reproduce https://www.brokenbrowser.com/uxss-edge-domainless-world/ (and, https://www.brokenbrowser.com/uxss-ie-domainless-world/, https://www.brokenbrowser.com/sop-bypass-uxss-tweeting-like-charles-darwin/) the domain is empty when I swith to `about:blank` using a link. Thus, when I try to embed a website into the iFrame -> frame busting since origins are different. :x:
+Note: While trying to reproduce this scenario, I realized the different behavior between Safari and Brave (see pictures below):
+![About Blank in Safari](.github/AboutBlankSafari.png)
+![About Blank in Brave](.github/AboutBlankBrave.png)
+
+In the case of Safari, about blank has not origin. However, in the case of Brave, about blank has an origin, which makes this attack unlikely to happen...
+
+Note: With Safari, I managed to include bing.com into an iFrame on my about:blank page. The I tried many commands to try to execute code in this iFrame:
+```
+var frame = document.getElementsByTagName('iframe')[0]
+
+frame.onmouseover = function() {var script = document.createElement('script'); script.type = 'text/javascript'; var code = 'alert("hello world!");'; script.appendChild(document.createTextNode(code)); document.body.appendChild(script);}
+```
+
+```
+var frame = document.getElementsByTagName('iframe')[0]
+
+frame.onmouseover = function() {var script = document.createElement('script'); script.type = 'text/javascript'; var code = 'alert("hello world!");'; script.appendChild(document.createTextNode(code)); document.body.appendChild(script);}
+```
+
+or
+
+```
+frame.onmouseover = function() {var script = document.createElement('script'); script.type = 'text/javascript'; var code = 'var string = "cookie: " + document.cookie; alert(string);'; script.appendChild(document.createTextNode(code)); document.body.appendChild(script);}
+```
+
+I tried to access `var innerDoc = frame.contentDocument || frame.contentWindow.document` the content of the iFrame, but Safari didn't let me do it...
+
+Then I tried to copy the variable `frame` into another variable: `var mFrame = Object.create(frame);`, `var tfrBody = HTMLBodyElement(mFrame.contentDocument);`, in order to find a way to access the value of `frame.contentDocument` but all my attempts were rejected by Safari...
+
+Also tried to block the browser while trying to change the location protocol and access the HTML elements inside the iFrame, didn't work either...:
+```
+window.setTimeout('alert("Blocking"); document.location.protocol = "http:"; var frame = document.getElementsByTagName("iframe")[0]; var bodyTarget = frame.contentDocument.getElementsByTagName("body")[0]; document.getElementById("savedValue").innerHTML = bodyTarget.innerHTML', 400);
+```
+
 
 ### Bonus : If no vulnerabilities found, inject a vulnerable plugin and proceed to UXSS attack. (Usable in the real world through phishing)
 
