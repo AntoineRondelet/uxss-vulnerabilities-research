@@ -76,6 +76,10 @@ Also tried to block the browser while trying to change the location protocol and
 window.setTimeout('alert("Blocking"); document.location.protocol = "http:"; var frame = document.getElementsByTagName("iframe")[0]; var bodyTarget = frame.contentDocument.getElementsByTagName("body")[0]; document.getElementById("savedValue").innerHTML = bodyTarget.innerHTML', 400);
 ```
 
+- To explore: if we enter: `data:text/html,<script>alert("test")</script>`, then this code is executed in the browser. See what we can do with it (access some sensitive data ? escape from sandbox ? Read some data on other tabs ? Create a tab using this script and read data in it ? Embed a page and execute malicious code ?) **--> TODO**
+
+- Impossible to reproduce: https://www.brokenbrowser.com/sop-bypass-uxss-stealing-credentials-pretty-fast/ :x:
+
 
 ### Bonus : If no vulnerabilities found, inject a vulnerable plugin and proceed to UXSS attack. (Usable in the real world through phishing)
 
