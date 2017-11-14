@@ -1,3 +1,20 @@
 # UXSS recorded vulnerabilities
 
-This folder contains some of the UXSS patterns (see ./patterns) that have been used against Browsers in the past. We record some of them in this reposotiry to try to extract valuable information from the study of these previous attacks. Hopefully, we might be able to draft our own attack based on this record.
+This folder contains some of the UXSS patterns (see ./patterns) that have been used against Browsers in the past. We record some of them in this repository to try to extract valuable information from the study of these previous attacks. Hopefully, we might be able to draft our own attack based on this record.
+
+## UXSS Studied:
+
+### Chrome:
+- CVE-2017-5069: https://bugs.chromium.org/p/chromium/issues/detail?id=667079
+- CVE-2017-5045: https://bugs.chromium.org/p/chromium/issues/detail?id=667079
+- CVE-2017-5020: https://bugs.chromium.org/p/chromium/issues/detail?id=668653&desc=2
+- CVE-2017-5018: https://bugs.chromium.org/p/chromium/issues/detail?id=668665
+- CVE-2017-5010: https://bugs.chromium.org/p/chromium/issues/detail?id=663476
+- CVE-2017-5008: https://bugs.chromium.org/p/chromium/issues/detail?id=668552
+- CVE-2017-5007: https://bugs.chromium.org/p/chromium/issues/detail?id=671102
+
+### Edge/IE
+- https://www.brokenbrowser.com/sop-bypass-uxss-tweeting-like-charles-darwin/
+- https://www.brokenbrowser.com/sop-bypass-uxss-stealing-credentials-pretty-fast/
+- https://www.brokenbrowser.com/sop-bypass-abusing-read-protocol/
+- https://www.brokenbrowser.com/uxss-edge-domainless-world/
