@@ -102,6 +102,8 @@ Try to see whether such features could be used in a malicious manner to find a v
   - Select the iFrame: `var iframe = document.getElementsByTagName('iframe')[0];`
   - Define your event: `iframe.onmouseover = alert(iframe.innerHTML);` (Note: We can also try to append a script into the iFrame, but it will be appended outside the actual document (outside head and body tags...))
 
+- Tried to bookmark a malicious page that points to `<script>alert("1");</script>` and renamed the bookmark `<script>alert("1");</script>`. Neither JS executed :x:
+
 
 ### Bonus : If no vulnerabilities found, inject a vulnerable plugin and proceed to UXSS attack. (Usable in the real world through phishing)
 
