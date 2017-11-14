@@ -86,7 +86,7 @@ window.setTimeout('alert("Blocking"); document.location.protocol = "http:"; var 
 
 - Tried to use the `"history API"` to change the URL of the page without reloading it, but I couldn't exploit it to bypass the SoP... `window.history.pushState("test", "Title", "about:passwords");` (see: https://stackoverflow.com/questions/3338642/updating-address-bar-with-new-url-without-hash-or-reloading-the-page) :x:
 
-- The page `about:bookmarks` offers a lot of possibilities:
+- The page `about:bookmarks` offers a lot of possibilities: --> No way to execute malicious code inside this page (from another page) because of the `document.location` that is equal to `chrome-extension://mnojpmjdmbbfmejpflffifhffcmidifd/about-bookmarks.html` :x:
   - Import bookmarks from HTML file
   - Export bookmarks on user computer
   - Search for bookmarks --> This search tab can handle regex !! see whether we can use it to do malicious stuffs
