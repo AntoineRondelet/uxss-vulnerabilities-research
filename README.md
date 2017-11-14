@@ -94,6 +94,14 @@ Try to see whether such features could be used in a malicious manner to find a v
 
 - Couldn't manage to exploit the `about:[page]` pages, since their origin is `chrome-extension://mnojpmjdmbbfmejpflffifhffcmidifd/about-about.html`. Those endpoints have their own origin that is an origin with a randomly looking string (which is not random btw), and which a `chrome-extension` protocol. So trying to access the content of such pages is equivalent than trying to bypass the SOP... No shortcut here... :x:
 
+- Couldn't manage to drag and DROP data from the parent to an embedded iFrame. The idea here was to find a way to drag some malicious JS code adn drop it into the iFrame, so that it can execute it. If I was able to drop a script as simple as `alert(document.cookie)`, I would have accessed the cookie of the victim/embedded site --> :x: (see ./playground/dragAndDropMaliciousCode.html)
+
+- Couldn't manage to fire an event defined in the parent, in the embedded frame. The idea here was to trigger an event from the inside of the frame each time the user's mous ewent over the frame (onmouseover for instance). Here are the commands I did: :x:
+  - Open Brave and go to `data:text/html,`
+  - Embed Bing in an iFrame on the page: `document.body.innerHTML = '<iframe src="http://www.bing.com/images/search?q=microsoft+edge"></iframe>'`
+  - Select the iFrame: `var iframe = document.getElementsByTagName('iframe')[0];`
+  - Define your event: `iframe.onmouseover = alert(iframe.innerHTML);` (Note: We can also try to append a script into the iFrame, but it will be appended outside the actual document (outside head and body tags...))
+
 
 ### Bonus : If no vulnerabilities found, inject a vulnerable plugin and proceed to UXSS attack. (Usable in the real world through phishing)
 
