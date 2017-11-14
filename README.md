@@ -84,6 +84,16 @@ window.setTimeout('alert("Blocking"); document.location.protocol = "http:"; var 
 
 - See whether we could include the `about:passwords` into the `about:blank` page and try to execute malicious javascript that could retrieve the victim's data. I don't know whether it's possible or not. I tried to include `about:passwords` into a frame on the `about:blank` page, and it didn't work. Then I tried to clobber the `location` variable to prevent any frame busting from `about:passwords`. But this didn't work either. In order to clobber the `location` variable, I did `var location = 'test'`, but it changes the location of the document (looks like `location` is a singleton). Moreover, I tried to do `window.__defineSetter__("location", function(){})` but it didn't work either (error message saying thta I couldn't redefine `location`). I don't know whether focusing on these `"about:"` URI could be a good idea or not, but since they have no domain and the same protocol, we migth manage to do something. **--> TODO some more research needed**
 
+- Tried to use the `"history API"` to change the URL of the page without reloading it, but I couldn't exploit it to bypass the SoP... `window.history.pushState("test", "Title", "about:passwords");` (see: https://stackoverflow.com/questions/3338642/updating-address-bar-with-new-url-without-hash-or-reloading-the-page) :x:
+
+- The page `about:bookmarks` offers a lot of possibilities:
+  - Import bookmarks from HTML file
+  - Export bookmarks on user computer
+  - Search for bookmarks --> This search tab can handle regex !! see whether we can use it to do malicious stuffs
+Try to see whether such features could be used in a malicious manner to find a vulnerability that could be a threat for the user (steal bookmarks, write malicious data on user's computer, and so on...)
+
+- Couldn't manage to exploit the `about:[page]` pages, since their origin is `chrome-extension://mnojpmjdmbbfmejpflffifhffcmidifd/about-about.html`. Those endpoints have their own origin that is an origin with a randomly looking string (which is not random btw), and which a `chrome-extension` protocol. So trying to access the content of such pages is equivalent than trying to bypass the SOP... No shortcut here... :x:
+
 
 ### Bonus : If no vulnerabilities found, inject a vulnerable plugin and proceed to UXSS attack. (Usable in the real world through phishing)
 
