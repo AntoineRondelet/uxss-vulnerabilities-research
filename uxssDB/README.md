@@ -18,3 +18,4 @@ This folder contains some of the UXSS patterns (see ./patterns) that have been u
 - https://www.brokenbrowser.com/sop-bypass-uxss-stealing-credentials-pretty-fast/
 - https://www.brokenbrowser.com/sop-bypass-abusing-read-protocol/
 - https://www.brokenbrowser.com/uxss-edge-domainless-world/
+- https://blog.innerht.ml/ie-uxss/
