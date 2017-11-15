@@ -1,0 +1,26 @@
+<!DOCTYPE hxtml>
+<html>
+  <head>
+  </head>
+  <body>
+    <h1> Here there ! Welcome on my malicious website ;p </h1>
+    <p> This is some content </p>
+    <div class="targetFrame">
+      <iframe id="tFrameWindow" name="tFrameWindow" src=""></iframe>
+    </div>
+
+    <script>
+      // Since we use the mode 'cors' hear
+      var headers = new Headers();
+      headers.append('DummyValue', 'testIN1');
+      headers.append('DUMMYHEADER', 'DummyValue%0AUser-Agent: curl/7.54.0');
+
+      var request = new Request('https://www.google.com', {
+            mode: 'cors', // If we set mode to 'no-cors', our headers are not sent but the data is fetched (we cannot access it from this page however...)
+            headers: headers,
+          });
+
+      var result = fetch(request).then(function(Response) { console.log("Response Status is " + Response.status + " And " + Response.statusText); }).catch(function(err) { return "Error " + err.toString()});
+    </script>
+  </body>
+</html>
