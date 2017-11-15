@@ -106,9 +106,11 @@ Try to see whether such features could be used in a malicious manner to find a v
 
 - Did further attempts to "fool" the browser by defining custom "malicious" HEADERS. See more details in `playground/corsByPassingWithXMLHTTPRequest.html`. Note that all the attemps carried out in the `playground/corsByPassingWithXMLHTTPRequest.html` file have also been tried using the fetch API using both `cors` and `no-cors` modes. While the case of `cors` mode, is equivalent to the case of `XMLHTTPRequest`, when we use `no-cors` and when we define personalized headers (also the case when we define personalized headers with `XMLHTTPRequest`), the header `access-control-request-headers:` is set and send to the server. After noticing it, I saw that the "header names" of the headers I defined where given as value of `access-control-request-headers`. So I tried to craft malicious header names to try to make the browser add new headers with my forged values. Nevertheless, the result was the same as before... :x:
 Below the screenshot of the attempt to modify the Headers VALUES:
+
 ![Try to forge malicious Headers' values](.github/maliciousHeadersValues.png)
 
 Below the screenshot of the attempt to modify the Headers NAMES:
+
 ![Try to forge malicious Headers' names](.github/maliciousHeadersNames.png)
 
 - See Webkit vulnerabilities
