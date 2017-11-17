@@ -125,6 +125,8 @@ In fact, in general, many pages tend to be displayed in a user's browser at the 
 
 Since browsers are the door that enable us to access web pages from a lot of sources every day, such a vulnerability would be a major threat for Internet users. Being able to keep browsers safe from such menaces is paramount to keep the web safe. In order to do so, web browsers developers developed very sophisticated security mechanisms to isolate web pages from one another.
 
+Moreover, modern web browsers need to support the latest and constantly evolving web standards capable of loading resources, while making sure that their level of security remains optimal. As a matter of fact, as explained in \cite{browserSecurity}, web browsers are committed to implement most of the security specifications defined by the World Wide Web Consortium (W3C), such as: (see \cite{SOP} \cite{CORS} \cite{CSP} \cite{SRI} \cite{MixedContent})
+
 \medskip
 
 \subsubsection{Same Origin Policy (SOP)}
@@ -159,11 +161,66 @@ Know that we know what an origin is, the Same Origin Policy is a policy that ens
 
 \subsubsection{Cross-Origin Resource Sharing (CORS)}
 
+In order to relax the SOP, the W3C specified the Cross-Origin Resource Sharing (CORS) which consists in specifying a white-list of trusted domains allowed to request restricted resources, by extending HTTP with a new origin request header. The CORS mechanism supports secure cross-domain requests and data transfers between browsers and web servers. \\
+
+Even though, the policy is defined by web server administrators, this security mechanism is used in modern browsers especially on APIs such as \emph{XMLHttpRequest} or \emph{Fetch} to help mitigate the risks of cross-origin HTTP requests and prevent a malicious user to access a resource he should not be able to access.
+
+\subsubsection{Content Security Policy (CSP)}
+
+The Content Security Policy allows web site administrators to define a white-list in a HTTP header to specify trusted sources for delivering content. That way web authors can control resources the user agent is allowed to load for a given page.
+
+\subsubsection{Mixed Content Blocking}
+
+The mechanism of Mixed Content Blocking blocks insecure content on web pages that are considered secure. A "mixed" content can happen in the case where a user fetches a secure page over HTTPS, containing a HTTP content. Since data transiting over HTTP is not secure and can be eavesdropped, the Mixed Content Blocking mechanism will block this part of the web page. That way the page displayed to the user would be "completely safe from risks"\footnote{This section is placed into quotes because in web security, very few things (not to say nothing) are said to be unconditionally safe.}.
+
+\subsubsection{Subresource Integrity (SRI)}
+
+Subresource Integrity defines a mechanism by which user agents may verify that a fetched resource has been delivered without being altered. This process allow a User Agent to be sure that the requested resource is the one it received. SRI works by using hash functions. Website developers can associated a hash value to a specific resource. That way web browsers can compute the hash value of the received resource and compare them with the initial value provided by the website. The resource is then displayed only if the hash values are equal, i.e: the resource is valid. 
+
+\medskip
+\medskip
+
+Despite the implementation and support of the security specifications of the W3C, some lower level attacks could be carried out to escape the security mechanisms of today's web browsers. By compromising a browser process and execute arbitrary code, and attacker could either be able to access the host system or bypass the SOP. The next subsections present the concepts of Sandboxes and Process and Origin Isolation, that are currently ensuring that low level attacks would not have dramatic impacts for end-users, and that SOP would not be "bypassable" at lower levels.
+
+\subsection{Sandboxes}
+
+Sandboxes is a mechanism which consists in limiting vulnerabilities by isolating components of an application from each other and from the rest of the system. In a sandbox, components run with the minimum access privileges to system resources they need to perform their functions.
+By isolating complex components into sandboxes, web browser developers can diminish the impact vulnerabilities can have for the end-user. By limiting the damages an attacker can cause. \\
+
+Some additional pieces of information about Google Chrome's sandboxes are provided in \cite{browserSecurityWhitePaper}, and an extract is illustrated in figure \ref{fig:ChromeSandboxes}.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.4\textwidth]{images/SandboxesChrome.png}
+\caption{Left: Google Chrome Main Process Sandbox, Right: Google Chrome Render Sandbox}
+\label{fig:ChromeSandboxes}
+\end{figure}
+
+\subsection{Process and Origin Isolation}
+
+We studied the mechanism of Same Origin Policy earlier in this paper. This concept restricts access to data across webpages if they have different origins. While the SOP is generally implemented at a high level, an attacker able to achieve process-level attacks might be able to bypass the Same Origin Policy, and thus accessing resources of a different origin hosted in the same process. To void such scenarios, decided to host each origin in a different process. That way by preventing direct access between these processes, and applying the same-origin policy in the APIs used by these processes for inter-origin communications, the same-origin policy can be enforced at all levels in browsers. The idea here is to ensure a strong site isolation and establish strong security boundaries between web sites \cite{isolationChrome}.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.4\textwidth]{images/IsolationChrome.png}
+\caption{Site isolation in Chrome}
+\label{fig:ChromeIsolation}
+\end{figure}
 
 
+Bypassing a browsers same-origin policy generically is called Universal Cross-site Scripting (UXSS).
 
-\subsubsection{Sandboxes}
-Speak about the role of sandboxes and speak about the difference between the security in Edge (window's side) and the google-chrome based browsers
+\section{Universal XSS}
+
+\subsection{\emph{Classic} XSS attack}
+Explain what XSS is. They target WEB APPS
+
+\subsection{UXSS a major threat}
+
+Universal XSS (UXSS) is a particular type of Cross-Site Scripting that has the ability to be triggered by exploiting flaws inside browsers, instead of leveraging the vulnerabilities against insecure web sites.
+In UXSS attacks, client-side vulnerabilities are exploited in a web browser or browser extensions to generate an XSS condition, which allows the malicious code to be executed, bypassing or disabling the security protection mechanisms in the web browser.
+
+Describe what Universal XSS is, and explain the consequences it has. It targets the BROWSER and could defeat all protection mechanisms of web apps.
 
 \section{Brave}
 Speak about the new features brought by Brave (speak about the company's policy to ensure privacy on the web and so on...) + the BAT principle and the new things that are brought by Brave and why we decided to study this web browser in particular
@@ -171,15 +228,10 @@ Speak about the new features brought by Brave (speak about the company's policy 
 
 Say that we first focused on studying Brave because of X reasons, and that we broaden our research to other browsers.
 
-\section{Universal XSS}
-\subsection{\emph{Classic} XSS attack}
-Explain what XSS is. They target WEB APPS
-
-\subsection{UXSS a major threat}
-Describe what Universal XSS is, and explain the consequences it has. It targets the BROWSER and could defeat all protection mechanisms of web apps.
-
 \section{Previous attacks and patterns used to defeat the security mechanisms of web browsers}
 Today web browsers are extremely complicated pieces of software (speak about complex architecture described in the section above). So there are potential vulnerabilities that escaped to the development teams and can be used by malicious users.
+
+- Say that we observed many kind of attacks. A UXSS vulnerability can be found in different subsystems of the browser or in plugins/extensions (example of the Adobe Reader plugin \cite{uxssPDF} and Keyabse \cite{uxssKeybase})
 
 \medskip
 
@@ -227,16 +279,84 @@ Note, while we were writing this paper, Mozilla released a brand new version of 
 https://www.brokenbrowser.com/uxss-edge-domainless-world/
 
 \bibitem{paper1}
-MJ Rees
+MJ Rees,
 \textit{Evolving the Browser Towards a Standard User Interface Architecture}, 2001
 
+\bibitem{DOM}
+W3C,
+\textit{Document Object Model (DOM)},
+https://www.w3.org/DOM/
+
 \bibitem{architectureWebBrowsers}
-Alan Grosskurth, and Michael W. Godfrey
+Alan Grosskurth, and Michael W. Godfrey,
 \textit{A reference architecture for web browsers}, 2006
 
 \bibitem{howBrowsersWork}
-Tali Garsiel and Paul Irish
+Tali Garsiel and Paul Irish,
 \textit{How Browsers Work: Behind the scenes of modern web browsers}, 2011
+
+\bibitem{browserSecurity}
+Christoph Kerschbaumer,
+\textit{Enforcing Content Security by Default within Web Browsers}, IEEE, 2016
+
+\bibitem{SOP}
+W3C,
+\textit{Same Origin Policy (SOP)},
+https://www.w3.org/Security/wiki/Same\_Origin\_Policy
+
+\bibitem{CORS}
+W3C,
+\textit{Cross-Origin Resource Sharing (CORS)},
+https://www.w3.org/Security/wiki/CORS
+
+\bibitem{CSP}
+W3C,
+\textit{Content Security Policy (CSP)},
+https://www.w3.org/TR/CSP/
+
+\bibitem{SRI}
+W3C,
+\textit{Subresource Integrity},
+https://www.w3.org/TR/SRI/
+
+\bibitem{MixedContent}
+W3C,
+\textit{Mixed Content},
+https://www.w3.org/TR/mixed-content/
+
+\bibitem{browserSecurityWhitePaper}
+Markus Vervier, Michele Orrù, Berend-Jan Wever, Eric Sesterhenn,
+\textit{Browser Security White Paper},
+X41 D-SEC GmbH, 2017
+ 
+ 
+\bibitem{browserSecurityWhitePaper2}
+Mario Heiderich,
+\textit{Browser Security White Paper},
+Cure53, 2017
+
+\bibitem{isolationChrome}
+The Chromium Projects,
+\textit{Site Isolation},
+https://www.chromium.org/developers/design-documents/site-isolation
+
+\bibitem{uxssPDF}
+Ofer Shezaf,
+\textit{The Universal XSS PDF Vulnerability},
+OWASP IL Chapter leader
+
+\bibitem{uxssKeybase}
+\textit{Universal Cross-Site Scripting in Keybase Chrome extension},
+https://hackerone.com/reports/232432
+ 
+\bibitem{webSecurityFoundation}
+Devdatta Akhawe, Adam Barth, Peifung E. Lam, John Mitchell and Dawn Song,
+\textit{Towards a Formal Foundation of Web Security}
+ 
+\bibitem{javascriptSecurity}
+Nataliia Bielova,
+\textit{Survey on JavaScript security policies and their enforcement mechanisms in a web browser}
+The Journal of Logic and Algebraic Programming, 2013
 
 \end{thebibliography}
 
