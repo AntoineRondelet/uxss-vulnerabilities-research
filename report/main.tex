@@ -45,6 +45,8 @@ Finish the introduction by a list of keywords.
 
 It might be good to begin the paper with a bit of context about UXSS research. See whether we manage to find some papers about it -> if yes: speak about previous work, if no: speak about the fact that we couldn't find anything and that we were surprised to see that no previous work were carried out to try to study the security mechanisms of browsers and that current UXSS investigations are carried out by either companies themselves or by isolated persons reporting bugs to companies. This paper is an attempt to study browser's vulnerability, especially Universal XSS vulnerabilities.
 
+Maybe do a small introduction about us (the team) and say that we are students in the computer science and information security departments at KAIST. Passionate by security and cryptography we decided to study UXSS. We have a very small background in Web programming and didn't know that much about the way browsers worked before this study, however, the potential theat behind UXSS attacks attracted our attention, and further to some research, it turned out that UXSS investigations were carried out by either companies themselves or by isolated persons reporting bugs to companies. Thus, our paper is an first attempt to study browser's vulnerability, especially Universal XSS vulnerabilities, and gather what we found. 
+
 \section{Web Browsers}
 
 \subsection{Role}
@@ -78,13 +80,13 @@ A taste of a web browser's design is provided in the next part of this paper.
 
 \subsection{Architecture}
 
-Despite the large variety of browsers available to surf the web, they are almost all following a general structure. This architecture, as shown in \cite{architectureWebBrowsers} can be decomposed into eight components, each of which has its very own functionality.
+Despite the large variety of browsers available to surf the web, most of them tend to follow a general structure. This architecture, as shown in \cite{architectureWebBrowsers} \cite{howBrowsersWork} can be decomposed into eight components, each of which has its very own functionality.
 
 \subsubsection{User Interface}
-The component in charge of the UI contains every piece of the browser that is not actually part of the webpage itself. Such piece can either be toolbars or even previous and next buttons for instance.
+The component in charge of the UI contains every piece of the browser that is not actually part of the webpage itself. Such piece can either be toolbars or Back and forward buttons for instance.
 
 \subsubsection{Browser Engine}
-The browser engine forms the interface that allows the User Interface to interact and manipulate elements of the rendering engine.
+The browser engine forms the interface that allows the User Interface to interact and manipulate elements of the rendering engine. It basically marshals actions between the UI and the rendering engine.
 
 \subsubsection{Rendering Engine}
 The rendering engine is responsible for producing a graphical representation of the document fetched from a specific URL. It parses and render documents written in HTML and applies styles specified by CSS.
@@ -96,15 +98,13 @@ The data persistence subsystem is responsible for insuring the persistence of da
 Since a browser fetches document from the Web, a browser needs to be able to have an access to the network. This access is provided by the networking module. It implements file transfer protocols such as HTTP and FTP. Moreover, this subsystem translates between different character sets, and resolves MIME media types for files\footnote{https://en.wikipedia.org/wiki/Media\_type}. In some cases, the networking module might also implement a cache of recently retrieved resources to ensure good performances when a user asks multiple times the same resource.
 
 \subsubsection{Javascript Interpreter}
-This module interprets Javascript\footnote{Programming language developed by Netscape in 1995 to make webpages interactive. More details can be found at https://en.wikipedia.org/wiki/JavaScript} code
+This module parses and executes Javascript\footnote{Programming language developed by Netscape in 1995 to make webpages interactive. More details can be found at https://en.wikipedia.org/wiki/JavaScript} code.
 
 \subsubsection{XML parser}
 The XML parser module is in charge of parsing XML documents into a Document Object Model (DOM) tree\footnote{https://en.wikipedia.org/wiki/Document\_Object\_Model}
 
 \subsubsection{Display Backend}
 The display backend subsystem provides primitives for drawing and windows. It also interfaces with the Operating System of the host machine.
-
-
 
 \begin{figure}[h]
 \centering
@@ -113,10 +113,55 @@ The display backend subsystem provides primitives for drawing and windows. It al
 \label{fig:browserStructure}
 \end{figure}
 
+While figure \ref{fig:browserStructure} shows the general web browser structure explained above, it is without saying that each browser has its particularities and its very own version of the aforementioned architecture.
+
+\medskip
+
+At this point, the reader should be able to have a taste of the complexity of web browsers. Such a compound of subsystems might be likely to expose several vulnerabilities either in the subsystems' implementation or in their interactions.
 
 \subsection{Security mechanisms}
-\subsubsection{SoP}
-\subsubsection{CORS}
+While, the Internet today is a widespread information infrastructure, the Web is not only used to access and share resources, but is also hosting commercial activities. According to http://www.internetworldstats.com/stats.htm, 51.7\% of the world population\footnote{This represent 3,885,567,619 people} is now using the Internet on a day to day basis. Albeit, a vast majority of Internet users are undoubtedly honest users, a few of them are malicious and carry out attacks on the network or publish malicious web pages on the web waiting for users to fetch them. From this point, a malicious page displayed in victims' browser could run malicious Javascript code trying to retrieve user's sensitive data. \\
+In fact, in general, many pages tend to be displayed in a user's browser at the same time (into tabs or iframes\footnote{https://developer.mozilla.org/en-US/docs/Web/HTML/Element/iframe}). Thus, they all live in the browser in the same time. So how about using the browser as a bridge for a malicious page to access sensitive data stored in other pages ? \\
+
+Since browsers are the door that enable us to access web pages from a lot of sources every day, such a vulnerability would be a major threat for Internet users. Being able to keep browsers safe from such menaces is paramount to keep the web safe. In order to do so, web browsers developers developed very sophisticated security mechanisms to isolate web pages from one another.
+
+\medskip
+
+\subsubsection{Same Origin Policy (SOP)}
+
+The foundation of browsers security mechanisms is the notion of Same Origin Policy (referred to as SOP). Before looking at this important concept, we should first define what an origin is.
+
+\medskip
+
+In order to access a specific resource, a user has to specify its Uniform Resource Locator (URL)\footnote{Reference to a web resource that specifies its location on a computer network and a mechanism for retrieving it.}. This web address is a compound of different elements, as shown on figure \ref{fig:URL}. The protocol indicates which protocol the browser must use to retrieve the resource. The domain name is an alias for the IP address pointing to the Web server that should be requested. The port is a logical construct that identifies a specific process or a type of network service, on the web server, that is responsible for serving the web resource. Moreover, the path, parameters and fragment are the path to the resource on the Web server, extra parameters provided to the Web server and an anchor to a specific part of the resource itself, respectively.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.4\textwidth]{images/URL.png}
+\caption{URL anatomy}
+\label{fig:URL}
+\end{figure}
+
+\medskip
+
+With this in mind, defining what an origin is becomes trivial. Looking at the official definition of the W3C\footnote{https://www.w3.org/Security/wiki/Same\_Origin\_Policy}, an origin is defined by the scheme, host, and port of a URL.
+
+\medskip
+
+Know that we know what an origin is, the Same Origin Policy is a policy that ensures that documents retrieved from distinct origins are isolated from each other. Thus, even if users happened to visit malicious web sites, these fraudulent sites would not be able to interfere with the user's session with honest web sites.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.4\textwidth]{images/SOPTabs.png}
+\caption{Same Origin Policy preventing a malicious "tabs" to access user's sensitive data}
+\label{fig:SOPTabs}
+\end{figure}
+
+\subsubsection{Cross-Origin Resource Sharing (CORS)}
+
+
+
+
 \subsubsection{Sandboxes}
 Speak about the role of sandboxes and speak about the difference between the security in Edge (window's side) and the google-chrome based browsers
 
@@ -124,8 +169,14 @@ Speak about the role of sandboxes and speak about the difference between the sec
 Speak about the new features brought by Brave (speak about the company's policy to ensure privacy on the web and so on...) + the BAT principle and the new things that are brought by Brave and why we decided to study this web browser in particular
 + Speak about other new browsers such as Whale and so on just to show that many actors are actually trying to take Google Chrome's market share.
 
+Say that we first focused on studying Brave because of X reasons, and that we broaden our research to other browsers.
+
 \section{Universal XSS}
-Describe what Universal XSS is, and explain the consequences it has.
+\subsection{\emph{Classic} XSS attack}
+Explain what XSS is. They target WEB APPS
+
+\subsection{UXSS a major threat}
+Describe what Universal XSS is, and explain the consequences it has. It targets the BROWSER and could defeat all protection mechanisms of web apps.
 
 \section{Previous attacks and patterns used to defeat the security mechanisms of web browsers}
 Today web browsers are extremely complicated pieces of software (speak about complex architecture described in the section above). So there are potential vulnerabilities that escaped to the development teams and can be used by malicious users.
@@ -149,6 +200,7 @@ Conclude this section by saying that today's browsers are not trivially vulnerab
 Despite the fact that we didn't manage to find any vulnerability on the web browsers, some persons might be able to find some. It is important to remember that browsers act as a last rampart against malicious users/attackers. As many browsers are on the market today, the teams developing them are in a perpetual race against each other. The best browser is the most secure one with the most features to provide their users. However, as features are added to a browser, it is paramount to keep in mind the aspect of security.
 
 \section{IDEAS for the paper}
+Note, while we were writing this paper, Mozilla released a brand new version of Firefox (Firefow Quantum). We didn't have time to test malicous payloads against this browser.
 
 
 
@@ -181,6 +233,10 @@ MJ Rees
 \bibitem{architectureWebBrowsers}
 Alan Grosskurth, and Michael W. Godfrey
 \textit{A reference architecture for web browsers}, 2006
+
+\bibitem{howBrowsersWork}
+Tali Garsiel and Paul Irish
+\textit{How Browsers Work: Behind the scenes of modern web browsers}, 2011
 
 \end{thebibliography}
 
