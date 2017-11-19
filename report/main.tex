@@ -40,6 +40,8 @@
 \IEEEpeerreviewmaketitle
 
 \section{Introduction}
+[TODO]\\
+
 Write the introduction at the end
 Finish the introduction by a list of keywords.
 
@@ -207,37 +209,111 @@ We studied the mechanism of Same Origin Policy earlier in this paper. This conce
 \label{fig:ChromeIsolation}
 \end{figure}
 
-
-Bypassing a browsers same-origin policy generically is called Universal Cross-site Scripting (UXSS).
-
 \section{Universal XSS}
 
-\subsection{\emph{Classic} XSS attack}
-Explain what XSS is. They target WEB APPS
+Despite all the security mechanisms used in today's browsers, some people still manage to find vulnerabilities that allow them to bypass the same-origin policy generically. Such vulnerabilities can lead to what is called Universal Cross-site Scripting (UXSS).
+Before studying the Universal Cross Site Scripting attacks that have been carried out against modern web browsers, the next section defines what Cross Site Scripting (XSS) attacks are.
 
-\subsection{UXSS a major threat}
+\subsection{\emph{"Classic"} XSS attack}
+
+According to \cite{owaspXSS}, Cross-Site Scripting (XSS) attacks are a type of injection, in which malicious scripts are injected into benign and trusted web sites.
+Since the end user’s browser has no way to know whether the script should be trusted or not, it will execute the script. As a matter of fact, injected code are executed at the attacker’s tar get origin. Thus, the malicious script can access any cookies, session tokens, or other sensitive information retained by the browser and associated with this origin. These scripts can even rewrite the content of the HTML page.
+
+\bigskip
+
+\fbox{\begin{minipage}{22em}
+XSS attacks are injection attacks which exploit vulnerabilities in \textbf{web applications}.
+\end{minipage}}
+
+\bigskip
+
+In order to carry out a cross-site scripting attack, a malicious user exploit a vulnerability found in the victim web application. Such vulnerability can be a lack of user input sanitizing which allow the user to send an inline script that is going to be executed or a regular expression that would enable a malicious website to send malicious \emph{postMessages}  \cite{postMessagesXSS} to a victim website embedded in an \emph{iframe}, for instance. 
+
+\medskip
+
+Since XSS attacks are one of the most popular attacks against web applications, developers are highly encouraged to implement good practices in order to prevent any damage engendered by cross-site scripting attacks. Nevertheless, as SOP is implemented by web browsers, a malicious user able to find a vulnerability in a web browser could bypass every defense of a web application, and thus inject malicious payload to any web page origin.
+
+\subsection{UXSS: A major threat}
 
 Universal XSS (UXSS) is a particular type of Cross-Site Scripting that has the ability to be triggered by exploiting flaws inside browsers, instead of leveraging the vulnerabilities against insecure web sites.
+
+\bigskip
+
+\fbox{\begin{minipage}{22em}
+UXSS attacks exploit vulnerabilities in \textbf{web browsers}.
+\end{minipage}}
+
+\bigskip
+
 In UXSS attacks, client-side vulnerabilities are exploited in a web browser or browser extensions to generate an XSS condition, which allows the malicious code to be executed, bypassing or disabling the security protection mechanisms in the web browser.
 
-Describe what Universal XSS is, and explain the consequences it has. It targets the BROWSER and could defeat all protection mechanisms of web apps.
+\medskip
+
+The consequences of such an attack are pretty critical. In the case of a successful UXSS, the attacker doesn’t just get access to a compromised session on a vulnerable web page, but may get access to any session belonging to web pages currently opened (or cached) by the browser at the time the attack is triggered. UXSS does not need a vulnerable web page in order to trigger, and can penetrate web sessions belonging to secure, well written web pages. Thus, UXSS can create a vulnerability where there isn’t one !
+
+\medskip
+
+While bypassing all the security mechanisms described above in this paper might appear impossible, 
+the attentive reader may remember that web browsers developers are in a popularity contest, and in order to be on top, need to implement numerous features over short periods of time. Even though security features are highly regarded, usability and integration features are usually easier to test and implement, and thus often done in priority. \\
+Furthermore, UXSS attacks can also be carried out using vulnerabilities in plugins. This makes ensuring security of web browsers, an even more difficult task. Since a countless number of extensions are available to users they all constitute a potential security hole exploitable by attackers.
+
 
 \section{Brave}
-Speak about the new features brought by Brave (speak about the company's policy to ensure privacy on the web and so on...) + the BAT principle and the new things that are brought by Brave and why we decided to study this web browser in particular
-+ Speak about other new browsers such as Whale and so on just to show that many actors are actually trying to take Google Chrome's market share.
 
-Say that we first focused on studying Brave because of X reasons, and that we broaden our research to other browsers.
+Now that we have defined what UXSS was and studied the consequences of such attacks, we now need to define the environment we used to carry out our project. \\
+In order to conduct our study, we decided to choose the browser Brave\footnote{https://brave.com} which was first announced in January 2016. This free and open-source web browser is based on the Chromium\footnote{https://www.chromium.org} web browser. Brave is said to block website trackers, remove intrusive Internet advertisements, and also claims to improve online privacy by sharing less data with advertising customers. One specificity of Brave, is that the beta version is testing a new system to reward publishers, called Brave Payments. According to \cite{braveWikipedia}, this system allows users to optionally set a budget that they are willing to donate to the websites they visit. Brave then calculates the percentage assigned to each website through an algorithm and the publisher receives a transfer in bitcoins\footnote{https://bitcoin.org/en/}.
 
-\section{Previous attacks and patterns used to defeat the security mechanisms of web browsers}
+\medskip
+
+Our willingness to carry out our project on Brave was due to the fact that this browser is pretty new (only one year) and still in Beta version. Moreover, the new features included into this browser and the small amount of reported vulnerabilities (see: figure \ref{fig:BraveReportedVulnerabilities}) opened the door for more vulnerabilities and made it a good candidate for our project.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.47\textwidth]{images/BraveReportedVulnerabilities.png}
+\caption{Brave Reported Vulnerabilities (top) compared to Google Chrome Reported Vulnerabilities (bottom) according to cvedetails.com}
+\label{fig:BraveReportedVulnerabilities}
+\end{figure}
+
+\subsection{Environment specifications and software version}
+
+Our project has been performed on a MacBook Air running macOS Sierra version 10.12.6, using the Brave version described in figure \ref{fig:BraveVersion}.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.4\textwidth]{images/BraveVersion.png}
+\caption{Brave version used during our project}
+\label{fig:BraveVersion}
+\end{figure}
+
+
+\subsection{Widening to other browsers}
+
+Despite the fact that we first focused on Brave during this term project, we then decided to broaden our study to the other browsers listed below:
+
+\begin{itemize}
+\item \textbf{Whale} browser by Naver\footnote{http://whale.naver.com/en/}: version 1.0.37.16 (64-bit), released in October 23, 2017
+\item \textbf{Firefox Quantum} by Mozilla\footnote{https://www.mozilla.org/en-US/firefox/}: Version 57.0 (64 bits), released in November 14, 2017
+\item \textbf{Safari} by Apple: Version 10.1.2
+\end{itemize}
+
+
+
+\section{Our study}
+
+\subsection{Previous attacks used to defeat the security mechanisms of web browsers}
 Today web browsers are extremely complicated pieces of software (speak about complex architecture described in the section above). So there are potential vulnerabilities that escaped to the development teams and can be used by malicious users.
 
-- Say that we observed many kind of attacks. A UXSS vulnerability can be found in different subsystems of the browser or in plugins/extensions (example of the Adobe Reader plugin \cite{uxssPDF} and Keyabse \cite{uxssKeybase})
+- Say that we observed many kind of attacks. A UXSS vulnerability can be found in different subsystems of the browser or in plugins/extensions (example of the Adobe Reader plugin \cite{uxssPDF} and Keybase \cite{uxssKeybase})
+
+\subsection{Patterns of UXSS attacks}
+After studying the previous attacks above, we were able to distinguish some patterns...
 
 \medskip
 
 Speak about the patterns we found in the different attack report we studied (CVE and Broken Browser and so on)
 
-\section{Our attempts}
+\subsection{Our attempts}
+Further to the study of the patterns, we tried to do some UXSS attacks...
 Say that none of our attempts were successful but that we provide them as a record of our work. They might also be extended/adapted to carry out successful attack.
 
 \medskip
@@ -252,8 +328,10 @@ Conclude this section by saying that today's browsers are not trivially vulnerab
 Despite the fact that we didn't manage to find any vulnerability on the web browsers, some persons might be able to find some. It is important to remember that browsers act as a last rampart against malicious users/attackers. As many browsers are on the market today, the teams developing them are in a perpetual race against each other. The best browser is the most secure one with the most features to provide their users. However, as features are added to a browser, it is paramount to keep in mind the aspect of security.
 
 \section{IDEAS for the paper}
-Note, while we were writing this paper, Mozilla released a brand new version of Firefox (Firefow Quantum). We didn't have time to test malicous payloads against this browser.
+Note, while we were writing this paper, Mozilla released a brand new version of Firefox (Firefow Quantum). We didn't have time to test malicious payloads against this browser.
+--> do some statistics about the UXSS attacks we saw/studied. For instance, 3\% of the UXSS we studied used vulnerabilities in plugins, 20\% managed to bypass the SOP by using embedded iFrames and blocked the browsers with server redirected, and so on --> try to find patterns of the attacks and the most used techniques to bypass the SOP -> do,such analysis for each browser and if we cannot manage to have decent stats -> speak about the different techniques we saw that were used to bypass the SOP.
 
+--> SAY that our study does not focus on vulnerabilities exploited on Android or IOS. The scope of our study is: laptop browsers, and tell the environment on which we carried out the study (the versions of each web browsers we used, and the OS version of our machines and so on)
 
 
 % if have a single appendix:
@@ -357,6 +435,36 @@ Devdatta Akhawe, Adam Barth, Peifung E. Lam, John Mitchell and Dawn Song,
 Nataliia Bielova,
 \textit{Survey on JavaScript security policies and their enforcement mechanisms in a web browser}
 The Journal of Logic and Algebraic Programming, 2013
+
+\bibitem{owaspXSS}
+OWASP,
+\textit{Cross-site Scripting (XSS)},
+https://www.owasp.org/index.php/Cross-site\_Scripting\_(XSS),
+2016
+
+\bibitem{postMessagesXSS}
+Son. et al. 
+\textit{The Postman Always Rings Twice: Attacking and Defending postMessage in HTML5 Websites}, 
+NDSS, 2013
+
+\bibitem{uxssAcunetix}
+Acunetix,
+\textit{Universal Cross-site Scripting (UXSS): The Making of a Vulnerability},
+https://www.acunetix.com/blog/articles/universal-cross-site-scripting-uxss/,
+2014
+
+\bibitem{braveWikipedia}
+Wikipedia: Brave,
+\textit{Brave (web browser)}
+https://en.wikipedia.org/wiki/Brave\_(web\_browser),
+2016
+
+\bibitem{microsoftFuzzingOnv8}
+Microsoft Offensive Security Research team,
+\textit{Browser security beyond sandboxing},
+https://blogs.technet.microsoft.com/mmpc/2017/10/18/browser-security-beyond-sandboxing/,
+2017
+
 
 \end{thebibliography}
 
