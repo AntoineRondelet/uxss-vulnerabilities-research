@@ -113,6 +113,12 @@ Below the screenshot of the attempt to modify the Headers NAMES:
 
 ![Try to forge malicious Headers' names](.github/maliciousHeadersNames.png)
 
+- Other trials to bypass CORS using workers and service workers can be found in `playground`. The idea here was:
+  - To initiate a request from a worker, where workers are: "Web Workers makes it possible to run a script operation in background thread separate from the main execution thread of a web application. The advantage of this is that laborious processing can be performed in a separate thread, allowing the main (usually the UI) thread to run without being blocked/slowed down" --> So the request would be executed from a backgroudn threat. This doesn't work however :x:
+  - The "evolution" of the scenario aforementioned was to setup a ServiceWorker in order to intercept the outgoing GET requests and try to modify the headers in order to bypass the CORS. In order to carry out this attempt, we needed a webserver to host our html page and the javascript code of our ServiceWorker. To do so, we used MAMP version 4.2.1 for macOS. Our code has been written based on what we found on: https://stackoverflow.com/questions/43813770/how-to-intercept-all-http-requests-including-form-submits and https://www.html5rocks.com/en/tutorials/workers/basics/#toc-inlineworkers. Despite all our attempts, this attack was not succesfull and we couldn't manage to modify our request as we wanted :x:
+
+
+TO SAY IN THE REPORT:
 - See Webkit vulnerabilities
 -> mistakes people tend to make
 -> See whether a vuln could not be applied to another browser
