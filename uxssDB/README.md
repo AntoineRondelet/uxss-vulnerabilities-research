@@ -28,7 +28,19 @@ This folder contains some of the UXSS patterns (see ./patterns) that have been u
 - CVE-2015-1264: https://bugs.chromium.org/p/chromium/issues/detail?id=481015 -- XSS in the bookmark button
 - CVE-2014-3197: https://bugs.chromium.org/p/chromium/issues/detail?id=396544 -- XSS filter information leak -- The idea here is to try to guess a secret that is on a victim's page by writing a malicious script after a anchor in the URL and see whether the XSS Filters reacted.
 - CVE-2014-1747: https://bugs.chromium.org/p/chromium/issues/detail?id=330663 -- UXSS from a local MHTML file
-- CVE-2014-1701: https://bugs.chromium.org/p/chromium/issues/detail?id=342618 -- UXSS via dispatchEvent on iframes
+- CVE-2014-1701: https://bugs.chromium.org/p/chromium/issues/detail?id=342618 -- UXSS via dispatchEvent on iframes -- The problem here is that the attacker was able to call "dispatchEvent" on iframe.contentWindow. (Note: DispatchEvent enables to "trigger" an event). In this case, some conditions had to be met for the attack to be successful (such has event handlers returning DOM nodes and so on). In such conditions, an attacker was able to trigger some events and recover the DOM nodes especially the "document" node, which enables to access any part of the embedded page.
+- CVE-2013-2849: https://bugs.chromium.org/p/chromium/issues/detail?id=171392 -- Cross-Origin copy&paste / drag&drop allowing XSS -- D&D/C&P black-list doesn't cover srcdoc.
+- CVE-2010-1236: https://bugs.chromium.org/p/chromium/issues/detail?id=37383 -- javascript: url with a leading NULL byte can bypass cross origin protection.
+- CVE-2009-3264: https://bugs.chromium.org/p/chromium/issues/detail?id=21338 -- Same Origin Policy Bypass via getSVGDocument() method.
+- CVE-2009-1414: https://bugs.chromium.org/p/chromium/issues/detail?id=9860 -- ChromeHTML URI handler vulnerability
+
+Some sensitive data extraction can be made using the XSS auditor with X-XSS-Protection using block mode
+- CVE-2013-2848: https://bugs.chromium.org/p/chromium/issues/detail?id=176137 -- more details on the XSS Auditor on http://homakov.blogspot.kr/2013/02/hacking-with-xss-auditor.html
+- CVE-2013-0909: document.referrer leakage with XSS Auditor page block -- see: http://homakov.blogspot.kr/2013/02/hacking-with-xss-auditor.html
+
+
+Actually many reported vulnerabilities used the about:blank URL that inherits the parent's origin to carry out attacks. This endpoint is pretty used to carry out attacks to bypass the SOP (see how many of the CVE we studied used this endpoint in their PoC), also lots of attacks based on extensions exploit/vulerabilities, some attacks use interesting tricks to execute javascript in another origin (such as \u0000 in front of javascipt in a URL, or even white spaces in host IP that lead to a bypass of SOP).
+--> Things we mentionned, in some cases, it was ambiguous to know who to the vulnerability belonged to (i.e: Who is responsible for this vulnerability, and who should invest time in trying to solve it -- https://bugzilla.mozilla.org/show_bug.cgi?id=1199430 for instance)
 
 ### Edge/IE
 - https://www.brokenbrowser.com/sop-bypass-uxss-tweeting-like-charles-darwin/
@@ -36,6 +48,15 @@ This folder contains some of the UXSS patterns (see ./patterns) that have been u
 - https://www.brokenbrowser.com/sop-bypass-abusing-read-protocol/
 - https://www.brokenbrowser.com/uxss-edge-domainless-world/
 - https://blog.innerht.ml/ie-uxss/ -- Freeze the browser using alert box or synchronous AJAX call (use XMLHTTPRequest.open() with false as 3rd parameter: synchronous call). The goal here is to achieve thread blocking. Before redirecting to target resource, script execution does not break SOP because redirect.php is still on the same origin of the attacker's. However, once the target resource finished loading on frame 1, Internet Explorer will update the origin information accordingly. As a result, the previous script execution will suddenly be executed on the targets' origin. As a side note, the attack has to be done using two frames because Internet Explorer will remove all the object references once navigation occurs. The suggested fix would be either terminate the script execution or remain the origin information when navigation occurs. More details about this attack: http://danielebellavista.blogspot.kr/2015/02/uxss-multiple-targets-poc-cve-2015-0072.html
+
+### Mozilla Firefox
+
+- CVE-2016-5262: https://bugzilla.mozilla.org/show_bug.cgi?id=1277475 -- XSS out of iframe sandbox, iframe disabled javascript. marquee
+- CVE-2015-7188: https://bugzilla.mozilla.org/show_bug.cgi?id=1199430 -- White-spaces in host IP address, leading to same origin policy bypass
+- CVE-2015-7187: https://bugzilla.mozilla.org/show_bug.cgi?id=1195735 -- To disable JS, set { script: false } when creating the panel, but inline JS is still executing (POC: create a browser extension)
+- CVE-2014-1530: https://bugzilla.mozilla.org/show_bug.cgi?id=895557 -- It's possible to set a document's URI to a different document's URI by confusing docshell
+- 
+
 
 ### Vulnerabilities classifier
 
@@ -54,6 +75,15 @@ This folder contains some of the UXSS patterns (see ./patterns) that have been u
 | Freeze browsers' process with alert()/synchronous XMLHTTPRequest due to JavaScript's single-threaded nature |  | Internet Explorer |  |  | CVE-2015-0072: https://blog.innerht.ml/ie-uxss/ |
 
 ### Conclusion
+
+- We leanrt many things about web dev in this project: marquee html tag, X-XSS-PROTECTION, Many security mechanism, many attack scenarios, we also saw most of (not to say all) notions that have been presented this semester in this course (clickjacking, XSS, CSRF, UI timing attacks and so on) while we studied the previous attacks in the CVE record, 
+
+What we conclude from this study: UXSS will always occur/new vulns will always be found... --> Many =/= platforms, iOS, Android, Laptop (=/= OS) and so on + Browsers are extremely complicated software. The area for attackers to exploit potential vulnerabilities is really big (many things that can be exploited by attackers --> extensions, =/= internal components of the browser, third party component (cf: Blink/Webkit for instance), and so on...). The diversity of attacks is really really big. We though it would be easy to come up with patterns used to bypass the SoP, but it was not as simple as that. Some patterns can be detected, but this is not as obvious as we first thought.
+We learnt a lot, we are not a team specilized/familiar with web development, but througout this study we were able to learn many things about UXSS attacks and about web development in general.
+Moreover, while browsers provide users with a way to access resources plublished on the Web, they also ambed a very large number of features that make our web surfing way more agreable. In addition, they implement all sort of security mechanisms to prevent our personal/sensitive data from being accessed leaked out. Nevertheless, some of these mechanisms can be bypassed by attackers. Thus, these malicious users can tehn gain access to victim's sensitive data. That is the reason why web application developpers should not rely on browsers to secure their customer's data. Security on the web has to be handled and taken into consideration by everyone. Web app devs should define strict CSPs, use HTTPONLY cookies to prevent some javascript code from accessing them, do frame busting using the X-FRAME-OPTIONS header, use session IDs for a small amount of time, be careful with quick change of IP address when a user uses a webservice (at login and so on), use strong keys and encryption scheme for encrypted communications (see the paper "How DH fails in practice"), and keep on following the news in the web security areas while keeping their security infrastructure up to date.
+
+
+To go further: Browsers developers might need to handle discrepancies in network traffic (see paper of SCA based on packet size), since personal data can also be leaked out further to network analysis of a passive attacker. So, despite all encrytpion and security mechanisms that are being implemented by browser developers, they might need to go a step further and hide our network trace to keep our data completelly safe. + (See paper about DH "How DH fails in practice" --> browser developers need to do a perpetual surveillance of what's going on in the security area and stop supporting deprecated Encryption schemeand so on.)
 
 [TODO]
 Say how many UXSS attacks we studied, and try to classify all these attacks into groups in order to get some insightful statistics and try to get the most used vulnerabilities to carry out UXSS attacks.
