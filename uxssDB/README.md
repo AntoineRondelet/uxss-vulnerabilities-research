@@ -41,6 +41,7 @@ Some sensitive data extraction can be made using the XSS auditor with X-XSS-Prot
 
 Actually many reported vulnerabilities used the about:blank URL that inherits the parent's origin to carry out attacks. This endpoint is pretty used to carry out attacks to bypass the SOP (see how many of the CVE we studied used this endpoint in their PoC), also lots of attacks based on extensions exploit/vulerabilities, some attacks use interesting tricks to execute javascript in another origin (such as \u0000 in front of javascipt in a URL, or even white spaces in host IP that lead to a bypass of SOP).
 --> Things we mentionned, in some cases, it was ambiguous to know who to the vulnerability belonged to (i.e: Who is responsible for this vulnerability, and who should invest time in trying to solve it -- https://bugzilla.mozilla.org/show_bug.cgi?id=1199430 for instance)
+--> Some interesting attacks are based on the inheritance of some properties from one domain to another.
 
 ### Edge/IE
 - https://www.brokenbrowser.com/sop-bypass-uxss-tweeting-like-charles-darwin/
@@ -55,6 +56,9 @@ Actually many reported vulnerabilities used the about:blank URL that inherits th
 - CVE-2015-7188: https://bugzilla.mozilla.org/show_bug.cgi?id=1199430 -- White-spaces in host IP address, leading to same origin policy bypass
 - CVE-2015-7187: https://bugzilla.mozilla.org/show_bug.cgi?id=1195735 -- To disable JS, set { script: false } when creating the panel, but inline JS is still executing (POC: create a browser extension)
 - CVE-2014-1530: https://bugzilla.mozilla.org/show_bug.cgi?id=895557 -- It's possible to set a document's URI to a different document's URI by confusing docshell
+- CVE-2014-1504: https://bugzilla.mozilla.org/show_bug.cgi?id=911547 -- data-URI + Firefox restart = CSP bypass -- This attack scenario uses the fact that some part of the context is saved by the Browser when the Browser is restarted. Such context save might be used to bypass CSP
+- CVE-2013-5612: https://bugzilla.mozilla.org/show_bug.cgi?id=871161 -- Potential XSS with cross-domain (cross-origin) inheritance of charset
+- CVE-2013-1714 -- https://bugzilla.mozilla.org/show_bug.cgi?id=879787 -- Cross Domain Policy override using webworkers -- Web Workers makes it possible to run a script operation in background thread separate from the main execution thread of a web application. The advantage of this is that laborious processing can be performed in a separate thread, allowing the main (usually the UI) thread to run without being blocked/slowed down.
 - 
 
 
@@ -76,11 +80,13 @@ Actually many reported vulnerabilities used the about:blank URL that inherits th
 
 ### Conclusion
 
-- We leanrt many things about web dev in this project: marquee html tag, X-XSS-PROTECTION, Many security mechanism, many attack scenarios, we also saw most of (not to say all) notions that have been presented this semester in this course (clickjacking, XSS, CSRF, UI timing attacks and so on) while we studied the previous attacks in the CVE record, 
+- We leanrt many things about web dev in this project: marquee html tag, X-XSS-PROTECTION, Many security mechanism, many attack scenarios, we also saw most of (not to say all) notions that have been presented this semester in this course (clickjacking, XSS, CSRF, UI timing attacks, browser extensions and so on) while we studied the previous attacks in the CVE record, 
 
 What we conclude from this study: UXSS will always occur/new vulns will always be found... --> Many =/= platforms, iOS, Android, Laptop (=/= OS) and so on + Browsers are extremely complicated software. The area for attackers to exploit potential vulnerabilities is really big (many things that can be exploited by attackers --> extensions, =/= internal components of the browser, third party component (cf: Blink/Webkit for instance), and so on...). The diversity of attacks is really really big. We though it would be easy to come up with patterns used to bypass the SoP, but it was not as simple as that. Some patterns can be detected, but this is not as obvious as we first thought.
 We learnt a lot, we are not a team specilized/familiar with web development, but througout this study we were able to learn many things about UXSS attacks and about web development in general.
 Moreover, while browsers provide users with a way to access resources plublished on the Web, they also ambed a very large number of features that make our web surfing way more agreable. In addition, they implement all sort of security mechanisms to prevent our personal/sensitive data from being accessed leaked out. Nevertheless, some of these mechanisms can be bypassed by attackers. Thus, these malicious users can tehn gain access to victim's sensitive data. That is the reason why web application developpers should not rely on browsers to secure their customer's data. Security on the web has to be handled and taken into consideration by everyone. Web app devs should define strict CSPs, use HTTPONLY cookies to prevent some javascript code from accessing them, do frame busting using the X-FRAME-OPTIONS header, use session IDs for a small amount of time, be careful with quick change of IP address when a user uses a webservice (at login and so on), use strong keys and encryption scheme for encrypted communications (see the paper "How DH fails in practice"), and keep on following the news in the web security areas while keeping their security infrastructure up to date.
+
+-- We saw that a simple small error/lack of check of in a feature in a browser could lead to dramatic vulnerabilities that would threaten all users. A simple Drag and Drop and some malicious code could be added in an embedded/victim page and thus, some malicious code could be executed on his behalf.
 
 
 To go further: Browsers developers might need to handle discrepancies in network traffic (see paper of SCA based on packet size), since personal data can also be leaked out further to network analysis of a passive attacker. So, despite all encrytpion and security mechanisms that are being implemented by browser developers, they might need to go a step further and hide our network trace to keep our data completelly safe. + (See paper about DH "How DH fails in practice" --> browser developers need to do a perpetual surveillance of what's going on in the security area and stop supporting deprecated Encryption schemeand so on.)
