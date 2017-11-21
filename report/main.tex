@@ -297,32 +297,95 @@ Despite the fact that we first focused on Brave during this term project, we the
 \end{itemize}
 
 
-
 \section{Our study}
 
-\subsection{Previous attacks used to defeat the security mechanisms of web browsers}
-Today web browsers are extremely complicated pieces of software (speak about complex architecture described in the section above). So there are potential vulnerabilities that escaped to the development teams and can be used by malicious users.
+\subsection{Scope of our study}
 
-- Say that we observed many kind of attacks. A UXSS vulnerability can be found in different subsystems of the browser or in plugins/extensions (example of the Adobe Reader plugin \cite{uxssPDF} and Keybase \cite{uxssKeybase})
+In the course of the last two months we investigated the causes of Universal Cross-Site Scripting in modern web browsers. As a consequence, we analyzed and studied the reported vulnerabilities that have been discovered on many browsers, in the course of the last years. 
+As a wide panel of platforms are being used in our connected devices nowadays, we decided to eliminate from our study all vulnerabilities reported on mobile platforms such as iOS\footnote{https://en.wikipedia.org/wiki/IOS} or Android\footnote{https://en.wikipedia.org/wiki/Android\_(operating\_system)}. Such decision was due to the fact that security mechanisms are not exactly the same in mobile platforms than in laptop operating systems.
+
+\medskip
+
+In this section of the paper, we try to summarize the attacks we studied before. Then we seek to extract patterns that emerge from the attack scenario we studied. We conclude this passage by listing some of our attempts to bypass the security mechanisms of web browsers.
+
+\subsection{Common Vulnerabilities and Exposures (CVE)}
+
+In the previous part of the paper we explained how difficult securing a web browser was. Moreover, since browsers developers have to release new features in small amount of time to stay ahead of the competition, writing tests that ensure a full coverage of the software is almost impossible.
+
+\medskip
+
+In order to prevent attackers from exploiting potential flaws in web browsers and threaten users, companies decided to set up bug bounty programs\footnote{https://en.wikipedia.org/wiki/Bug\_bounty\_program}. Such scheme consist in providing \emph{"bug hunters"} with a financial compensation and a high recognition for the bugs they report. That way, developers cooperate with part of the community and are able to discover and resolve bugs before the general public is aware of them, preventing incidents of widespread abuse. \\
+A majority, not to say all, of reported vulnerabilities have been classified in the Common Vulnerabilities and Exposures system which provides a reference-method for publicly known information-security vulnerabilities and exposures. \\
+
+Most of the vulnerabilities we studied during this two-month research work are actually extracted from the CVE system. \\
+
+In total we studied:
+
+[TO FINISH ACCORDING TO LAST NUMBERS !!]
+
+\begin{itemize}
+\item 50 XSS vulnerabilities reported for Mozilla Firefox from 2017 to 2012, involving X version of the software
+\item 59 XSS vulnerabilities reported for Google Chrome from 2017 to 2008, and, involving X versions of the software
+\item 20 XSS vulnerabilities reported for Internet Explorer from 2016 to 2008, and, involving X versions of the software
+\item 9 XSS vulnerabilities reported for Edge from 2017 to 2015, and, involving X versions of the software
+\item 2 XSS vulnerabilities reported for Opera in 2008
+\item 1 XSS vulnerability reported for Brave in 2017
+\item 33 XSS vulnerabilities reported for Safari from 2017 to, involving X version of the software 2010
+\end{itemize}
+
+Along with these reported flaws, we also studied some disclosed vulnerabilities on web browser plugins, that lead to UXSS attacks.
+
+\medskip
+
+
+Needless to say that the dozens of CVE reports we examined revealed a wide range of attack scenarios, all more originals than the others. Such a variety of vulnerabilities echoed, without surprise, the astounding complexity of web browsers and the large amount of possible exploitable flaws. From Cross Origin Drag and Drop \cite{CVE-2013-2849}, to SOP bypass using Reading mode \cite{edgeReadingModeUXSS}, UXSS from local MHTML files \cite{CVE-2014-1747}, or even exploit of vulnerabilities in plugins \cite{uxssPDF} \cite{uxssKeybase}, attackers are always more and more originals and manage to find breaches where to execute malicious scripts.
+
+\medskip
+
+Based on the previous observations, the next part of our work was to extract patterns from this large set of attacks.
 
 \subsection{Patterns of UXSS attacks}
-After studying the previous attacks above, we were able to distinguish some patterns...
 
-\medskip
+In this part, try to do some statistics about the attacks that we studied: X\% of the attacks we studied exploited vulnerabilities in Blink for Google Chrome, Y\% of the attacks we studied were carried out using extensions' vulnerabilities in the entire set of browsers, W\% of the attacks we studied used the XSS Auditor in web browsers.
 
-Speak about the patterns we found in the different attack report we studied (CVE and Broken Browser and so on)
+Then, based on such statistics, introduce the patterns that we could "extract" from the reports we studied
+
+Some \textbf{attack vectors} that were exploited were:
+
+\begin{itemize}
+\item \textbf{Extensions}
+\item \textbf{Redirections}
+\item \textbf{about:blank pages}
+\item \textbf{XSS Auditor} (a lot of attacks using XSS auditors to infer sensitive data in the page)
+\item \textbf{The single threaded nature of JS used to "paralize" a browser} to change the location and execute malicious JS (maybe not  recurrent pattern, but at least a very interesting attack scenario that has been used against Edge, but patched now)
+\end{itemize}
+
+
+--> Say that what surprised us what the originality of the different attacks, all the things were tried and finding a specific pattern out of all this diversity of attack has been an extremely difficult challenge throughout this project.
 
 \subsection{Our attempts}
+
+Say that we tried all our payloads against Brave, Whale, Google Chrome and Firefox Quantum -- Since all browsers are different, we wanted to try our payloads against them all. All browsers have their own set of features, so one might be unaffected by an attack while another can be vulnerable.
+
+Based on the attacks we studied on a large range of browsers, we tried to carry out some attacks ourselves.
+Speak about our different attempts here.
 Further to the study of the patterns, we tried to do some UXSS attacks...
 Say that none of our attempts were successful but that we provide them as a record of our work. They might also be extended/adapted to carry out successful attack.
-
-\medskip
-
 Speak about what we tried, and why we tried it, and explain what we had in mind when we tried something (so that the reader can understand the attack more easily)
+- In this part of the paper present some of our attempts. At least we can list what we tried, but we are not compelled to include all the payloads we came up with.
 
-\medskip
+\subsection{Results}
 
-Conclude this section by saying that today's browsers are not trivially vulnerable (fortunately), however it is not because we didn't manage to find a vulnerability that no one is going to find one.
+We can say that all the payloads we crafted, and some precise results of our study are available on the github page of the project: https://github.com/KAIST-IS593-WEBSEC/UXSS-Vulnerabilities-Project
+Conclude about the results of our attacks. Say that despite the fact that we couldn't find any vulnerabilities, the result should not be considered as null/bad --> we learnt a lot about some features used in web browsers/web apps, and we studied a large numbe rof attack scenario that we tried to reproduce. So it was a very exciting moment, sometimes fun (when we thought we were close to find a vulnerability), sometimes annoying (after a lot of failures) but the overall was very interesting for us to confront ourselves to the security mechanisms of today's web browsers. Trying to reproduce attacks, and trying to come up with our own paylaods undoubtedly helped us developing a deep understanding of today's web security mechanisms.
+
+Conclude this section by saying that today's browsers are not trivially vulnerable (fortunately), however it is not because we didn't manage to find a vulnerability that no one is going to find one. 
+Nevertheless, say that we are sure that we just broached the surface of all the possible attacks 
+
+\subsection{Difficulties encountered}
+
+--> Do a "Difficulties encountered" section and say that one difficulty we had was our lack of knowledge in web technologies and features exploitables in javascript/web browsers. This was on the one hand the most interesting part and the whole purpose of this project (discover and learn) but it also slowed us down a lot since we had to read a lot about what we could use to carry out an attack and know how to use it (ex: web workers, fetch API and all the things we discovered and tried to exploit)
+
 
 \section{Conclusion}
 Despite the fact that we didn't manage to find any vulnerability on the web browsers, some persons might be able to find some. It is important to remember that browsers act as a last rampart against malicious users/attackers. As many browsers are on the market today, the teams developing them are in a perpetual race against each other. The best browser is the most secure one with the most features to provide their users. However, as features are added to a browser, it is paramount to keep in mind the aspect of security.
@@ -330,8 +393,6 @@ Despite the fact that we didn't manage to find any vulnerability on the web brow
 \section{IDEAS for the paper}
 Note, while we were writing this paper, Mozilla released a brand new version of Firefox (Firefow Quantum). We didn't have time to test malicious payloads against this browser.
 --> do some statistics about the UXSS attacks we saw/studied. For instance, 3\% of the UXSS we studied used vulnerabilities in plugins, 20\% managed to bypass the SOP by using embedded iFrames and blocked the browsers with server redirected, and so on --> try to find patterns of the attacks and the most used techniques to bypass the SOP -> do,such analysis for each browser and if we cannot manage to have decent stats -> speak about the different techniques we saw that were used to bypass the SOP.
-
---> SAY that our study does not focus on vulnerabilities exploited on Android or IOS. The scope of our study is: laptop browsers, and tell the environment on which we carried out the study (the versions of each web browsers we used, and the OS version of our machines and so on)
 
 
 % if have a single appendix:
@@ -464,6 +525,30 @@ Microsoft Offensive Security Research team,
 \textit{Browser security beyond sandboxing},
 https://blogs.technet.microsoft.com/mmpc/2017/10/18/browser-security-beyond-sandboxing/,
 2017
+
+\bibitem{xXssHeader}
+Mozilla,
+\textit{X-XSS-Protection},
+https://developer.mozilla.org/fr/docs/Web/HTTP/Headers/X-XSS-Protection,
+2017
+
+\bibitem{CVE-2013-2849}
+CVE-2013-2849,
+\textit{Cross-Origin Copy \& Paste / Drag \& Drop allowing XSS},
+https://bugs.chromium.org/p/chromium/issues/detail?id=171392,
+2013
+
+\bibitem{edgeReadingModeUXSS}
+Manuel Caballero
+\textit{SOP bypass courtesy of the reading mode (Edge)},
+https://www.brokenbrowser.com/sop-bypass-abusing-read-protocol/,
+2017
+
+\bibitem{CVE-2014-1747}
+CVE-2014-1747,
+\textit{UXSS from a local MHTML file},
+https://bugs.chromium.org/p/chromium/issues/detail?id=330663,
+2014
 
 
 \end{thebibliography}
