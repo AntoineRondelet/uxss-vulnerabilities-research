@@ -42,6 +42,8 @@
 \section{Introduction}
 [TODO]\\
 
+In the previous work, we can speak about the CVEs and the paper \cite{uxssJSLeaks}.
+
 Write the introduction at the end
 Finish the introduction by a list of keywords.
 
@@ -310,58 +312,112 @@ In this section of the paper, we try to summarize the attacks we studied before.
 
 \subsection{Common Vulnerabilities and Exposures (CVE)}
 
-In the previous part of the paper we explained how difficult securing a web browser was. Moreover, since browsers developers have to release new features in small amount of time to stay ahead of the competition, writing tests that ensure a full coverage of the software is almost impossible.
+In the previous part of the paper we explained how difficult securing a web browser was. Moreover, browser developers have to release new features in small amount of time to stay ahead of the competition. This makes testing an arduous task. Ensuring a full coverage of the software is almost impossible.
 
 \medskip
 
-In order to prevent attackers from exploiting potential flaws in web browsers and threaten users, companies decided to set up bug bounty programs\footnote{https://en.wikipedia.org/wiki/Bug\_bounty\_program}. Such scheme consist in providing \emph{"bug hunters"} with a financial compensation and a high recognition for the bugs they report. That way, developers cooperate with part of the community and are able to discover and resolve bugs before the general public is aware of them, preventing incidents of widespread abuse. \\
+In order to prevent attackers from exploiting potential flaws in web browsers and threaten users, companies decided to set up \emph{bug bounty programs}\footnote{https://en.wikipedia.org/wiki/Bug\_bounty\_program}. Such scheme consist giving \emph{"bug hunters"} a financial compensation and a high recognition for the bugs they report. That way, developers cooperate with part of the community and are able to discover and resolve bugs before the general public is aware of them. This helps preventing incidents of widespread abuse. \\
 A majority, not to say all, of reported vulnerabilities have been classified in the Common Vulnerabilities and Exposures system which provides a reference-method for publicly known information-security vulnerabilities and exposures. \\
 
 Most of the vulnerabilities we studied during this two-month research work are actually extracted from the CVE system. \\
 
-In total we studied:
-
-[TO FINISH ACCORDING TO LAST NUMBERS !!]
+In total we analyzed a set of nearly 80 vulnerabilities divided up as follow:
 
 \begin{itemize}
-\item 50 XSS vulnerabilities reported for Mozilla Firefox from 2017 to 2012, involving X version of the software
-\item 59 XSS vulnerabilities reported for Google Chrome from 2017 to 2008, and, involving X versions of the software
-\item 20 XSS vulnerabilities reported for Internet Explorer from 2016 to 2008, and, involving X versions of the software
-\item 9 XSS vulnerabilities reported for Edge from 2017 to 2015, and, involving X versions of the software
-\item 2 XSS vulnerabilities reported for Opera in 2008
+\item 25 XSS vulnerabilities reported for Mozilla Firefox from 2012 to 2016, involving X version of the software
+\item 30 XSS vulnerabilities reported for Google Chrome from 2009 to 2017
+\item 7 XSS vulnerabilities reported for Internet Explorer and Edge from 2008 to 2016
+\item 16 XSS vulnerabilities reported for Opera from 2008 to 2013
 \item 1 XSS vulnerability reported for Brave in 2017
-\item 33 XSS vulnerabilities reported for Safari from 2017 to, involving X version of the software 2010
 \end{itemize}
 
-Along with these reported flaws, we also studied some disclosed vulnerabilities on web browser plugins, that lead to UXSS attacks.
+This set of vulnerabilities reported on 5 browsers in a time frame of 8 years, coupled with the study of disclosed vulnerabilities on web browser plugins, constituted the kernel upon which we based our study. The examination of these reported vulnerabilities helped us understand the different attack vectors used against web browsers. In addition, it helped us understanding the security mechanisms that have incrementally been implemented in web browsers in response of these successive attacks.
 
 \medskip
 
+Further to the the attack reports properly speaking, we took the time to read the discussions the development teams had on the vulnerability report, during the development of the patches. Not only following the developer's reasoning steps was very interesting, but also it made us realize the strict deadlines also referred to as \emph{"time-to-release"} the teams have to meet.
 
-Needless to say that the dozens of CVE reports we examined revealed a wide range of attack scenarios, all more originals than the others. Such a variety of vulnerabilities echoed, without surprise, the astounding complexity of web browsers and the large amount of possible exploitable flaws. From Cross Origin Drag and Drop \cite{CVE-2013-2849}, to SOP bypass using Reading mode \cite{edgeReadingModeUXSS}, UXSS from local MHTML files \cite{CVE-2014-1747}, or even exploit of vulnerabilities in plugins \cite{uxssPDF} \cite{uxssKeybase}, attackers are always more and more originals and manage to find breaches where to execute malicious scripts.
+
+\subsection{Originality of attack scenarios}
+
+The inspection of out vulnerability revealed an astounding wide range of attack scenarios, all more originals than the others. Such a variety of vulnerabilities is undoubtedly due to the complexity of web browsers and the large amount of possible exploitable flaws. From Cross Origin Drag and Drop \cite{CVE-2013-2849}, to SOP bypass using Reading mode \cite{edgeReadingModeUXSS}, UXSS from local MHTML\footnote{https://en.wikipedia.org/wiki/MHTML} files \cite{CVE-2014-1747}, or even exploit of vulnerabilities in plugins \cite{uxssPDF} \cite{uxssKeybase}, attackers are always more and more originals and manage to find breaches where to execute malicious scripts.
 
 \medskip
 
-Based on the previous observations, the next part of our work was to extract patterns from this large set of attacks.
+Nevertheless, although we observed a huge variety of attacks, our analysis unveiled some sort of patterns common to multiple successful attacks against web browsers.
 
 \subsection{Patterns of UXSS attacks}
 
-In this part, try to do some statistics about the attacks that we studied: X\% of the attacks we studied exploited vulnerabilities in Blink for Google Chrome, Y\% of the attacks we studied were carried out using extensions' vulnerabilities in the entire set of browsers, W\% of the attacks we studied used the XSS Auditor in web browsers.
+An interesting part of our work has consisted in trying to find patterns in UXSS attacks. Despite the incredible diversity we observed in the CVE entries we examined, some vulnerabilities appeared to be exploited more regularly than others. \\
+The following part of this section aims to list the popular attack vectors extracted from our study.
 
-Then, based on such statistics, introduce the patterns that we could "extract" from the reports we studied
+\medskip
 
-Some \textbf{attack vectors} that were exploited were:
-
+\subsubsection*{\textbf{Extensions}}
+Browser extensions are plug-ins that extend the features provided by a web browser. Extensions can be downloaded by users and integrated to their browsers to improve the user interface, the security or for blocking advertisements for instance. Such pieces of software have the right to access everything in the browser. This is the reason why, one should be really careful when it comes to use extensions, since any malicious could bypass the SOP and access sensitive data without efforts. To protect their users, many browsers have online stores that allow users to find extensions that have previously been verified. At this point 3 scenarios arise:
 \begin{itemize}
-\item \textbf{Extensions}
-\item \textbf{Redirections}
-\item \textbf{about:blank pages}
-\item \textbf{XSS Auditor} (a lot of attacks using XSS auditors to infer sensitive data in the page)
-\item \textbf{The single threaded nature of JS used to "paralize" a browser} to change the location and execute malicious JS (maybe not  recurrent pattern, but at least a very interesting attack scenario that has been used against Edge, but patched now)
+\item The user installs a malicious extension from a malicious store: This exposes the user to dramatic attacks and data leaks. The extension developer is able to bypass the browser security mechanisms and access user's private data.
+\item The user installs a malicious extension from a secure store: This case is less likely than the first case. Companies such as Google deployed mechanisms to detect malicious extensions and prevent them from being published on their store \cite{extensionsGoogle}. Nonetheless, in the case where a malicious extension manages to bypass all the checks, the consequences are the same as in the previous case. The user's private pieces of information are totally exposed to the attacker.
+\item The user installs an official\footnote{By official we mean "non-malicious"} extension from a secure store. This case is the most interesting in our case. In such circumstances the user should be free from risks. However, this is not the case. If the attacker could not manage to find any vulnerability in the browser before, he can now try to find one in the extension. By using this "non-malicious" extension, the user gives the attacker another chance to attack him. Such weaknesses in extensions have been reported in Adobe Reader\cite{adobeExtensionUXSS}, or Keybase \cite{uxssKeybase} for instance. Finally, vulnerabilities can also be found in the part of the browser responsible for integrating the extensions \cite{CVE-2015-7187} \cite{CVE-2017-5020}.
+
 \end{itemize}
 
+\medskip
 
---> Say that what surprised us what the originality of the different attacks, all the things were tried and finding a specific pattern out of all this diversity of attack has been an extremely difficult challenge throughout this project.
+\subsubsection*{\textbf{Redirects}}
+
+HTTP redirects are a special kind of HTTP response used for numerous goals such as temporary redirection while site maintenance is ongoing for instance. While this mechanism is, in general, implemented server side, web developers who do not have access over the server, can implement it in their HTML page (HTML redirections) or in their Javascript client (Javascript redirections). \\
+Interestingly enough, carefully timed reloads and redirects can enable an attacker to bypass the SOP \cite{CVE-2015-0072}\footnote{In the PoC (https://blog.innerht.ml/ie-uxss/) of CVE-2015-0072, the author explains that JavaScript's single-threaded nature is actually used to freeze the browser with an alert box to actually manage to bypass the SOP}, \cite{CVE-2010-4045}, \cite{CVE-2009-3013}.
+
+\medskip
+
+\subsubsection*{\textbf{Diversity of URIs}}
+
+In order to ensure good performances, and/or in order to support some features, web browsers come with numerous URIs. The \emph{data} URI scheme, for instance, is a uniform resource identifier scheme that provides a way to include data in-line in web pages as if they were external resources. Moreover, the \emph{feed} URI scheme is a URI scheme designed to facilitate subscription to web feeds; and the \emph{about} URI is an internal URI scheme implemented in various Web browsers used to reveal internal state and built-in functions. Such a variety of URIs has been widely used by attackers to carry out their attacks. Domainless \emph{about:blank} URIs have been used to bypass the SOP in \cite{domainlessAboutBlank}, while \emph{feed:} and \emph{data:} URIs have been used to execute malicious javascript code \cite{CVE-2012-1966} \cite{CVE-2012-1965} \cite{CVE-2011-2609} \cite{CVE-2012-6463} \cite{CVE-2010-2665}.
+
+\medskip
+
+\subsubsection*{\textbf{XSS Auditor}}
+
+In order to avoid Cross-site Scripting attacks many web browsers implement a mechanism (XSS Auditor) using the \emph{X-XSS-Protection} HTTP header that is used to stop pages from loading when browsers detect reflected XSS attacks. In the case where the header is set to \emph{X-XSS-Protection: 1; mode=block}, once the auditor is triggered the response is blocked and a blank page is shown to the user.\footnote{https://www.virtuesecurity.com/blog/understanding-xss-auditor/}. This blocking mode in the XSS Auditor has also been an fairly "popular" attack vector used by attackers. Some scenarios exploited the fact that a page was blocked or not, to infer some secret information on a victim's page or to proceed to a document.referrer leakage \cite{CVE-2017-5045} \cite{CVE-2013-0909} \cite{CVE-2013-2848}
+
+\medskip
+
+\subsubsection*{\textbf{Cross Origin Drag and Drop/Copy and Paste}}
+
+In HTML5, Drag and Drop has been included as part of the standard. Thus any element can be set as draggable, and custom events can be defined by the web developer to refine the behavior of his page during a drag and drop from the user. However, such a feature can be used in a malicious fashion. Attackers actually found scenarios where cross Drag and Drop were possible and thus lead to XSS conditions \cite{CVE-2016-5226} \cite{CVE-2013-2849} \cite{CVE-2012-0455}.
+
+\medskip
+
+\subsubsection*{\textbf{Malicious attributes values for DOM elements}}
+
+The last method we observed, was frequently used to generate XSS conditions in web browsers was to confuse the browser with malicious names for DOM elements and/or malicious values for DOM elements' attributes. \\
+In such case, the web browser's behavior could be changed and some security mechanisms could be altered. \\
+Attacks that used this technique consisted in redefining global variable (variable clobbering\footnote{https://en.wikipedia.org/wiki/Clobbering}) \cite{frameBustingLocationClubbered}, escaping the browser XSS filters by writing some javascript payloads in the value of some DOM elements \cite{CVE-2013-2849}, or just naming an attribute with the name of a global variable \cite{CVE-2012-4209} \cite{CVE-2012-3994} \cite{CVE-2012-4194}
+
+\bigskip
+
+In addition of our observations during this research, \cite{uxssJSLeaks} provides an insighful analysis of UXSS vulnerabilities of the family of \emph{cross-origin JavaScript capability leaks}. In this paper, the authors carried out a study on WebKit\footnote{https://en.wikipedia.org/wiki/WebKit} and tried to detect and exploit when the browser leaked a JavaScript pointer from one security origin to another. They showed that the origins of such vulnerabilities came from the fact that the Document Object Model (DOM) and the JavaScript engine actually enforced the same-origin policy using two different security models: Access Control and Object-Capabilities. While Access Control, used by the DOM, prevents one Web site from accessing resources allocated to another Web site, the JavaScript engine enforces the same-origin policy using an object-capability discipline that prevents one Web site from obtaining JavaScript pointers to sensitive objects that belong to a foreign security origin. In their research they showed that is the browser leaked a JavaScript pointer from one security origin to another, this would lead to an exploitable vulnerability to bypass the SOP. 
+
+\medskip
+
+This study can actually be put into relation with the above section about \emph{Malicious attributes values for DOM elements}. Indeed, in this part we spoke about variable clobbering to prevent some security mechanisms to be triggered, such as frame busting scripts for instance. If, on the other hand, the attacker manages to overwrite some methods from a global Javascript object such as \emph{window} for instance, it would not be foolish to assume that, if invoked inside a victim iframe, this method would execute on behalf of the victim's origin. \\
+
+Thus, it appears that, is some circumstances, and in some browsers, global variables could be seen as \emph{bridges} between origins, and used by malicious users to attack the web browser.
+
+
+\subsection{Errors made by developpers}
+
+After studying the reported vulnerabilities found on today's most famous web browsers, and after extracting some common attack vectors - or patterns - used to attack these pieces of software, let's try to figure out some mistakes made from web browser developers.
+
+\medskip
+
+- User input not sanitized
+- Bugus Regex
+- Divergence with specs and laziness ? --> CVE-2012-3985 shows how divergence from specs and laziness from dev teams can introduce exploitable vulnerabilities."We've diverged from the spec and this can put some sites at risk, we need to fix it" --> extract from CVE-2012-3985 bug report discussion.
+- Lack of security over sensitive/global objects that might be shared accross frames and whose methods/attributes can be overwritten with malicious code
+- Confusion (sometimes they do not know who should be responsible of what when browser interact with plugins -> not even aware that they should take this security aspect into consideration)
+- Regression / Introduction of previously patched features.
 
 \subsection{Our attempts}
 
@@ -412,6 +468,8 @@ Say how many UXSS attacks we studied, and try to classify all these attacks into
 Note, while we were writing this paper, Mozilla released a brand new version of Firefox (Firefow Quantum). We didn't have time to test malicious payloads against this browser.
 --> do some statistics about the UXSS attacks we saw/studied. For instance, 3\% of the UXSS we studied used vulnerabilities in plugins, 20\% managed to bypass the SOP by using embedded iFrames and blocked the browsers with server redirected, and so on --> try to find patterns of the attacks and the most used techniques to bypass the SOP -> do,such analysis for each browser and if we cannot manage to have decent stats -> speak about the different techniques we saw that were used to bypass the SOP.
 
+
+--> Note: During the review of the different reported vulnerabilities, we read comments from reporter of the vulns but also the comments from the core team exchanging about how to fix the vulns --> During the reading of these messages, we really measured the pressure on the teams about releasing new versions of the software. It seems that time tables already contain day of release, and that the team has to cope with such delays and meet the deadlines. It seems there is a "time-to-release" pre-established.  
 
 % if have a single appendix:
 %\appendix[Proof of the Zonklar Equations]
@@ -568,6 +626,84 @@ CVE-2014-1747,
 https://bugs.chromium.org/p/chromium/issues/detail?id=330663,
 2014
 
+\bibitem{uxssJSLeaks}
+UC Berkeley,
+\textit{Cross-Origin JavaScript Capability Leaks: Detection, Exploitation, and Defense}
+
+
+\bibitem{extensionsGoogle}
+Google,
+\textit{Trends and Lessons from Three Years Fighting Malicious Extensions}
+
+\bibitem{adobeExtensionUXSS}
+CVE-2011-2107
+
+\bibitem{CVE-2015-7187}
+CVE-2015-7187
+
+\bibitem{CVE-2017-5020}
+CVE-2017-5020
+
+\bibitem{CVE-2015-0072}
+CVE-2015-0072
+
+\bibitem{CVE-2010-4045}
+CVE-2010-4045
+
+\bibitem{CVE-2009-3013}
+CVE-2009-3013
+
+\bibitem{domainlessAboutBlank}
+Manuel Caballero,
+\textit{SOP bypass / UXSS – Adventures in a Domainless World (Edge)},
+2017
+
+\bibitem{CVE-2012-1966} 
+CVE-2012-1966
+
+\bibitem{CVE-2012-1965} 
+CVE-2012-1965
+
+\bibitem{CVE-2011-2609} 
+CVE-2011-2609
+
+\bibitem{CVE-2012-6463} 
+CVE-2012-6463
+
+\bibitem{CVE-2010-2665}
+CVE-2010-2665
+
+\bibitem{CVE-2017-5045}
+CVE-2017-5045
+
+\bibitem{CVE-2013-0909}
+CVE-2013-0909
+
+\bibitem{CVE-2013-2848}
+CVE-2013-2848
+
+\bibitem{CVE-2016-5226} 
+CVE-2016-5226
+
+\bibitem{CVE-2013-2849} 
+CVE-2013-2849
+
+\bibitem{CVE-2012-0455}
+CVE-2012-0455
+
+\bibitem{frameBustingLocationClubbered}
+Gustav Rydstedt, Elie Bursztein, Dan Boneh and Collin Jackson,
+\textit{Busting Frame Busting:
+a Study of Clickjacking Vulnerabilities on Popular Sites},
+
+\bibitem{CVE-2012-4209}
+CVE-2012-4209
+
+\bibitem{CVE-2012-3994}
+CVE-2012-3994
+
+\bibitem{CVE-2012-4194}
+CVE-2012-4194
 
 \end{thebibliography}
 
