@@ -406,20 +406,29 @@ This study can actually be put into relation with the above section about \emph{
 Thus, it appears that, is some circumstances, and in some browsers, global variables could be seen as \emph{bridges} between origins, and used by malicious users to attack the web browser.
 
 
-\subsection{Errors made by developpers}
+\subsection{Errors made by developers}
 
 After studying the reported vulnerabilities found on today's most famous web browsers, and after extracting some common attack vectors - or patterns - used to attack these pieces of software, let's try to figure out some mistakes made from web browser developers.
 
 \medskip
 
-- User input not sanitized
-- Bugus Regex
-- Divergence with specs and laziness ? --> CVE-2012-3985 shows how divergence from specs and laziness from dev teams can introduce exploitable vulnerabilities."We've diverged from the spec and this can put some sites at risk, we need to fix it" --> extract from CVE-2012-3985 bug report discussion.
-- Lack of security over sensitive/global objects that might be shared accross frames and whose methods/attributes can be overwritten with malicious code
-- Confusion (sometimes they do not know who should be responsible of what when browser interact with plugins -> not even aware that they should take this security aspect into consideration)
-- Regression / Introduction of previously patched features.
+While some attacks exploit vulnerabilities that might not be easily predictable by the browser developers, some attacks could, however, be "easily" avoided. Some common mistakes made by browser developers could be:
+
+\begin{itemize}
+\item Lack of sanitization of user input: Could lead to script injection in URIs for instance.
+\item Bad design of regular expression: Could allow a user to bypass some security checks. If the regular expression is case sensitive, a user could use upper and lower case letters to short-circuit any checks for instance \cite{CVE-2012-0455}
+\item Divergence with specifications: Sometimes the specifications might add a lot of constraints on the developers. It might be tempting to "adapt" them. Nevertheless, such circumstances could create odd situations that could benefit an attacker \cite{CVE-2012-3985}
+\item Confusion/Negligence: As browsers support a large panel of extensions, some situations appear when it is difficult to know the party responsible for the implementation of some security mechanisms. In case where an ambiguity happens, some security checks might be missing, allowing an malicious user to attack the software.
+\item Inattention: By being focused on developing new features, web browser developers can mistakenly introduce regressions, and vulnerabilities that have already been patched. Thus an attacker might be able to carry out an old attack on the browser.
+\end{itemize}
+
+\medskip
+
+\underline{\emph{Note:}} This list of potentials errors, is based on the messages exchanged on the bug report pages. 
 
 \subsection{Our attempts}
+
+Say that we tried to attack the browser but we stay at the surface (we didn't dove into implementation of the browser and didn't do an sort of analysis of the code to find flaws)
 
 Say that we tried all our payloads against Brave, Whale, Google Chrome and Firefox Quantum -- Since all browsers are different, we wanted to try our payloads against them all. All browsers have their own set of features, so one might be unaffected by an attack while another can be vulnerable.
 
@@ -704,6 +713,12 @@ CVE-2012-3994
 
 \bibitem{CVE-2012-4194}
 CVE-2012-4194
+
+\bibitem{CVE-2012-0455}
+CVE-2012-0455
+
+\bibitem{CVE-2012-3985}
+CVE-2012-3985
 
 \end{thebibliography}
 
