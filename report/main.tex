@@ -289,6 +289,7 @@ Our project has been performed on a MacBook Air running macOS Sierra version 10.
 
 
 \subsection{Widening to other browsers}
+\label{otherBrowsers}
 
 Despite the fact that we first focused on Brave during this term project, we then decided to broaden our study to the other browsers listed below:
 
@@ -428,13 +429,31 @@ While some attacks exploit vulnerabilities that might not be easily predictable 
 
 \subsection{Our attempts}
 
-Say that we tried to attack the browser but we stay at the surface (we didn't dove into implementation of the browser and didn't do an sort of analysis of the code to find flaws)
+In addition to studying the payloads used against modern web browsers, we tried to adapt some of the attacks we observed against the browser Brave\footnote{Note that all our attacks were finally widen to the web browsers listed in section \ref{otherBrowsers}. Since all browsers are different, one might have been vulnerable for an attack while others might have not.} in the hope to unveil a UXSS vulnerability. The following section presents our attempts.
 
-Say that we tried all our payloads against Brave, Whale, Google Chrome and Firefox Quantum -- Since all browsers are different, we wanted to try our payloads against them all. All browsers have their own set of features, so one might be unaffected by an attack while another can be vulnerable.
+\medskip
 
-Based on the attacks we studied on a large range of browsers, we tried to carry out some attacks ourselves.
-Speak about our different attempts here.
-Further to the study of the patterns, we tried to do some UXSS attacks...
+\underline{\emph{Note:}} For our attacks, we focused on crafting malicious html pages to render, or malicious payloads to inject in the user interface of the browser. Some more refined and advanced attacks, such as some fuzzing  against the Javascript interpreter for instance \cite{microsoftFuzzingOnv8}, could have been achieved but they were out of the scope of our project.
+
+
+\subsubsection*{Executing malicious code in the PDF renderer plugin}
+
+\subsubsection*{Variables clobbering}
+
+\subsubsection*{Variables clobbering}
+
+\subsubsection*{Exploiting the about: URI}
+
+\subsubsection*{Bookmarking malicious URIs and importing malicious bookmarks}
+
+\subsubsection*{Bypassing CORS}
+1) Bypassing CORS with XMLHTTPRequest
+2) Bypassing CORS with Fetch
+3) Bypassing CORS with a Web Worker
+4) Bypassing CORS with a Web Worker and a ServiceWebWorker
+
+
+
 Say that none of our attempts were successful but that we provide them as a record of our work. They might also be extended/adapted to carry out successful attack.
 Speak about what we tried, and why we tried it, and explain what we had in mind when we tried something (so that the reader can understand the attack more easily)
 - In this part of the paper present some of our attempts. At least we can list what we tried, but we are not compelled to include all the payloads we came up with.
