@@ -4,6 +4,44 @@
 \usepackage[justification=centering]{caption}
 
 
+\usepackage{listings}
+\usepackage{color}
+\definecolor{lightgray}{rgb}{.9,.9,.9}
+\definecolor{darkgray}{rgb}{.4,.4,.4}
+\definecolor{purple}{rgb}{0.65, 0.12, 0.82}
+
+\lstdefinelanguage{JavaScript}{
+  keywords={typeof, new, true, false, catch, function, return, null, catch, switch, var, if, in, while, do, else, case, break},
+  keywordstyle=\color{blue}\bfseries,
+  ndkeywords={class, export, boolean, throw, implements, import, this},
+  ndkeywordstyle=\color{darkgray}\bfseries,
+  identifierstyle=\color{black},
+  sensitive=false,
+  comment=[l]{//},
+  morecomment=[s]{/*}{*/},
+  commentstyle=\color{purple}\ttfamily,
+  stringstyle=\color{red}\ttfamily,
+  morestring=[b]',
+  morestring=[b]"
+}
+
+\lstset{
+   language=JavaScript,
+   backgroundcolor=\color{lightgray},
+   extendedchars=true,
+   basicstyle=\footnotesize\ttfamily,
+   showstringspaces=false,
+   showspaces=false,
+   numberstyle=\footnotesize,
+   numbersep=9pt,
+   tabsize=1,
+   breaklines=true,
+   showtabs=false,
+   captionpos=b
+}
+
+
+
 \ifCLASSINFOpdf
   % \usepackage[pdftex]{graphicx}
   % declare the path(s) where your graphic files are
@@ -164,6 +202,7 @@ Know that we know what an origin is, the Same Origin Policy is a policy that ens
 \end{figure}
 
 \subsubsection{Cross-Origin Resource Sharing (CORS)}
+\label{CORSSection}
 
 In order to relax the SOP, the W3C specified the Cross-Origin Resource Sharing (CORS) which consists in specifying a white-list of trusted domains allowed to request restricted resources, by extending HTTP with a new origin request header. The CORS mechanism supports secure cross-domain requests and data transfers between browsers and web servers. \\
 
@@ -325,7 +364,7 @@ Most of the vulnerabilities we studied during this two-month research work are a
 In total we analyzed a set of nearly 80 vulnerabilities divided up as follow:
 
 \begin{itemize}
-\item 25 XSS vulnerabilities reported for Mozilla Firefox from 2012 to 2016, involving X version of the software
+\item 25 XSS vulnerabilities reported for Mozilla Firefox from 2012 to 2016
 \item 30 XSS vulnerabilities reported for Google Chrome from 2009 to 2017
 \item 7 XSS vulnerabilities reported for Internet Explorer and Edge from 2008 to 2016
 \item 16 XSS vulnerabilities reported for Opera from 2008 to 2013
@@ -440,19 +479,104 @@ In addition to studying the payloads used against modern web browsers, we tried 
 
 \subsubsection*{Variables clobbering}
 
-\subsubsection*{Variables clobbering}
-
 \subsubsection*{Exploiting the about: URI}
 
 \subsubsection*{Bookmarking malicious URIs and importing malicious bookmarks}
 
-\subsubsection*{Bypassing CORS}
-1) Bypassing CORS with XMLHTTPRequest
-2) Bypassing CORS with Fetch
-3) Bypassing CORS with a Web Worker
-4) Bypassing CORS with a Web Worker and a ServiceWebWorker
+\subsubsection*{Bypassing CORS} 
+
+In our attempt to find a way to bypass the CORS\footnote{Cross-Origin Resources Sharing. See section \label{CORSSection}} mechanisms, we encountered a lot of difficulties. Thus, we tried to gradually improve our attack in order to finally find an exploitable vulnerability. \\
+The idea we came up with here was to try to set a malicious header in the request, in order to confuse the victim's web server. Indeed, we thought here that if we were able to set \emph{User-Agent}, \emph{Referer} or \emph{Origin} headers, the victim's web server might be fooled, and might send us the web page regardless of our malicious origin. However, it turned out that the browser refused to let us set such HTTP Headers in our requests. Further to this observation, we tried to perform an attack similar to HTTP Response Splitting\footnote{https://www.owasp.org/index.php/HTTP\_Response\_Splitting}. What if we could set malicious values to headers ? In fact, if we could find a way to change the \emph{User-Agent} indirectly by setting another HTTP header, we would be able to bypass the browser security mechanisms.
+
+\medskip
+
+\emph{\underline{Test 1:} Bypassing CORS with XMLHTTPRequest} \\
+\begin{lstlisting}[caption=Trying to set malicious headers with XMLHTTPRequest]
+var xhr = new XMLHttpRequest();
+xhr.open("GET", "https://www.google.co.kr", true);
+      
+// Trying to set a malicious header in our request
+var maliciousHeader = "accept-language";
+xhr.setRequestHeader(maliciousHeader, "value\%0AUser-Agent: curl/7.54.0");
+      
+xhr.onreadystatechange = function () {
+    if (xhr.readyState == XMLHttpRequest.DONE) {
+        if (xhr.status != 200 && xhr.status != 206) {
+            console.log("Oops ! Something went wrong :( (Status: " + xhr.status + ", Response: " + xhr.responseText + ")");
+        } else {
+            document.getElementById("tFrameWindow").innerHTML = xhr.responseText;
+        }
+        return;
+    }
+};
+xhr.send();
+\end{lstlisting}
+
+The idea in the code represented above was to use introduce a line break in the header value (\%0A is the URL encoding value of the line break\footnote{We used the URL encoding line break since headers name and values have to be composed of ASCII characters. Thus we couldn't use \textbackslash n nor \textbackslash r for instance}) in order to create a malicious \emph{User-Agent} header. That way we would be able to fetch the victim's page. Unfortunately as shown on figure \ref{fig:maliciousHeadersValues}, the result was not the one we expected.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.47\textwidth]{images/maliciousHeadersValues.png}
+\caption{The resulting request headers from our attempt to fake the User-Agent}
+\label{fig:maliciousHeadersValues}
+\end{figure}
+
+\medskip
+
+In the attempt shown above, we tried to set the value of the http header \emph{accept-language} which is a standard HTTP header. However, we know that the \emph{Access-Control-Request-Headers} HTTP header is set in the preflight\footnote{https://developer.mozilla.org/en-US/docs/Glossary/preflight\_request} request when one tries to fetch a cross origin resource. Thus, instead of setting a maliciously crafted header value, we tried to set a malicious custom header name that would be then used as a value for the \emph{Access-Control-Request-Headers} HTTP header (figure \ref{fig:maliciousHeadersNames})
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.47\textwidth]{images/maliciousHeadersNames.png}
+\caption{The result of our attempt to set malicious custom header names}
+\label{fig:maliciousHeadersNames}
+\end{figure}
 
 
+As we can see on figure \ref{fig:maliciousHeadersNames}, our attempt to set malicious headers was not successful. It seems that the specifications\footnote{http://tools.ietf.org/html/rfc2616\#section-4.2} have been well implemented in the browser. Thus, no vulnerability seems to be usable here to attack the software. \\
+
+Note that many more headers and names values have been tested to try to bypass the security checks of the browser. Moreover we also tested the attacks aforementioned using the \emph{Fetch} API\footnote{https://developer.mozilla.org/en-US/docs/Web/API/Fetch\_API/Using\_Fetch} with \emph{cors} and \emph{no-cors} modes, however, the results were the same.
+
+\medskip
+
+\emph{\underline{Test 2:} Bypassing CORS with a Web Worker}
+
+After trying to bypass cross origin resource sharing security mechanisms using \emph{XMLHTTPRequest} and \emph{Fetch}, and after studying the CVE-2013-1714, we decided to learn more about web workers and see whether we could use them to fetch a cross origin resource. According to \cite{webWorkers}, web workers are simple mean for web content to run scripts in background threads. The worker thread can perform tasks without interfering with the user interface. \\
+Thus we tried to see whether a request initiated from a web worker was ruled by the same constraints as "classical" requests, and see whether we could use these workers to attack the browser. The principle of our attack consisted in delegating the \emph{XMLHTTPRequest} to the worker thread a see whether we could fetch a cross origin resource\footnote{Our code for this attack scenario can be found at: https://github.com/KAIST-IS593-WEBSEC/UXSS-Vulnerabilities-Project/blob/develop-report/playground/corsBypassingWithWebWorkers.html}. As shown of figure \ref{fig:corsWithWebWorkers} the request was initiated by our worker (which tried to set malicious headers), but unfortunately the result was the same as the previous attempts presented above. 
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.47\textwidth]{images/corsWithWebWorkers.png}
+\caption{The request initiated by our web worker (blob:null/a036ed6f-601c-433a-994c-ed0e43c28498:26)}
+\label{fig:corsWithWebWorkers}
+\end{figure}
+
+
+\medskip
+
+\emph{\underline{Test 3:} Bypassing CORS with a Web Worker and a Service Worker}
+
+Finally, after all our attempts and some further research, we tried to use a service worker as a proxy of our requests. Such a service worker would intercept all our requests and would modify them in a malicious fashion in order to bypass the CORS security mechanisms. \\
+Indeed according to Mozilla's web page, service workers essentially act as proxy servers that sit between web applications, and the browser and network (see figures \ref{fig:corsWithServiceWorkers} and \ref{fig:serviceAndWebWorker}). They are intended to enable the creation of effective offline experiences, intercepting network requests and taking appropriate action based on whether the network is available and updated assets reside on the server. \\
+With this in mind, we tried in this scenario to implement a service worker that would intercept and unmarshal all the requests, and modify them with malicious information (fake/malicious headers for instance) before marshaling them again and executing them.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.47\textwidth]{images/corsWithServiceWorkers.png}
+\caption{The service worker intercepting and replaying the worker request as it is}
+\label{fig:corsWithServiceWorkers}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.47\textwidth]{images/serviceAndWebWorker.png}
+\caption{Our page with the service and the web worker}
+\label{fig:serviceAndWebWorker}
+\end{figure}
+
+The following steps in the attack exploit the fact that service worker can intercept requests and can replay them. If we manage to insert malicious data in these replayed requests, then our attack would be successful.
+
+-- Follow on explaining the code that I wrote for the service worker, (the one extracted from stackoverflow and explain that i wanted to modify the request before replaying it)
 
 Say that none of our attempts were successful but that we provide them as a record of our work. They might also be extended/adapted to carry out successful attack.
 Speak about what we tried, and why we tried it, and explain what we had in mind when we tried something (so that the reader can understand the attack more easily)
@@ -738,6 +862,12 @@ CVE-2012-0455
 
 \bibitem{CVE-2012-3985}
 CVE-2012-3985
+
+\bibitem{webWorkers}
+Mozilla,
+\textit{Using Web Workers},
+https://developer.mozilla.org/en-US/docs/Web/API/Web\_Workers\_API/Using\_web\_workers,
+
 
 \end{thebibliography}
 
