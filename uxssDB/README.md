@@ -6,7 +6,8 @@ This folder contains some of the UXSS patterns (see ./patterns) that have been u
 
 ### Chrome:
 #### Browser
-- CVE-2017-5069: https://bugs.chromium.org/p/chromium/issues/detail?id=667079
+- CVE-2017-5069: https://bugs.chromium.org/p/chromium/issues/detail?id=667079:
+	Use of the XSS auditor blocking mode to leak information. Xss auditor is a function use with the X-XSS-Protection HTTP header which is a non-standard header, to mitigate XSS attacks. It analyses query parameters and aims to identify malicious javascript code. Xss audito blocks server responses with such identified code to avoid injected payloads. Now this blocking mode can be exploited as a vulnerability. An attacker can use it to have some information about a blocked script that has a different origin than the webpage itself by loading it and trying to reproduce it. When XSS Auditor is triggered and blocks a page, it prevents the iframe's onload event handler to be called. So the attacker just have to check this call in order to verify if the made script is right and therefore leaks user information.
 - CVE-2017-5045: https://bugs.chromium.org/p/chromium/issues/detail?id=667079
 - CVE-2017-5020: https://bugs.chromium.org/p/chromium/issues/detail?id=668653&desc=2
 - CVE-2017-5018: https://bugs.chromium.org/p/chromium/issues/detail?id=668665
