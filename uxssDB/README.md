@@ -15,8 +15,25 @@ Operating System: [Ubuntu 14.04]
 Jan 2017
 XSS Auditor present in Google Chrome prior to 57.0.2987.98 for Mac, Windows, Linux and 57.0.2987.108 for Android
 - CVE-2017-5045: https://bugs.chromium.org/p/chromium/issues/detail?id=667079
-- CVE-2017-5018: https://bugs.chromium.org/p/chromium/issues/detail?id=668665
-- CVE-2017-5010: https://bugs.chromium.org/p/chromium/issues/detail?id=663476
+- Vulnerability in chrome://apps: It happens when this page is open in a tab, and a malicious page is open in another one. The drag and drop to the area with the app tiles results in that malicious page can be use in an unsafe way and be assign to the innerHTML parameter of an active document element. Since the apps page has no CSP to mitigate it, this can allow the use of NTP APIs such as:
+	- Enumerating the browsing history through favicons
+	- Querying who is signed in in Chrome
+	- Opening restricted URLs (including URLs that normally requires the user to manually type the URL, e.g. chrome://kill)
+	- Disabling extensions
+	- Launching apps
+	- Filling the preferences database with junk (AppLauncherHandler::HandleSaveAppPageName does not validate the bounds on the parameters)  
+CVE-2017-5018: https://bugs.chromium.org/p/chromium/issues/detail?id=668665
+VERSION
+Chrome version: 54.0.2840.90 (stable), 57.0.2933.0 (latest)
+Nov 2016
+- Vulnerability when link element is removed from its parent when linked to the last pending stylesheet: When a stylesheet happens to be the last pending one in the document and that a link element is aware of its removal, this can result on fragment anchor and then layout updates which are forbidden. Tthe updates may end up resolving a FontFace load promise, which allows an attacker to bypass the ScriptForbiddenScope and corrupt the DOM tree. The parent function may also endup firing a focus event that runs arbitrary code.
+CVE-2017-5010: https://bugs.chromium.org/p/chromium/issues/detail?id=663476
+https://www.exploit-db.com/exploits/41866/
+VERSION
+Chrome 54.0.2840.87 (Stable)
+Chrome 55.0.2883.35 (Beta)
+Chrome 56.0.2906.0 (Dev)
+Chromium 56.0.2914.0 (Release build compiled today)
 - CVE-2017-5008: https://bugs.chromium.org/p/chromium/issues/detail?id=668552
 - CVE-2017-5007: https://bugs.chromium.org/p/chromium/issues/detail?id=671102
 #### Android
