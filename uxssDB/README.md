@@ -6,10 +6,15 @@ This folder contains some of the UXSS patterns (see ./patterns) that have been u
 
 ### Chrome:
 #### Browser
-- CVE-2017-5069: https://bugs.chromium.org/p/chromium/issues/detail?id=667079:
-	Use of the XSS auditor blocking mode to leak information. Xss auditor is a function use with the X-XSS-Protection HTTP header which is a non-standard header, to mitigate XSS attacks. It analyses query parameters and aims to identify malicious javascript code. Xss audito blocks server responses with such identified code to avoid injected payloads. Now this blocking mode can be exploited as a vulnerability. An attacker can use it to have some information about a blocked script that has a different origin than the webpage itself by loading it and trying to reproduce it. When XSS Auditor is triggered and blocks a page, it prevents the iframe's onload event handler to be called. So the attacker just have to check this call in order to verify if the made script is right and therefore leaks user information.
+- Use of the XSS auditor blocking mode to leak information
+ Xss auditor is a function use with the X-XSS-Protection HTTP header which is a non-standard header, to mitigate XSS attacks. It analyses query parameters and aims to identify malicious javascript code. Xss audito blocks server responses with such identified code to avoid injected payloads. Now this blocking mode can be exploited as a vulnerability. An attacker can use it to have some information about a blocked script that has a different origin than the webpage itself by loading it and trying to reproduce it. When XSS Auditor is triggered and blocks a page, it prevents the iframe's onload event handler to be called. So the attacker just have to check this call in order to brute force javascript variables and therefore leaks user information.
+CVE-2017-5069: https://bugs.chromium.org/p/chromium/issues/detail?id=667079
+VERSION
+Chrome Version: [54.0.2840.71] + [stable]
+Operating System: [Ubuntu 14.04]
+Jan 2017
+XSS Auditor present in Google Chrome prior to 57.0.2987.98 for Mac, Windows, Linux and 57.0.2987.108 for Android
 - CVE-2017-5045: https://bugs.chromium.org/p/chromium/issues/detail?id=667079
-- CVE-2017-5020: https://bugs.chromium.org/p/chromium/issues/detail?id=668653&desc=2
 - CVE-2017-5018: https://bugs.chromium.org/p/chromium/issues/detail?id=668665
 - CVE-2017-5010: https://bugs.chromium.org/p/chromium/issues/detail?id=663476
 - CVE-2017-5008: https://bugs.chromium.org/p/chromium/issues/detail?id=668552
@@ -20,6 +25,10 @@ This folder contains some of the UXSS patterns (see ./patterns) that have been u
 
 #### Extension
 - Flash Player Flaw CVE-2011-2107: http://www.adobe.com/support/security/bulletins/apsb11-13.html
+- chrome://downloads vulnerability that allows a malicious extension to run a program without user interaction: When the victim installs or upgrades a malicious extension, the XSS is perform on chrome://downloads by setting the extension name in the innerHTML assignment. This with the bypassing of CSP and safe browsing, will allow when the user click to run a program outside of chrome, the extension to run arbitrary code NS
+CVE-2017-5020: https://bugs.chromium.org/p/chromium/issues/detail?id=668653&desc=2
+VERSION
+Chrome version: 54.0.2840.90 (stable), 55.0.2883.59 (beta), 57.0.2931.0 (Canary)
 
 ### Edge/IE
 #### Browser
