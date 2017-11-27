@@ -15,6 +15,7 @@ Operating System: [Ubuntu 14.04]
 Jan 2017
 XSS Auditor present in Google Chrome prior to 57.0.2987.98 for Mac, Windows, Linux and 57.0.2987.108 for Android
 - CVE-2017-5045: https://bugs.chromium.org/p/chromium/issues/detail?id=667079
+https://codereview.chromium.org/2478573002/
 - Vulnerability in chrome://apps: It happens when this page is open in a tab, and a malicious page is open in another one. The drag and drop to the area with the app tiles results in that malicious page can be use in an unsafe way and be assign to the innerHTML parameter of an active document element. Since the apps page has no CSP to mitigate it, this can allow the use of NTP APIs such as:
 	- Enumerating the browsing history through favicons
 	- Querying who is signed in in Chrome
@@ -34,14 +35,24 @@ Chrome 54.0.2840.87 (Stable)
 Chrome 55.0.2883.35 (Beta)
 Chrome 56.0.2906.0 (Dev)
 Chromium 56.0.2914.0 (Release build compiled today)
-- CVE-2017-5008: https://bugs.chromium.org/p/chromium/issues/detail?id=668552
+Apple WebKit / Safari 10.0.3 (12602.4.8)
+-  CVE-2017-5008: https://bugs.chromium.org/p/chromium/issues/detail?id=668552
+VERSION
+Chrome 54.0.2840.99 (Stable)
+Chrome 55.0.2883.59 (Beta)
+Chrome 56.0.2924.3 (Dev)
+Chromium 57.0.2932.0 (Release build compiled today)
 - CVE-2017-5007: https://bugs.chromium.org/p/chromium/issues/detail?id=671102
 #### Android
 - https://bugs.chromium.org/p/chromium/issues/detail?id=144813
 - https://www.cyberintelligence.in/google-play-store-vulnerable-to-xss-and-uxss-attacks/
 
 #### Extension
-- Flash Player Flaw CVE-2011-2107: http://www.adobe.com/support/security/bulletins/apsb11-13.html
+- Flash Player Flaw CVE-2011-2107: This was an important vulnerability that allows remote attackers to inject arbitrary web script or HTML via unspecified vectors, when victim visits malicious website.
+http://www.adobe.com/support/security/bulletins/apsb11-13.html
+VERSION
+Adobe Flash Player 10.3.181.16 and earlier versions for Windows, Macintosh, Linux and Solaris operating systems
+Adobe Flash Player 10.3.185.22 and earlier versions for Android
 - chrome://downloads vulnerability that allows a malicious extension to run a program without user interaction: When the victim installs or upgrades a malicious extension, the XSS is perform on chrome://downloads by setting the extension name in the innerHTML assignment. This with the bypassing of CSP and safe browsing, will allow when the user click to run a program outside of chrome, the extension to run arbitrary code NS
 CVE-2017-5020: https://bugs.chromium.org/p/chromium/issues/detail?id=668653&desc=2
 VERSION
