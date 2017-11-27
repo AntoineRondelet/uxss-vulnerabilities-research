@@ -73,7 +73,7 @@
 \begin{document}
 \title{IS593 Term Project \emph{"Find Universal Cross Site Scripting Vulnerabilities in Brave Browser"}}
 
-\author{Antoine RONDELET (20176461)}
+\author{Antoine RONDELET (20176461) \& Khady NGOM(20176440)}
 \maketitle
 \IEEEpeerreviewmaketitle
 
@@ -755,39 +755,51 @@ Moreover, from a broader perspective, we noticed that the number of resources ab
 
 
 \section{Conclusion}
-Lots of attacks -> difficutl not to say to automate 
 
-We just scratched the surface of what is possible to test in a browser
+In conclusion of this paper, we saw that today, many web browsers coexists. Thus we said that developers maintaining these pieces of software needed to develop new numerous features in small amount of time, in order for their browser to be the must appreciated and the most used. 
 
-Despite the fact that we didn't manage to find any vulnerability on the web browsers, some persons might be able to find some. It is important to remember that browsers act as a last rampart against malicious users/attackers. As many browsers are on the market today, the teams developing them are in a perpetual race against each other. The best browser is the most secure one with the most features to provide their users. However, as features are added to a browser, it is paramount to keep in mind the aspect of security.
+\medskip
+
+Today, the most used web browser is Google Chrome, and many companies are pushing forward with fast development pace to catch up with Chrome. While most of these browsers are free, making sure that a high number of internet users use their browser is a fundamental matter for companies. Indeed, browsers help big companies shaping the way people browse the web, and can prove to have tremendous impact for these firms.
+
+\medskip
+
+Since we use the internet to achieve sensitive operations, on a day to day basis, web browsers play a crucial role in keeping the web safe. They are the door that protect us from the wild and insecure world that is the web. As a consequence, theses pieces of software need to respect the specifications defined by the W3C, and implement suitable security mechanisms. However, we saw that a tradeoff had to be found between developing features dedicated to improve user's use of the browser and security. Such compromise, coupled with the high complexity of web browsers design open a breach for attackers. The latter can find vulnerabilities in browsers, leading to what we called Universal Cross-Site Scripting (UXSS). Moreover, we shown how critical such vulnerabilities could be. In fact, UXSS flaws would provide an attacker to bypass security mechanisms of the browser, and thus access users' sensitive data despite all protection mechanisms implemented by web application developers. \\
+Finding ways to mitigate such vulnerabilities is thus paramount to keep the web safe. Nonetheless, we shown that protecting a complex software like a browser was extremely hard. That is the reason why companies created \emph{Bug Bounty Programs} which aim to remunerate people who report found vulnerabilities. The reported vulnerabilities are then stored in a database called Common Vulnerabilities and Exposures (CVE) and maintained by the MISTRE. This database acts as a record of vulnerabilities, and was the basis we carried out our project upon. The analysis of this database of vulnerability provided us with a myriad of pieces of information, and echoed the different notions studied in IS593 this term. From clickjacking, XSS, CSRF, UI timing attacks, or even browser extensions vulnerabilities, everything has been used to defeat browsers mechanisms. This incredible diversity of browsers and the astounding number of attack scenarios made the development of a "malicious payload generator" tool extremely complex, which is why we didn't manage to deliver it.
+
+\medskip
+
+After studying number of reported vulnerabilities in the CVE, we proposed to extract recurrent patterns used in attacks against different browsers. Furthermore, based on the reading of the core development teams' messages on the bug reports, we worked on pinpointing some common mistakes done by developers that led to vulnerabilities in their software. The next step of our work consisted in crafting our own payloads and finding some potentially dangerous attack scenarios to find UXSS vulnerabilities in the Brave browser. At this point, even after a couple of weeks of studying CVE records and reading online sources, our knowledge basis restrained us and slowed us down. None of the attacks we attempted worked, and we are persuaded that we just scratched the surface of what was possible. Further these deceiving results, the income of this research has been quite positive. We learnt a lot about cutting edge web security technology and about the web technologies. Furthermore, we studied plenty of attack scenario which truly helped us deeply understand not only the notions broached in IS593, but also on how to attack a software and about the common mistakes developers tend to make. 
+
+\medskip
+
+Looking at the current situation and harsh competition in the sector of web browsers, it would not be foolish to assume that UXSS vulnerabilities are still going to be found and reported. We focused our research on laptop browsers, but it worth mentioning that plenty vulnerabilities have also been found on iOS and Android platforms. \\
+Being aware of such risks is a first step toward more security mechanisms. Even if UXSS vulnerabilities are found in browsers, web applications developers should do their best to follow up the news in security, and keep their web applications secure. The simple fact to set HTTPOnly cookies can make attacker's endeavors much more difficult than expected.
+
+\medskip
+
+\subsection{Further research}
+
+As we spoke about the small amount of academic work about UXSS in this paper, we consider that our research as an invitation for more in-depth work about this type of vulnerability. This paper could constitute a basis upon which carry out further work.
+
+\medskip
+
+Finally, we shown that UXSS vulnerabilities were critical to keep the web secure
+
+
 
 [TO SAY FOR THE CONCLUSION]
 
 -- In opening, we could speak about some side channel attacks (packet size and so on), and speak about the attck on Google chrome's event list (the paper that has been presented in CS548)
 
--- Even if UXSS are vulnerabilities in web browsers, web app devs can mitigate vulnerabilities by adopting good practice tht would lead to a minimum leakage of information: such as: HTTPOnly cookies --> if one manage to bypass of security mechanisms of a browsers he might still struggle in accessing the values of cookies because they are http only 
 
-- We learnt many things about web dev in this project: marquee html tag, X-XSS-PROTECTION, Many security mechanism, many attack scenarios, we also saw most of (not to say all) notions that have been presented this semester in this course (clickjacking, XSS, CSRF, UI timing attacks, browser extensions and so on) while we studied the previous attacks in the CVE record,
-
-What we conclude from this study: UXSS will always occur/new vulns will always be found... --> Many =/= platforms, iOS, Android, Laptop (=/= OS) and so on + Browsers are extremely complicated software. The area for attackers to exploit potential vulnerabilities is really big (many things that can be exploited by attackers --> extensions, =/= internal components of the browser, third party component (cf: Blink/Webkit for instance), and so on...). The diversity of attacks is really really big. We though it would be easy to come up with patterns used to bypass the SoP, but it was not as simple as that. Some patterns can be detected, but this is not as obvious as we first thought.
-We learnt a lot, we are not a team specilized/familiar with web development, but througout this study we were able to learn many things about UXSS attacks and about web development in general.
-Moreover, while browsers provide users with a way to access resources plublished on the Web, they also ambed a very large number of features that make our web surfing way more agreable. In addition, they implement all sort of security mechanisms to prevent our personal/sensitive data from being accessed leaked out. Nevertheless, some of these mechanisms can be bypassed by attackers. Thus, these malicious users can tehn gain access to victim's sensitive data. That is the reason why web application developpers should not rely on browsers to secure their customer's data. Security on the web has to be handled and taken into consideration by everyone. Web app devs should define strict CSPs, use HTTPONLY cookies to prevent some javascript code from accessing them, do frame busting using the X-FRAME-OPTIONS header, use session IDs for a small amount of time, be careful with quick change of IP address when a user uses a webservice (at login and so on), use strong keys and encryption scheme for encrypted communications (see the paper "How DH fails in practice"), and keep on following the news in the web security areas while keeping their security infrastructure up to date.
+use strong keys and encryption scheme for encrypted communications (see the paper "How DH fails in practice"), and keep on following the news in the web security areas while keeping their security infrastructure up to date.
 
 -- We saw that a simple small error/lack of check of in a feature in a browser could lead to dramatic vulnerabilities that would threaten all users. A simple Drag and Drop and some malicious code could be added in an embedded/victim page and thus, some malicious code could be executed on his behalf.
 
 
 To go further: Browsers developers might need to handle discrepancies in network traffic (see paper of SCA based on packet size), since personal data can also be leaked out further to network analysis of a passive attacker. So, despite all encrytpion and security mechanisms that are being implemented by browser developers, they might need to go a step further and hide our network trace to keep our data completelly safe. + (See paper about DH "How DH fails in practice" --> browser developers need to do a perpetual surveillance of what's going on in the security area and stop supporting deprecated Encryption schemeand so on.)
 
-[TODO]
-Say how many UXSS attacks we studied, and try to classify all these attacks into groups in order to get some insightful statistics and try to get the most used vulnerabilities to carry out UXSS attacks.
-
-- As a sort of conclusion we can say that workers and service workers are an experimental feature (still in development in some browsers, but as browser developers want to have the best product they, try to support these experimental features asap. But this can lead to some risks.
-
-
-Say that despite the fact that we couldn't find any vulnerabilities, the result should not be considered as null/bad --> we learnt a lot about some features used in web browsers/web apps, and we studied a large numbe rof attack scenario that we tried to reproduce. So it was a very exciting moment, sometimes fun (when we thought we were close to find a vulnerability), sometimes annoying (after a lot of failures) but the overall was very interesting for us to confront ourselves to the security mechanisms of today's web browsers. Trying to reproduce attacks, and trying to come up with our own paylaods undoubtedly helped us developing a deep understanding of today's web security mechanisms.
-
-Conclude this section by saying that today's browsers are not trivially vulnerable (fortunately), however it is not because we didn't manage to find a vulnerability that no one is going to find one. 
-Nevertheless, say that we are sure that we just broached the surface of all the possible attacks 
 
 
 % if have a single appendix:
