@@ -109,7 +109,7 @@ The rendering engine is responsible for producing a graphical representation of 
 The data persistence subsystem is responsible for insuring the persistence of data when the browser needs it. For instance, a browser needs to save data locally to keep track of the user's bookmarks and cookies.
 
 \subsubsection{Networking}
-Since a browser fetches document from the Web, a browser needs to be able to have an access to the network. This access is provided by the networking module. It implements file transfer protocols such as HTTP and FTP. Moreover, this subsystem translates between different character sets, and resolves MIME media types for files\footnote{https://en.wikipedia.org/wiki/Media\_type}. In some cases, the networking module might also implement a cache of recently retrieved resources to ensure good performances when a user asks multiple times the same resource.
+Since a browser fetches document from the Web, a browser needs to be able to have access to the network. This access is provided by the networking module. It implements file transfer protocols such as HTTP and FTP. Moreover, this subsystem translates between different character sets, and resolves MIME media types for files\footnote{https://en.wikipedia.org/wiki/Media\_type}. In some cases, the networking module might also implement a cache of recently retrieved resources to ensure good performances when a user asks multiple times the same resource.
 
 \subsubsection{Javascript Interpreter}
 This module parses and executes Javascript\footnote{Programming language developed by Netscape in 1995 to make webpages interactive. More details can be found at https://en.wikipedia.org/wiki/JavaScript} code.
@@ -188,7 +188,7 @@ Even though, the policy is defined by web server administrators, this security m
 
 \subsubsection{Content Security Policy (CSP)}
 
-The Content Security Policy allows web site administrators to define a white-list in a HTTP header to specify trusted sources for delivering content. That way web authors can control resources the user agent is allowed to load for a given page.
+The Content Security Policy allows website administrators to define a white-list in a HTTP header to specify trusted sources for delivering content. That way web authors can control resources the user agent is allowed to load for a given page.
 
 \subsubsection{Mixed Content Blocking}
 
@@ -196,7 +196,7 @@ The mechanism of Mixed Content Blocking blocks insecure content on web pages tha
 
 \subsubsection{Subresource Integrity (SRI)}
 
-Subresource Integrity defines a mechanism by which user agents may verify that a fetched resource has been delivered without being altered. This process allow a User Agent to be sure that the requested resource is the one it received. SRI works by using hash functions. Website developers can associate a hash value with a specific resource. That way web browsers can compute the hash value of the received resource and compare them with the initial value provided by the website. The resource is then displayed only if the hash values are equal, i.e: the resource is valid. 
+Subresource Integrity defines a mechanism by which user agents may verify that a fetched resource has been delivered without being altered. This process allows a User Agent to be sure that the requested resource is the one it received. SRI works by using hash functions. Website developers can associate a hash value with a specific resource. That way web browsers can compute the hash value of the received resource and compare them with the initial value provided by the website. The resource is then displayed only if the hash values are equal, i.e: the resource is valid. 
 
 \medskip
 \medskip
@@ -264,7 +264,7 @@ UXSS attacks exploit vulnerabilities in \textbf{web browsers}.
 
 \bigskip
 
-In UXSS attacks, client-side vulnerabilities are exploited in a web browser or browser extensions to generate an XSS condition, which allows the malicious code to be executed, bypassing or disabling the security protection mechanisms in the web browser.
+In UXSS attacks, client-side vulnerabilities are exploited in a web browser or browser extensions to generate an XSS condition, which allows the malicious code to be executed, bypassing or disabling the security protection mechanisms on the web browser.
 
 \medskip
 
@@ -274,13 +274,13 @@ The consequences of such an attack are pretty critical. In the case of a success
 
 While bypassing all the security mechanisms described above in this paper might appear impossible, 
 the attentive reader may remember that web browsers developers are in a popularity contest, and in order to be on top, need to implement numerous features over short periods of time. Even though security features are highly regarded, usability and integration features are usually easier to test and implement, and thus often done in priority. \\
-Furthermore, UXSS attacks can also be carried out using vulnerabilities in plugins. This makes ensuring security of web browsers, an even more difficult task. Since a countless number of extensions are available to users they all constitute a potential security hole exploitable by attackers.
+Furthermore, UXSS attacks can also be carried out using vulnerabilities in plugins. These make ensuring security of web browsers, an even more difficult task. Since a countless number of extensions are available to users, they all constitute a potential security hole exploitable by attackers.
 
 
 \section{Brave}
 
 Now that we have defined what UXSS was and studied the consequences of such attacks, we now need to define the environment we used to carry out our project. \\
-In order to conduct our study, we decided to choose the browser Brave\footnote{https://brave.com} which was first announced in January 2016. This free and open-source web browser is based on the Chromium\footnote{https://www.chromium.org} web browser. Brave is said to block website trackers, remove intrusive Internet advertisements, and also claims to improve online privacy by sharing less data with advertising customers. One specificity of Brave, is that the beta version is testing a new system to reward publishers, called Brave Payments. According to \cite{braveWikipedia}, this system allows users to optionally set a budget that they are willing to donate to the websites they visit. Brave then calculates the percentage assigned to each website through an algorithm and the publisher receives a transfer in bitcoins\footnote{https://bitcoin.org/en/}.
+In order to conduct our study, we decided to choose the browser Brave\footnote{https://brave.com} which was first announced in January 2016. This free and open-source web browser is based on the Chromium\footnote{https://www.chromium.org} web browser. Brave is said to block website trackers, remove intrusive Internet advertisements, and also claims to improve online privacy by sharing fewer data with advertising customers. One specificity of Brave, is that the beta version is testing a new system to reward publishers, called Brave Payments. According to \cite{braveWikipedia}, this system allows users to optionally set a budget that they are willing to donate to the websites they visit. Brave then calculates the percentage assigned to each website through an algorithm and the publisher receives a transfer in bitcoins\footnote{https://bitcoin.org/en/}.
 
 \medskip
 
@@ -334,7 +334,7 @@ In the previous part of the paper we explained how difficult securing a web brow
 
 \medskip
 
-In order to prevent attackers from exploiting potential flaws in web browsers and threaten users, companies decided to set up \emph{bug bounty programs}\footnote{https://en.wikipedia.org/wiki/Bug\_bounty\_program}. Such scheme consist giving \emph{"bug hunters"} a financial compensation and a high recognition for the bugs they report. That way, developers cooperate with part of the community and are able to discover and resolve bugs before the general public is aware of them. This helps preventing incidents of widespread abuse. \\
+In order to prevent attackers from exploiting potential flaws in web browsers and threaten users, companies decided to set up \emph{bug bounty programs}\footnote{https://en.wikipedia.org/wiki/Bug\_bounty\_program}. Such scheme consist giving \emph{"bug hunters"} a financial compensation and a high recognition for the bugs they report. That way, developers cooperate with part of the community and are able to discover and resolve bugs before the general public is aware of them. This helps prevent incidents of widespread abuse. \\
 A majority, not to say all, of reported vulnerabilities have been classified in the Common Vulnerabilities and Exposures system which provides a reference-method for publicly known information-security vulnerabilities and exposures. \\
 
 Most of the vulnerabilities we studied during this two-month research work are actually extracted from the CVE system. \\
@@ -349,16 +349,16 @@ In total we analyzed a set of nearly 80 vulnerabilities divided up as follow:
 \item 1 XSS vulnerability reported for Brave in 2017
 \end{itemize}
 
-This set of vulnerabilities reported on 5 browsers in a time frame of 8 years, coupled with the study of disclosed vulnerabilities on web browser plugins, constituted the kernel upon which we based our study. The examination of these reported vulnerabilities helped us understand the different attack vectors used against web browsers. In addition, it helped us understanding the security mechanisms that have incrementally been implemented in web browsers in response of these successive attacks.
+This set of vulnerabilities reported on 5 browsers in a time frame of 8 years, coupled with the study of disclosed vulnerabilities on web browser plugins, constituted the kernel upon which we based our study. The examination of these reported vulnerabilities helped us understand the different attack vectors used against web browsers. In addition, it helped us understand the security mechanisms that have incrementally been implemented in web browsers in response of these successive attacks.
 
 \medskip
 
-Further to the the attack reports properly speaking, we took the time to read the discussions the development teams had on the vulnerability report, during the development of the patches. Not only following the developer's reasoning steps was very interesting, but also it made us realize the strict deadlines also referred to as \emph{"time-to-release"} the teams have to meet.
+Further to the attack reports properly speaking, we took the time to read the discussions the development teams had on the vulnerability report, during the development of the patches. Not only following the developer's reasoning steps was very interesting, but also it made us realize the strict deadlines also referred to as \emph{"time-to-release"} the teams have to meet.
 
 
 \subsection{Originality of attack scenarios}
 
-The inspection of out vulnerability revealed an astounding wide range of attack scenarios, all more originals than the others. Such a variety of vulnerabilities is undoubtedly due to the complexity of web browsers and the large amount of possible exploitable flaws. From Cross Origin Drag and Drop \cite{CVE-2013-2849}, to SOP bypass using Reading mode \cite{edgeReadingModeUXSS}, UXSS from local MHTML\footnote{https://en.wikipedia.org/wiki/MHTML} files \cite{CVE-2014-1747}, or even exploit of vulnerabilities in plugins \cite{uxssPDF} \cite{uxssKeybase}, attackers are always more and more originals and manage to find breaches where to execute malicious scripts.
+The inspection of vulnerabilities revealed an astounding wide range of attack scenarios, all more originals than the others. Such a variety of vulnerabilities is undoubtedly due to the complexity of web browsers and the large amount of possible exploitable flaws. From Cross Origin Drag and Drop \cite{CVE-2013-2849}, to SOP bypass using Reading mode \cite{edgeReadingModeUXSS}, UXSS from local MHTML\footnote{https://en.wikipedia.org/wiki/MHTML} files \cite{CVE-2014-1747}, or even exploit of vulnerabilities in plugins \cite{uxssPDF} \cite{uxssKeybase}, attackers are always more and more originals and manage to find breaches where to execute malicious scripts.
 
 \medskip
 
@@ -403,7 +403,7 @@ In order to avoid Cross-site Scripting attacks many web browsers implement a mec
 
 \subsubsection*{\textbf{Cross Origin Drag and Drop/Copy and Paste}}
 
-In HTML5, Drag and Drop has been included as part of the standard. Thus any element can be set as draggable, and custom events can be defined by the web developer to refine the behavior of his page during a drag and drop from the user. However, such a feature can be used in a malicious fashion. Attackers actually found scenarios where cross Drag and Drop were possible and thus lead to XSS conditions \cite{CVE-2016-5226} \cite{CVE-2013-2849} \cite{CVE-2012-0455}.
+In HTML5, Drag and Drop has been included as part of the standard. Thus, any element can be set as "draggable", and custom events can be defined by the web developer to refine the behavior of his page during a drag and drop from the user. However, such a feature can be used in a malicious fashion. Attackers actually found scenarios where cross Drag and Drop were possible and thus lead to XSS conditions \cite{CVE-2016-5226} \cite{CVE-2013-2849} \cite{CVE-2012-0455}.
 
 \medskip
 
@@ -415,7 +415,7 @@ Attacks that used this technique consisted in redefining global variable (variab
 
 \bigskip
 
-In addition of our observations during this research, \cite{uxssJSLeaks} provides an insighful analysis of UXSS vulnerabilities of the family of \emph{cross-origin JavaScript capability leaks}. In this paper, the authors carried out a study on WebKit\footnote{https://en.wikipedia.org/wiki/WebKit} and tried to detect and exploit when the browser leaked a JavaScript pointer from one security origin to another. They showed that the origins of such vulnerabilities came from the fact that the Document Object Model (DOM) and the JavaScript engine actually enforced the same-origin policy using two different security models: Access Control and Object-Capabilities. While Access Control, used by the DOM, prevents one Web site from accessing resources allocated to another Web site, the JavaScript engine enforces the same-origin policy using an object-capability discipline that prevents one Web site from obtaining JavaScript pointers to sensitive objects that belong to a foreign security origin. In their research they showed that is the browser leaked a JavaScript pointer from one security origin to another, this would lead to an exploitable vulnerability to bypass the SOP. 
+In addition of our observations during this research, \cite{uxssJSLeaks} provides an insighful analysis of UXSS vulnerabilities of the family of \emph{cross-origin JavaScript capability leaks}. In this paper, the authors carried out a study on WebKit\footnote{https://en.wikipedia.org/wiki/WebKit} and tried to detect and exploit when the browser leaked a JavaScript pointer from one security origin to another. They showed that the origins of such vulnerabilities came from the fact that the Document Object Model (DOM) and the JavaScript engine actually enforced the same-origin policy using two different security models: Access Control and Object-Capabilities. While Access Control, used by the DOM, prevents one website from accessing resources allocated to another website, the JavaScript engine enforces the same-origin policy using an object-capability discipline that prevents one website from obtaining JavaScript pointers to sensitive objects that belong to a foreign security origin. In their research they showed that is the browser leaked a JavaScript pointer from one security origin to another, this would lead to an exploitable vulnerability to bypass the SOP. 
 
 \medskip
 
@@ -434,10 +434,10 @@ While some attacks exploit vulnerabilities that might not be easily predictable 
 
 \begin{itemize}
 \item Lack of sanitization of user input: Could lead to script injection in URIs for instance.
-\item Bad design of regular expression: Could allow a user to bypass some security checks. If the regular expression is case sensitive, a user could use upper and lower case letters to short-circuit any checks for instance \cite{CVE-2012-0455}
+\item Bad design of regular expression: Could allow a user to bypass some security checks. If the regular expression is case-sensitive, a user could use upper and lower case letters to short-circuit any checks for instance \cite{CVE-2012-0455}
 \item Divergence with specifications: Sometimes the specifications might add a lot of constraints on the developers. It might be tempting to "adapt" them. Nevertheless, such circumstances could create odd situations that could benefit an attacker \cite{CVE-2012-3985}
-\item Confusion/Negligence: As browsers support a large panel of extensions, some situations appear when it is difficult to know the party responsible for the implementation of some security mechanisms. In case where an ambiguity happens, some security checks might be missing, allowing an malicious user to attack the software.
-\item Inattention: By being focused on developing new features, web browser developers can mistakenly introduce regressions, and vulnerabilities that have already been patched. Thus an attacker might be able to carry out an old attack on the browser.
+\item Confusion/Negligence: As browsers support a large panel of extensions, some situations appear when it is difficult to know the party responsible for the implementation of some security mechanisms. In case where an ambiguity happens, some security checks might be missing, allowing a malicious user to attack the software.
+\item Inattention: By being focused on developing new features, web browser developers can mistakenly introduce regressions, and vulnerabilities that have already been patched. Thus, an attacker might be able to carry out an old attack on the browser.
 \end{itemize}
 
 \medskip
@@ -446,11 +446,11 @@ While some attacks exploit vulnerabilities that might not be easily predictable 
 
 \subsection{Our attempts}
 
-In addition to studying the payloads used against modern web browsers, we tried to adapt some of the attacks we observed against the browser Brave\footnote{Note that all our attacks were finally widen to the web browsers listed in section \ref{otherBrowsers}. Since all browsers are different, one might have been vulnerable for an attack while others might have not.} in the hope to unveil a UXSS vulnerability. The following section presents our attempts.
+In addition to studying the payloads used against modern web browsers, we tried to adapt some of the attacks we observed against the browser Brave\footnote{Note that all our attacks were finally widened to the web browsers listed in section \ref{otherBrowsers}. Since all browsers are different, one might have been vulnerable for an attack while others might have not.} in the hope to unveil a UXSS vulnerability. The following section presents our attempts.
 
 \medskip
 
-\underline{\emph{Note:}} For our attacks, we focused on crafting malicious html pages to render, or malicious payloads to inject in the user interface of the browser. Some more refined and advanced attacks, such as some fuzzing  against the Javascript interpreter for instance \cite{microsoftFuzzingOnv8}, could have been achieved but they were out of the scope of our project.
+\underline{\emph{Note:}} For our attacks, we focused on crafting malicious html pages to render, or malicious payloads to inject in the user interface of the browser. Some more refined and advanced attacks, such as some fuzzing  against the Javascript interpreter for instance \cite{microsoftFuzzingOnv8}, could have been achieved, but they were out of the scope of our project.
 
 \subsubsection*{Executing malicious code in the PDF renderer plugin}
 
@@ -462,7 +462,7 @@ http://www.axmag.com/download/pdfurl-guide.pdf#<maliciousPaylaod>
 
 \medskip
 
-Since \emph{Brave} proposes a limited number of extensions, we were extremely restricted. After a couple of research on the supported extensions, and after arguing in finding vulnerabilities, we decided to stop spending a lot of time on extensions. Thus we moved on trying to attack the browser directly.
+Since \emph{Brave} proposes a limited number of extensions, we were extremely restricted. After a couple of research on the supported extensions, and after arguing in finding vulnerabilities, we decided to stop spending a lot of time on extensions. Thus, we moved on trying to attack the browser directly.
 
 \subsubsection*{Variables clobbering}
 
@@ -580,7 +580,7 @@ xhr.onreadystatechange = function () {
 xhr.send();
 \end{lstlisting}
 
-The idea in the code represented above was to use introduce a line break in the header value (\%0A is the URL encoding value of the line break\footnote{We used the URL encoding line break since headers name and values have to be composed of ASCII characters. Thus we couldn't use \textbackslash n nor \textbackslash r for instance}) in order to create a malicious \emph{User-Agent} header. That way we would be able to fetch the victim's page. Unfortunately as shown on figure \ref{fig:maliciousHeadersValues}, the result was not the one we expected.
+The idea in the code represented above was to use introduce a line break in the header value (\%0A is the URL encoding value of the line break\footnote{We used the URL encoding line break since headers name and values have to be composed of ASCII characters. Thus, we couldn't use \textbackslash n nor \textbackslash r for instance}) in order to create a malicious \emph{User-Agent} header. That way we would be able to fetch the victim's page. Unfortunately as shown on figure \ref{fig:maliciousHeadersValues}, the result was not the one we expected.
 
 \begin{figure}[h]
 \centering
@@ -603,7 +603,7 @@ In the attempt shown above, we tried to set the value of the http header \emph{a
 
 As we can see on figure \ref{fig:maliciousHeadersNames}, our attempt to set malicious headers was not successful. It seems that the specifications\footnote{http://tools.ietf.org/html/rfc2616\#section-4.2} have been well implemented in the browser. Thus, no vulnerability seems to be usable here to attack the software. \\
 
-Note that many more headers and names values have been tested to try to bypass the security checks of the browser. Moreover we also tested the attacks aforementioned using the \emph{Fetch} API\footnote{https://developer.mozilla.org/en-US/docs/Web/API/Fetch\_API/Using\_Fetch} with \emph{cors} and \emph{no-cors} modes, however, the results were the same.
+Note that many more headers and names values have been tested to try to bypass the security checks of the browser. Moreover, we also tested the attacks aforementioned using the \emph{Fetch} API\footnote{https://developer.mozilla.org/en-US/docs/Web/API/Fetch\_API/Using\_Fetch} with \emph{cors} and \emph{no-cors} modes, however, the results were the same.
 
 \medskip
 
@@ -699,8 +699,8 @@ function deserialize(data) {
 In the code above (listing \ref{listing:serviceWorker})\footnote{Our code for this attempt is derived from the answers provided in: https://stackoverflow.com/questions/43813770/how-to-intercept-all-http-requests-including-form-submits}, we tried to execute requests from isolated threads in order to see how to browser handled such cases in term of SOP. The goal here was to see how these workers were considered, whether they had no origin, and if so whether we could use it to bypass the security mechanisms. In this case, we can see on figure \ref{fig:serviceAndWebWorker} that the service worker's origin is also \emph{localhost:8888}. However, despite this, we wanted to see how the browser reacted when we tried to actually modify the content of the request in order to set malicious headers to trick the victim web server. If, despite the origin associated with our service worker, the browser allowed us to modify the requests and replay them, then we would have a full bypass of the CORS security mechanism. This would lead to dramatic vulnerabilities. Indeed, if one manages to bypass the CORS mechanism, this means two things:
 
 \begin{itemize}
-\item Our request would be executed, and we a good setting of headers, we should be able to fool the victim's web server such that it sends us the web page we want to embed in the HTTP response.
-\item Upon the reception of the response, we should be able to use our service worker to capture the response first, and modify it by injecting malicious code into it, before it is actually forwarded to the renderer and displayed to the user. At this point, the attacker has a immense power over the victim since he can inject malicious code in the rendered page that will execute on the context of the victim web page's origin, leading to a full bypass of SOP.
+\item Our request would be executed, and with a good setting of headers, we should be able to fool the victim's web server such that it sends us the web page we want to embed in the HTTP response.
+\item Upon the reception of the response, we should be able to use our service worker to capture the response first, and modify it by injecting malicious code into it, before it is actually forwarded to the renderer and displayed to the user. At this point, the attacker has an immense power over the victim since he can inject malicious code in the rendered page that will execute on the context of the victim web page's origin, leading to a full bypass of SOP.
 \end{itemize}
 
 \medskip
@@ -710,7 +710,7 @@ This being said, we tried to carry our the attack scenario described above, usin
 
 \subsection{Results and difficulties encountered}
 
-In the previous section, we presented our attempts to find UXSS vulnerabilities in the browser Brave\footnote{Note that the entire list of our attempts can be found on the Github page of our project: https://github.com/KAIST-IS593-WEBSEC/UXSS-Vulnerabilities-Project/tree/master}. Considering that all of these experiments have proven fruitless this shows that today's web browsers do not seem to be trivially vulnerable. Nonetheless, our failure to find flaws in the web browsers does not mean that they are totally secure. Some vulnerabilities might exists and might be found with further research. 
+In the previous section, we presented our attempts to find UXSS vulnerabilities in the browser Brave\footnote{Note that the entire list of our attempts can be found on the Github page of our project: https://github.com/KAIST-IS593-WEBSEC/UXSS-Vulnerabilities-Project/tree/master}. Considering that all of these experiments have proven fruitless this shows that today's web browsers do not seem to be trivially vulnerable. Nonetheless, our failure to find flaws on the web browsers does not mean that they are totally secure. Some vulnerabilities might exists and might be found with further research. 
 
 \medskip
 
@@ -718,7 +718,7 @@ Looking back at the "project proposal" we did a few months ago, the results are 
 
 \begin{itemize}
 \item The diversity of vulnerabilities, and the astounding number of different payloads we found: Such diversity made it very difficult for us (not to say impossible) to build a tool to build potential UXSS payloads. Indeed, as we had to occasion to show in this paper, a web browser is an extremely complex piece of software which can be attacked in a countless number of ways.
-\item Our "lack" of knowledge of web technologies (and javascript) at the beginning of the project: We decided such a challenging project in order to learn about modern browsers and the security mechanisms that protect us when we browse the web everyday. From this point of view, the result is extremely positive. We read a lot, we tested a lot and we learnt a lot about web security along this project. Nevertheless, this initial poverty of knowledge slowed our progression a lot. Before trying to find vulnerabilities we had to read a lot and learn a lot about browsers, in order to have a sufficient basis of knowledge to finally come up with our own payloads and ideas. A seasoned web security engineer would have had a lot more knowledge about the latest features and latest tools that could be explore to find a flaw in the browser. As an example, we learnt about \emph{web workers} and \emph{service workers} at the very end of the project. While we had the chance to explore this possibility in our project, we may still don't know plenty of features of web browsers that may lead to UXSS vulnerabilities.
+\item Our "lack" of knowledge of web technologies (and javascript) at the beginning of the project: We decided such a challenging project in order to learn about modern browsers and the security mechanisms that protect us when we browse the web every day. From this point of view, the result is extremely positive. We read a lot, we tested a lot, and we learnt a lot about web security along this project. Nevertheless, this initial poverty of knowledge slowed our progression a lot. Before trying to find vulnerabilities we had to read a lot and learn a lot about browsers, in order to have a sufficient basis of knowledge to finally come up with our own payloads and ideas. A seasoned web security engineer would have had a lot more knowledge about the latest features and latest tools that could be explored to find a flaw in the browser. As an example, we learnt about \emph{web workers} and \emph{service workers} at the very end of the project. While we had the chance to explore this possibility in our project, we may still don't know plenty of features of web browsers that may lead to UXSS vulnerabilities.
 \item The diversity and the complexity of web browsers: This point echoes the first ideas of this list. Indeed, today web browsers are extremely complex. Thus trying to attack them without prior knowledge is a pretty tough endeavor. Once again the purpose of this project was to learn about browsers, but having sufficient prior knowledge about modern browsers implementation and architecture would undoubtedly diminish our workload.
 \item
 \end{itemize}
@@ -734,7 +734,7 @@ Moreover, from a broader perspective, we noticed that the number of resources ab
 
 \section{Conclusion}
 
-In conclusion of this paper, we saw that today, many web browsers coexists. Thus we said that developers maintaining these pieces of software needed to develop new numerous features in small amount of time, in order for their browser to be the must appreciated and the most used. 
+In conclusion of this paper, we saw that today, many web browsers coexists. Thus, we said that developers maintaining these pieces of software needed to develop new numerous features in small amount of time, in order for their browser to be the must appreciated and the most used. 
 
 \medskip
 
@@ -742,8 +742,8 @@ Today, the most used web browser is Google Chrome, and many companies are pushin
 
 \medskip
 
-Since we use the internet to achieve sensitive operations, on a day to day basis, web browsers play a crucial role in keeping the web safe. They are the door that protect us from the wild and insecure world that is the web. As a consequence, theses pieces of software need to respect the specifications defined by the W3C, and implement suitable security mechanisms. However, we saw that a tradeoff had to be found between developing features dedicated to improve user's use of the browser and security. Such compromise, coupled with the high complexity of web browsers design open a breach for attackers. The latter can find vulnerabilities in browsers, leading to what we called Universal Cross-Site Scripting (UXSS). Moreover, we shown how critical such vulnerabilities could be. In fact, UXSS flaws would provide an attacker to bypass security mechanisms of the browser, and thus access users' sensitive data despite all protection mechanisms implemented by web application developers. \\
-Finding ways to mitigate such vulnerabilities is thus paramount to keep the web safe. Nonetheless, we shown that protecting a complex software like a browser was extremely hard. That is the reason why companies created \emph{Bug Bounty Programs} which aim to remunerate people who report found vulnerabilities. The reported vulnerabilities are then stored in a database called Common Vulnerabilities and Exposures (CVE) and maintained by the MISTRE. This database acts as a record of vulnerabilities, and was the basis we carried out our project upon. The analysis of this database of vulnerability provided us with a myriad of pieces of information, and echoed the different notions studied in IS593 this term. From clickjacking, XSS, CSRF, UI timing attacks, or even browser extensions vulnerabilities, everything has been used to defeat browsers mechanisms. This incredible diversity of browsers and the astounding number of attack scenarios made the development of a "malicious payload generator" tool extremely complex, which is why we didn't manage to deliver it.
+Since we use the internet to achieve sensitive operations, on a day to day basis, web browsers play a crucial role in keeping the web safe. They are the door that protect us from the wild and insecure world that is the web. As a consequence, these pieces of software need to respect the specifications defined by the W3C, and implement suitable security mechanisms. However, we saw that a tradeoff had to be found between developing features dedicated to improve user's use of the browser and security. Such compromise, coupled with the high complexity of web browsers design open a breach for attackers. The latter can find vulnerabilities in browsers, leading to what we called Universal Cross-Site Scripting (UXSS). Moreover, we showed how critical such vulnerabilities could be. In fact, UXSS flaws would provide an attacker to bypass security mechanisms of the browser, and thus access users' sensitive data despite all protection mechanisms implemented by web application developers. \\
+Finding ways to mitigate such vulnerabilities is thus paramount to keep the web safe. Nonetheless, we showed that protecting a complex software like a browser was extremely hard. That is the reason why companies created \emph{Bug Bounty Programs} which aim to remunerate people who report found vulnerabilities. The reported vulnerabilities are then stored in a database called Common Vulnerabilities and Exposures (CVE) and maintained by the MISTRE. This database acts as a record of vulnerabilities, and was the basis we carried out our project upon. The analysis of this database of vulnerability provided us with a myriad of pieces of information, and echoed the different notions studied in IS593 this term. From clickjacking, XSS, CSRF, UI timing attacks, or even browser extensions vulnerabilities, everything has been used to defeat browsers mechanisms. This incredible diversity of browsers and the astounding number of attack scenarios made the development of a "malicious payload generator" tool extremely complex, which is why we didn't manage to deliver it.
 
 \medskip
 
@@ -761,7 +761,7 @@ As we spoke about the small amount of academic work about UXSS in this paper, we
 
 \medskip
 
-Finally, we shown that UXSS vulnerabilities were critical to keep the web secure. Nevertheless some other attacks threaten the web as we know it. During our research we studied other sort of attacks that constitute real threats for our privacy on the web. The first paper we wanted to mention is called \ul{"Imperfect Forward Secrecy: How Diffie-Hellman Fails in Practice"} and has been written by a team of French and American researchers. This research put the accent on the danger to keep using export-cryptography (DHE\_EXPORT) to secure our communications. In addition of explaining their attack (Logjam) used to compute a solution of the Diffie-Hellman Problem\footnote{https://en.wikipedia.org/wiki/Diffie–Hellman\_problem} in "real time", they explained how dangerous weak keys and how misconfigurations could potentially help states decrypt our HTTPS traffic, and access our personal data. This paper has a fundamental impact since it shows the gap between cryptographers and web server administrators, and pinpoints how misunderstandings can compromise people privacy on the web. 
+Finally, we showed that UXSS vulnerabilities were critical to keep the web secure. Nevertheless, some other attacks threaten the web as we know it. During our research we studied other sort of attacks that constitute real threats for our privacy on the web. The first paper we wanted to mention is called \ul{"Imperfect Forward Secrecy: How Diffie-Hellman Fails in Practice"} and has been written by a team of French and American researchers. This research put the accent on the danger to keep using export-cryptography (DHE\_EXPORT) to secure our communications. In addition of explaining their attack (Logjam) used to compute a solution of the Diffie-Hellman Problem\footnote{https://en.wikipedia.org/wiki/Diffie–Hellman\_problem} in "real time", they explained how dangerous weak keys and how misconfigurations could potentially help states decrypt our HTTPS traffic, and access our personal data. This paper has a fundamental impact since it shows the gap between cryptographers and web server administrators, and pinpoints how misunderstandings can compromise people privacy on the web. 
 
 \medskip
 
