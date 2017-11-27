@@ -6,6 +6,8 @@
 
 \usepackage{listings}
 \usepackage{color}
+\usepackage{soul}
+
 \definecolor{lightgray}{rgb}{.9,.9,.9}
 \definecolor{darkgray}{rgb}{.4,.4,.4}
 \definecolor{purple}{rgb}{0.65, 0.12, 0.82}
@@ -776,29 +778,25 @@ After studying number of reported vulnerabilities in the CVE, we proposed to ext
 Looking at the current situation and harsh competition in the sector of web browsers, it would not be foolish to assume that UXSS vulnerabilities are still going to be found and reported. We focused our research on laptop browsers, but it worth mentioning that plenty vulnerabilities have also been found on iOS and Android platforms. \\
 Being aware of such risks is a first step toward more security mechanisms. Even if UXSS vulnerabilities are found in browsers, web applications developers should do their best to follow up the news in security, and keep their web applications secure. The simple fact to set HTTPOnly cookies can make attacker's endeavors much more difficult than expected.
 
+
+\section{Further research}
+
+As we spoke about the small amount of academic work about UXSS in this paper, we consider our research as an invitation for more in-depth work about this type of vulnerability. This paper could constitute a basis upon which carry out further work.
+
 \medskip
 
-\subsection{Further research}
-
-As we spoke about the small amount of academic work about UXSS in this paper, we consider that our research as an invitation for more in-depth work about this type of vulnerability. This paper could constitute a basis upon which carry out further work.
+Finally, we shown that UXSS vulnerabilities were critical to keep the web secure. Nevertheless some other attacks threaten the web as we know it. During our research we studied other sort of attacks that constitute real threats for our privacy on the web. The first paper we wanted to mention is called \ul{"Imperfect Forward Secrecy: How Diffie-Hellman Fails in Practice"} and has been written by a team of French and American researchers. This research put the accent on the danger to keep using export-cryptography (DHE\_EXPORT) to secure our communications. In addition of explaining their attack (Logjam) used to compute a solution of the Diffie-Hellman Problem\footnote{https://en.wikipedia.org/wiki/Diffie–Hellman\_problem} in "real time", they explained how dangerous weak keys and how misconfigurations could potentially help states decrypt our HTTPS traffic, and access our personal data. This paper has a fundamental impact since it shows the gap between cryptographers and web server administrators, and pinpoints how misunderstandings can compromise people privacy on the web. 
 
 \medskip
 
-Finally, we shown that UXSS vulnerabilities were critical to keep the web secure
+In addition of our research, we also studied how Side-Channel information leakage could actually be huge threats for our privacy on the web. The first paper \ul{"Side-Channel Leaks in Web Applications: a Reality Today, a Challenge Tomorrow"} by Shuo Chen et. al. and published in 2010 studied how side-channel information such as packet size and packet timestamp could provide an attacker with valuable clues on what the user is doing. The main idea underlined in this paper is that an eavesdropper is able to infer what actions the user undertakes on a web page, despite encryption. Unlike the paper presented above, the idea here is not to "break" encryption but to use other "observable" sources of information. \\
+Last, the paper \ul{"Loophole: Timing Attacks on Shared Event Loops in Chrome"} by Pepe Vila et. al., published in 2017 exploit a information leak from the shared event loops in Google Chrome to infer the activity of the user on the web. \\
+More than just describing specific attacks, these two papers raise a fundamental idea: not only web browsers should implement security mechanisms and security checks to prevent UXSS attacks from happening, but also, they should protect their users from any kind of Side-Channel attacks.
 
+\medskip
 
-
-[TO SAY FOR THE CONCLUSION]
-
--- In opening, we could speak about some side channel attacks (packet size and so on), and speak about the attck on Google chrome's event list (the paper that has been presented in CS548)
-
-
-use strong keys and encryption scheme for encrypted communications (see the paper "How DH fails in practice"), and keep on following the news in the web security areas while keeping their security infrastructure up to date.
-
--- We saw that a simple small error/lack of check of in a feature in a browser could lead to dramatic vulnerabilities that would threaten all users. A simple Drag and Drop and some malicious code could be added in an embedded/victim page and thus, some malicious code could be executed on his behalf.
-
-
-To go further: Browsers developers might need to handle discrepancies in network traffic (see paper of SCA based on packet size), since personal data can also be leaked out further to network analysis of a passive attacker. So, despite all encrytpion and security mechanisms that are being implemented by browser developers, they might need to go a step further and hide our network trace to keep our data completelly safe. + (See paper about DH "How DH fails in practice" --> browser developers need to do a perpetual surveillance of what's going on in the security area and stop supporting deprecated Encryption schemeand so on.)
+We see here that a great part of the security on the web depend on web browser developers. Since their pieces of software are used by billions of people every day, they should put the emphasis on implementing all the security mechanisms necessary to protect the end-users. However, we just saw in this section that attackers could benefit from misconfigurations of web server administrators to break a weak encryption and access people's sensitive data. Last, one can also use some "side-channel" sources of information to infer the actions of a user on a web page, and thus, acquiring sensitive data about the user. \\ 
+In conclusion, we notice that, keeping the web secure, and protecting the users' privacy is a task that has to be handled by all actors in the industry.
 
 
 
@@ -1106,5 +1104,3 @@ https://developer.mozilla.org/en-US/docs/Web/API/Web\_Workers\_API/Using\_web\_w
 
 % that's all folks
 \end{document}
-
-
