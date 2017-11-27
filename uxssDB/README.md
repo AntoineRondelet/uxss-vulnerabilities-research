@@ -42,10 +42,6 @@ This file contains the list of CVE vulnerabilities that we studied during the te
 - __CVE-2009-3264__: https://bugs.chromium.org/p/chromium/issues/detail?id=21338 -- Same Origin Policy Bypass via getSVGDocument() method.
 - __CVE-2009-1414__: https://bugs.chromium.org/p/chromium/issues/detail?id=9860 -- ChromeHTML URI handler vulnerability
 
-### Android
-- https://bugs.chromium.org/p/chromium/issues/detail?id=144813
-- https://www.cyberintelligence.in/google-play-store-vulnerable-to-xss-and-uxss-attacks/
-
 ### Extension based vulnerabilities
 - __CVE-2011-2107__: http://www.adobe.com/support/security/bulletins/apsb11-13.html -- Flash Player Flaw. This was an important vulnerability that allows remote attackers to inject arbitrary web script or HTML via unspecified vectors, when victim visits malicious website.
 - __CVE-2017-5020__: https://bugs.chromium.org/p/chromium/issues/detail?id=668653&desc=2 -- chrome://downloads vulnerability that allows a malicious extension to run a program without user interaction: When the victim installs or upgrades a malicious extension, the XSS is perform on chrome://downloads by setting the extension name in the innerHTML assignment. This with the bypassing of CSP and safe browsing, will allow when the user click to run a program outside of chrome, the extension to run arbitrary code NS
