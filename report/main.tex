@@ -474,14 +474,104 @@ In addition to studying the payloads used against modern web browsers, we tried 
 
 \underline{\emph{Note:}} For our attacks, we focused on crafting malicious html pages to render, or malicious payloads to inject in the user interface of the browser. Some more refined and advanced attacks, such as some fuzzing  against the Javascript interpreter for instance \cite{microsoftFuzzingOnv8}, could have been achieved but they were out of the scope of our project.
 
-
 \subsubsection*{Executing malicious code in the PDF renderer plugin}
+
+As we mentioned earlier, vulnerabilities in plugins can be used in order to bypass some security mechanisms in web browsers. Our first attempt to find UXSS vulnerabilities in \emph{Brave} consisted trying to exploit plugins. We tried to reproduce and adapt the known vulnerability in Adobe PDF Reader \cite{uxssPDF} on Brave, which uses PDF Viewer (with the version 1.9.457). This attempt was, without any surprise, not successful, but it gave us the taste of what a malicious attacker could do to find UXSS vulnerabilities.
+
+\begin{lstlisting}[caption=The pattern we tried to use to execute malicious javascript using the PDF viewer]
+http://www.axmag.com/download/pdfurl-guide.pdf#<maliciousPaylaod>
+\end{lstlisting}
+
+\medskip
+
+Since \emph{Brave} proposes a limited number of extensions, we were extremely restricted. After a couple of research on the supported extensions, and after arguing in finding vulnerabilities, we decided to stop spending a lot of time on extensions. Thus we moved on trying to attack the browser directly.
 
 \subsubsection*{Variables clobbering}
 
-\subsubsection*{Exploiting the about: URI}
+The next step of our research to find UXSS vulnerabilities consisted in trying to redefine global javascript variables. Indeed, if we managed to redefine a javascript variable such as \emph{window} or \emph{location} for instance, we could be able to either alter the security of the browser (some security checks might fail \cite{frameBustingLocationClubbered}), or execute our own javascript code in the context of the victim's page \cite{uxssJSLeaks}. In fact, if we managed to redefine the method, of the \emph{window} object for instance, that is called in a victim page embedded in an \emph{iframe}, our malicious code would be executed on behalf of the victim page. 
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.4\textwidth]{images/clobberingAttempt.png}
+\caption{The browsers reject our attempt to clobber global variables}
+\label{fig:clobbering}
+\end{figure}
+
+Figure \ref{fig:clobbering} shows an attempt to redefine the variable \emph{window}. This attempt is not successful. The variable \emph{window} that we create does not shadow the global variable \emph{window}. As a consequence, when we call \emph{window}, our variable is not returned. Moreover, we see on this figure that we cannot redefine the property \emph{location} of the object \emph{window}. 
+
+\medskip
+
+We carried out other attempts, with different payloads, but none of them seemed to unveil a vulnerability.
+
+\subsubsection*{Exploiting the \emph{about:} URI}
+
+In order to support diverse features and in order to manage the settings of the browser, developers use a large panel of different URIs. Among them, the \emph{about} URI is used to reveal internal state and built-in functions. Here, our idea was to use this URI to bypass SOP. Our first objective was to figure out how browsers handled such URIs. 
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.4\textwidth]{images/AboutBlankSafari.png}
+\caption{The origin of \emph{about:blank} in Safari}
+\label{fig:aboutBlankSafari}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.4\textwidth]{images/AboutBlankBrave.png}
+\caption{The origin of \emph{about:blank} in Brave}
+\label{fig:aboutBlankBrave}
+\end{figure}
+
+As we can observe on figures \ref{fig:aboutBlankSafari} and \ref{fig:aboutBlankBrave}, in the case of Safari, \emph{about:blank} has not origin. However, in the case of Brave, it has an origin set to some sort of google chrome origin. \\
+
+Further to this result and some additional research, we figured out that \emph{about:blank} inherit the same security parameters as its caller.
+
+\medskip
+
+In the case of Safari, we saw that when \emph{about:blank} was opened from the "home page" of the browser, we managed to get a \emph{null} origin. Thus, we tried to use it to see how to browser behaved when a script from a \emph{null} origin tried to access resources of a web page embedded in an iframe. In other words, our goal here was to see whether Safari did strict origin checks or not. To do so, we embedded \emph{bing.com} into an iframe, and tried to execute malicious code in its context.\\
+
+Unfortunately, even our malicious scripts with a \emph{null} origin couldn't execute in the context of \emph{bing.com}. Nevertheless, we didn't stop here. We tried to define malicious events to see whether they could be executed in the context of our victim \emph{bing.com} web page.
+
+\begin{lstlisting}[caption=Our attempt to define malicious event on an embbeded victim web page, label={listing:maliciousEvent}]
+// Get the victim iframe
+var frame = document.getElementsByTagName('iframe')[0]
+
+// Define a malicious event 
+frame.onmouseover = function() {var script = document.createElement('script'); script.type = 'text/javascript'; var code = 'alert(document.cookie);'; script.appendChild(document.createTextNode(code)); document.body.appendChild(script);}
+\end{lstlisting}
+
+The idea here was to bind an event to an embedded website in an iframe, and to execute the function of the event every time it happens. For our tests we used the \emph{onmouseover} event, since this event is extremely likely to be triggered by the user. \\
+Unfortunately here, the script executes in the context of the parent origin. Thus, we could not access sensitive data from the iframe.
+
 
 \subsubsection*{Bookmarking malicious URIs and importing malicious bookmarks}
+
+In our "quest" to UXSS vulnerabilities, we tried to challenge all the features we thought about in the browsers. As all browsers provide users with a mean to bookmark the web pages of their choice, we tried to see whether we could find a vulnerability in this feature. 
+
+\medskip
+
+In general, users are provided with a lot of possibilities to manage their bookmarks. They can simply add a page, they can order them and classify them into folders, and they can even export and import them (see figure \ref{fig:bookmarkPage}). Knowing this, we were left with many options to find a weakness in the browser. \\
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.4\textwidth]{images/bookmarkPage.png}
+\caption{The bookmark page of Brave}
+\label{fig:bookmarkPage}
+\end{figure}
+
+
+We first tried to bookmark websites to which we added malicious scripts, as shown on \ref{fig:maliciousBookmark}. We then tried to enter malicious code in the different fields of the bookmark page (figure \ref{fig:bookmarkPage}). Our idea here was to see if we could be able to run malicious scripts in the context of the browser itself. Indeed, in the case where user input is not correctly handled (not correctly sanitized), the attacker might be able to run javascript with the privileges of the browser.
+
+\medskip
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.4\textwidth]{images/maliciousBookmark.png}
+\caption{A malicious bookmark which points to http://example.com and to which we added malicious javascript in the URL}
+\label{fig:maliciousBookmark}
+\end{figure}
+
+Our attempts to name bookrmarks folders with javascript code, input javascript in the search bar, and append scripts to URLs before bookmarking them were, once again, not successful.
+
 
 \subsubsection*{Bypassing CORS} 
 
@@ -574,15 +664,84 @@ With this in mind, we tried in this scenario to implement a service worker that 
 \label{fig:serviceAndWebWorker}
 \end{figure}
 
-The following steps in the attack exploit the fact that service worker can intercept requests and can replay them. If we manage to insert malicious data in these replayed requests, then our attack would be successful.
+In order to carry out this attack, we needed to deploy our files on a web server which served pages for the domain \emph{localhost} (with port 8888 in our case). The code of the service worker has been written in the \emph{sw.js} file which is partially presented in the listing \ref{listing:serviceWorker}
 
--- Follow on explaining the code that I wrote for the service worker, (the one extracted from stackoverflow and explain that i wanted to modify the request before replaying it)
+
+\begin{lstlisting}[caption=Trying to set malicious headers with a "malicious" service worker, label={listing:serviceWorker}]
+self.addEventListener('fetch', function(event) {
+    event.respondWith(
+        modifyRequest(event.request)
+    );
+});
+
+function modifyRequest(request) {
+    serialize(request).then(function(serialized) {
+        deserialize(serialized).then(function(request) {
+            // Send the malicious/modified request
+            return fetch(request);
+        });
+    });
+}
+
+function serialize(request) {
+    // Create our "own" headers
+    var headers = {};
+    for (var entry of request.headers.entries()) {
+        headers[entry[0]] = entry[1];
+        
+        // Add to existing headers, our malicious data
+        headers["User-Agent"] = "curl";
+        headers["Origin"] = "google.com";
+        headers["TestHeader"] = "testValue";
+    }
+    var serialized = {
+        url: request.url,
+        headers: headers, // Add our headers to the request that will be sent to the web server
+        method: request.method,
+        mode: request.mode,
+        credentials: request.credentials,
+        cache: request.cache,
+        redirect: request.redirect,
+        referrer: request.referrer
+    };  
+    if (request.method !== 'GET' && request.method !== 'HEAD') {
+        return request.clone().text().then(function(body) {
+            serialized.body = body;
+            return Promise.resolve(serialized);
+        });
+    }
+    return Promise.resolve(serialized);
+}
+
+function deserialize(data) {
+    return Promise.resolve(new Request(data.url, data));
+}
+\end{lstlisting}
+
+In the code above (listing \ref{listing:serviceWorker})\footnote{Our code for this attempt is derived from the answers provided in: https://stackoverflow.com/questions/43813770/how-to-intercept-all-http-requests-including-form-submits}, we tried to execute requests from isolated threads in order to see how to browser handled such cases in term of SOP. The goal here was to see how these workers were considered, whether they had no origin, and if so whether we could use it to bypass the security mechanisms. In this case, we can see on figure \ref{fig:serviceAndWebWorker} that the service worker's origin is also \emph{localhost:8888}. However, despite this, we wanted to see how the browser reacted when we tried to actually modify the content of the request in order to set malicious headers to trick the victim web server. If, despite the origin associated with our service worker, the browser allowed us to modify the requests and replay them, then we would have a full bypass of the CORS security mechanism. This would lead to dramatic vulnerabilities. Indeed, if one manages to bypass the CORS mechanism, this means two things:
+
+\begin{itemize}
+\item Our request would be executed, and we a good setting of headers, we should be able to fool the victim's web server such that it sends us the web page we want to embed in the HTTP response.
+\item Upon the reception of the response, we should be able to use our service worker to capture the response first, and modify it by injecting malicious code into it, before it is actually forwarded to the renderer and displayed to the user. At this point, the attacker has a immense power over the victim since he can inject malicious code in the rendered page that will execute on the context of the victim web page's origin, leading to a full bypass of SOP.
+\end{itemize}
+
+\medskip
+
+This being said, we tried to carry our the attack scenario described above, using the code listed in \ref{listing:serviceWorker}. Unfortunately, after numerous attempts, we couldn't manage to have this attack work as expected. 
+
+
+
+\subsection{Results}
+
+See other attempts on our github page.
+
+
+- As a sort of conclusion we can say that workers and service workers are an experimental feature (still in development in some browsers, but as browser developers want to have the best product they, try to support these experimental features asap. But this can lead to some risks.
+
 
 Say that none of our attempts were successful but that we provide them as a record of our work. They might also be extended/adapted to carry out successful attack.
 Speak about what we tried, and why we tried it, and explain what we had in mind when we tried something (so that the reader can understand the attack more easily)
 - In this part of the paper present some of our attempts. At least we can list what we tried, but we are not compelled to include all the payloads we came up with.
-
-\subsection{Results}
 
 We can say that all the payloads we crafted, and some precise results of our study are available on the github page of the project: https://github.com/KAIST-IS593-WEBSEC/UXSS-Vulnerabilities-Project
 Conclude about the results of our attacks. Say that despite the fact that we couldn't find any vulnerabilities, the result should not be considered as null/bad --> we learnt a lot about some features used in web browsers/web apps, and we studied a large numbe rof attack scenario that we tried to reproduce. So it was a very exciting moment, sometimes fun (when we thought we were close to find a vulnerability), sometimes annoying (after a lot of failures) but the overall was very interesting for us to confront ourselves to the security mechanisms of today's web browsers. Trying to reproduce attacks, and trying to come up with our own paylaods undoubtedly helped us developing a deep understanding of today's web security mechanisms.
@@ -599,6 +758,10 @@ Nevertheless, say that we are sure that we just broached the surface of all the 
 Despite the fact that we didn't manage to find any vulnerability on the web browsers, some persons might be able to find some. It is important to remember that browsers act as a last rampart against malicious users/attackers. As many browsers are on the market today, the teams developing them are in a perpetual race against each other. The best browser is the most secure one with the most features to provide their users. However, as features are added to a browser, it is paramount to keep in mind the aspect of security.
 
 [TO SAY FOR THE CONCLUSION]
+
+-- In opening, we could speak about some side channel attacks (packet size and so on), and speak about the attck on Google chrome's event list (the paper that has been presented in CS548)
+
+-- Even if UXSS are vulnerabilities in web browsers, web app devs can mitigate vulnerabilities by adopting good practice tht would lead to a minimum leakage of information: such as: HTTPOnly cookies --> if one manage to bypass of security mechanisms of a browsers he might still struggle in accessing the values of cookies because they are http only 
 
 - We learnt many things about web dev in this project: marquee html tag, X-XSS-PROTECTION, Many security mechanism, many attack scenarios, we also saw most of (not to say all) notions that have been presented this semester in this course (clickjacking, XSS, CSRF, UI timing attacks, browser extensions and so on) while we studied the previous attacks in the CVE record,
 
