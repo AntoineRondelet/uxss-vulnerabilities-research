@@ -43,35 +43,6 @@
 }
 
 
-
-\ifCLASSINFOpdf
-  % \usepackage[pdftex]{graphicx}
-  % declare the path(s) where your graphic files are
-  % \graphicspath{{../pdf/}{../jpeg/}}
-  % and their extensions so you won't have to specify these with
-  % every instance of \includegraphics
-  % \DeclareGraphicsExtensions{.pdf,.jpeg,.png}
-\else
-  % or other class option (dvipsone, dvipdf, if not using dvips). graphicx
-  % will default to the driver specified in the system graphics.cfg if no
-  % driver is specified.
-  % \usepackage[dvips]{graphicx}
-  % declare the path(s) where your graphic files are
-  % \graphicspath{{../eps/}}
-  % and their extensions so you won't have to specify these with
-  % every instance of \includegraphics
-  % \DeclareGraphicsExtensions{.eps}
-\fi
-% graphicx was written by David Carlisle and Sebastian Rahtz. It is
-% required if you want graphics, photos, etc. graphicx.sty is already
-% installed on most LaTeX systems. The latest version and documentation can
-% be obtained at: 
-% http://www.ctan.org/tex-archive/macros/latex/required/graphics/
-% Another good source of documentation is "Using Imported Graphics in
-% LaTeX2e" by Keith Reckdahl which can be found as epslatex.ps or
-% epslatex.pdf at: http://www.ctan.org/tex-archive/info/
-%
-
 \begin{document}
 \title{IS593 Term Project \emph{"Find Universal Cross Site Scripting Vulnerabilities in Brave Browser"}}
 
@@ -79,17 +50,16 @@
 \maketitle
 \IEEEpeerreviewmaketitle
 
-\section{Introduction}
-[TODO]\\
+\section*{Abstract}
 
-In the previous work, we can speak about the CVEs and the paper \cite{uxssJSLeaks}.
+\textbf{We study web security mechanisms and Universal Cross-Site Scripting (UXSS), one of the most threatening attack on the web. First, we introduce some background knowledge about web browsers, their role, the companies behind them, their design and their security mechanisms. \\
+We go on to present the UXSS threat and the impacts of such an attack. Then, we study reported UXSS vulnerabilities on the most popular web browsers. From this study, we extract some recurrent patterns found in the different attack scenarios, and conclude about web browser developers' common mistakes.\\
+In a next section, we present our attempts to break the Brave browser and explain our reasoning and our payloads. \\
+We conclude that UXSS vulnerabilities are a major threat to the security of users on the web. The incredible diversity of browsers running on different platforms make UXSS vulnerabilities likely to be found again in the future. Thus, their study should become a major concern for developers and researchers.}
 
-Write the introduction at the end
-Finish the introduction by a list of keywords.
+\bigskip
 
-It might be good to begin the paper with a bit of context about UXSS research. See whether we manage to find some papers about it -> if yes: speak about previous work, if no: speak about the fact that we couldn't find anything and that we were surprised to see that no previous work were carried out to try to study the security mechanisms of browsers and that current UXSS investigations are carried out by either companies themselves or by isolated persons reporting bugs to companies. This paper is an attempt to study browser's vulnerability, especially Universal XSS vulnerabilities.
-
-Maybe do a small introduction about us (the team) and say that we are students in the computer science and information security departments at KAIST. Passionate by security and cryptography we decided to study UXSS. We have a very small background in Web programming and didn't know that much about the way browsers worked before this study, however, the potential theat behind UXSS attacks attracted our attention, and further to some research, it turned out that UXSS investigations were carried out by either companies themselves or by isolated persons reporting bugs to companies. Thus, our paper is an first attempt to study browser's vulnerability, especially Universal XSS vulnerabilities, and gather what we found. 
+\emph{Keywords: web security, web browser, Universal Cross-Site Scripting}
 
 \section{Web Browsers}
 
@@ -104,7 +74,7 @@ While the primary role of these pieces of software is to provide an easy way for
 \label{fig:marketShare}
 \end{figure}
 
-Around two decades after Netscape's Navigator and Window's Internet Explorer \emph{Browser wars}, the competition is still prevailing on the web browser market. The democratization of the use of the Web and, more recently, the introduction of HTML5, CSS3, and extensive client-side scripting to the World Wide Web, as well as more widespread use of smartphones and other mobile devices for browsing the web, lead to the apparition of dozens of browsers. From Mozilla's Firefox\footnote{https://www.mozilla.org/en-US/firefox/}, Google's Chrome\footnote{https://www.google.com/chrome/index.html}, Apple's Safari\footnote{https://www.apple.com/safari/} to Opera\footnote{http://www.opera.com/fr} for the most famous, the number of new browsers never ceases to increase. Today, as we are moving to the 4th industrial revolution - where data is moving astoundingly fast, and collected massively to be fed into \emph{Intelligent Agents} - some newcomers such as Brave\footnote{https://brave.com} or even Whale\footnote{http://whale.naver.com/en/} are trying to enter this disputed market and get their slice of the cake.
+Around two decades after Netscape's Navigator and Window's Internet Explorer \emph{"browser wars"}, the competition is still prevailing on the web browser market. The democratization of the use of the Web and, more recently, the introduction of HTML5, CSS3, extensive client-side scripting, as well as more widespread use of smartphones and other mobile devices for browsing the web, lead to the apparition of dozens of browsers. From Mozilla's Firefox\footnote{https://www.mozilla.org/en-US/firefox/}, Google's Chrome\footnote{https://www.google.com/chrome/index.html}, Apple's Safari\footnote{https://www.apple.com/safari/} to Opera\footnote{http://www.opera.com/fr} for the most famous, the number of new browsers never ceases to increase. Today, as we are moving to the 4th industrial revolution - where data is moving astoundingly fast, and collected massively to be fed into \emph{Intelligent Agents} - some newcomers such as Brave\footnote{https://brave.com} or even Whale\footnote{http://whale.naver.com/en/} are trying to enter this disputed market and get their slice of the cake.
 Although, figures \ref{fig:marketShare} and \ref{fig:monthlyUsage} agree on the fact that Google Chrome is the most widespread browser, other companies are working hard and hiring massively to try to dethrone Google's super star.
 
 \begin{figure}[h]
@@ -115,7 +85,7 @@ Although, figures \ref{fig:marketShare} and \ref{fig:monthlyUsage} agree on the 
 \end{figure}
 
 
-As opposed to Netscape's Navigator, today, most web browsers are free to use. Developing web browsers is not about making money anymore, but more about sculpting people's computing habits in a way that would benefit the companies behind them.
+As opposed to Netscape's Navigator, today, most web browsers are free to use. Developing web browsers is not about making money anymore, but more about sculpting people's computing habits in a way that would benefit the companies behind browsers development.
 As the market is quite competitive, developing a web browser can be seen as taking part into a race to developing the most features. This willingness to be different and attract people's attention often lead web browsers developers to implement features in a hurry. Such frequent releases sometimes unveil exploitable vulnerabilities and make browser's architecture more and more complex.
 
 \medskip
@@ -164,12 +134,18 @@ While figure \ref{fig:browserStructure} shows the general web browser structure 
 At this point, the reader should be able to have a taste of the complexity of web browsers. Such a compound of subsystems might be likely to expose several vulnerabilities either in the subsystems' implementation or in their interactions.
 
 \subsection{Security mechanisms}
-While, the Internet today is a widespread information infrastructure, the Web is not only used to access and share resources, but is also hosting commercial activities. According to http://www.internetworldstats.com/stats.htm, 51.7\% of the world population\footnote{This represent 3,885,567,619 people} is now using the Internet on a day to day basis. Albeit, a vast majority of Internet users are undoubtedly honest users, a few of them are malicious and carry out attacks on the network or publish malicious web pages on the web waiting for users to fetch them. From this point, a malicious page displayed in victims' browser could run malicious Javascript code trying to retrieve user's sensitive data. \\
-In fact, in general, many pages tend to be displayed in a user's browser at the same time (into tabs or iframes\footnote{https://developer.mozilla.org/en-US/docs/Web/HTML/Element/iframe}). Thus, they all live in the browser in the same time. So how about using the browser as a bridge for a malicious page to access sensitive data stored in other pages ? \\
+While, the Internet is a widespread information infrastructure, the Web is not only used to access and share resources, but is also hosting commercial activities. According to \emph{internetworldstats.com}\footnote{http://www.internetworldstats.com/stats.htm}, 51.7\% of the world population\footnote{This represent 3,885,567,619 people} is now using the Internet on a day to day basis. Albeit, a vast majority of Internet users are undoubtedly honest users, a few of them are malicious and carry out attacks on the network or publish malicious web pages on the web waiting for users to fetch them. From this point, a malicious page displayed in victims' browser could run malicious Javascript code trying to retrieve user's sensitive data. \\
+In fact, in general, many pages tend to be displayed in a user's browser at the same time (into tabs or iframes\footnote{https://developer.mozilla.org/en-US/docs/Web/HTML/Element/iframe}). Thus, they all live in the browser in the same time. 
 
-Since browsers are the door that enable us to access web pages from a lot of sources every day, such a vulnerability would be a major threat for Internet users. Being able to keep browsers safe from such menaces is paramount to keep the web safe. In order to do so, web browsers developers developed very sophisticated security mechanisms to isolate web pages from one another.
+\medskip
 
-Moreover, modern web browsers need to support the latest and constantly evolving web standards capable of loading resources, while making sure that their level of security remains optimal. As a matter of fact, as explained in \cite{browserSecurity}, web browsers are committed to implement most of the security specifications defined by the World Wide Web Consortium (W3C), such as: (see \cite{SOP} \cite{CORS} \cite{CSP} \cite{SRI} \cite{MixedContent})
+\emph{How about using the browser as a bridge for a malicious page to access sensitive data stored in other pages ?}
+
+\medskip
+
+Since browsers are the door that enable us to access web pages from a lot of sources every day, such a scenario would be a major threat for Internet users. Being able to keep browsers safe from such menaces is paramount to keep the web safe. In order to do so, web browsers developers developed very sophisticated security mechanisms to isolate web pages from one another.
+
+Moreover, modern web browsers need to support the latest and constantly evolving web standards. They should be capable of loading resources, while making sure that their level of security remains optimal. In consequence, as explained in \cite{browserSecurity}, web browsers are committed to implement most of the security specifications \cite{SOP} \cite{CORS} \cite{CSP} \cite{SRI} \cite{MixedContent} defined by the World Wide Web Consortium (W3C), such as:
 
 \medskip
 
@@ -179,7 +155,7 @@ The foundation of browsers security mechanisms is the notion of Same Origin Poli
 
 \medskip
 
-In order to access a specific resource, a user has to specify its Uniform Resource Locator (URL)\footnote{Reference to a web resource that specifies its location on a computer network and a mechanism for retrieving it.}. This web address is a compound of different elements, as shown on figure \ref{fig:URL}. The protocol indicates which protocol the browser must use to retrieve the resource. The domain name is an alias for the IP address pointing to the Web server that should be requested. The port is a logical construct that identifies a specific process or a type of network service, on the web server, that is responsible for serving the web resource. Moreover, the path, parameters and fragment are the path to the resource on the Web server, extra parameters provided to the Web server and an anchor to a specific part of the resource itself, respectively.
+In order to access a specific resource, a user has to specify its Uniform Resource Locator (URL)\footnote{Reference to a web resource that specifies its location on a computer network and a mechanism for retrieving it.}. This web address is a compound of different elements, as shown on figure \ref{fig:URL}. The protocol (or scheme) indicates which protocol the browser must use to retrieve the resource. The domain name is an alias for the IP address pointing to the Web server that should be requested. The port is a logical construct that identifies a specific process or a type of network service, on the web server that is responsible for serving the web resource. Moreover, the path, parameters and fragment are the path to the resource on the web server, extra parameters provided to the Web server and an anchor to a specific part of the resource itself, respectively.
 
 \begin{figure}[h]
 \centering
@@ -194,12 +170,12 @@ With this in mind, defining what an origin is becomes trivial. Looking at the of
 
 \medskip
 
-Know that we know what an origin is, the Same Origin Policy is a policy that ensures that documents retrieved from distinct origins are isolated from each other. Thus, even if users happened to visit malicious web sites, these fraudulent sites would not be able to interfere with the user's session with honest web sites.
+Now that we know what an origin is, the Same Origin Policy can be defined as a policy that ensures that documents retrieved from distinct origins are isolated from each other. Thus, even if users happened to visit malicious web sites, these fraudulent sites would not be able to interfere with the user's session with honest web sites.
 
 \begin{figure}[h]
 \centering
 \includegraphics[width=0.4\textwidth]{images/SOPTabs.png}
-\caption{Same Origin Policy preventing a malicious "tabs" to access user's sensitive data}
+\caption{Same Origin Policy preventing a malicious "tab" to access user's sensitive data}
 \label{fig:SOPTabs}
 \end{figure}
 
@@ -216,16 +192,16 @@ The Content Security Policy allows web site administrators to define a white-lis
 
 \subsubsection{Mixed Content Blocking}
 
-The mechanism of Mixed Content Blocking blocks insecure content on web pages that are considered secure. A "mixed" content can happen in the case where a user fetches a secure page over HTTPS, containing a HTTP content. Since data transiting over HTTP is not secure and can be eavesdropped, the Mixed Content Blocking mechanism will block this part of the web page. That way the page displayed to the user would be "completely safe from risks"\footnote{This section is placed into quotes because in web security, very few things (not to say nothing) are said to be unconditionally safe.}.
+The mechanism of Mixed Content Blocking blocks insecure content on web pages that are considered secure. A "mixed" content can happen in the case where a user fetches a secure page over HTTPS, containing a HTTP content. Since data transiting over HTTP is not secure and can be eavesdropped, the Mixed Content Blocking mechanism will block this part of the web page. That way the page displayed to the user would be "safe from risks"\footnote{This section is placed into quotes because in web security, very few things (not to say nothing) are said to be unconditionally safe.}.
 
 \subsubsection{Subresource Integrity (SRI)}
 
-Subresource Integrity defines a mechanism by which user agents may verify that a fetched resource has been delivered without being altered. This process allow a User Agent to be sure that the requested resource is the one it received. SRI works by using hash functions. Website developers can associated a hash value to a specific resource. That way web browsers can compute the hash value of the received resource and compare them with the initial value provided by the website. The resource is then displayed only if the hash values are equal, i.e: the resource is valid. 
+Subresource Integrity defines a mechanism by which user agents may verify that a fetched resource has been delivered without being altered. This process allow a User Agent to be sure that the requested resource is the one it received. SRI works by using hash functions. Website developers can associate a hash value with a specific resource. That way web browsers can compute the hash value of the received resource and compare them with the initial value provided by the website. The resource is then displayed only if the hash values are equal, i.e: the resource is valid. 
 
 \medskip
 \medskip
 
-Despite the implementation and support of the security specifications of the W3C, some lower level attacks could be carried out to escape the security mechanisms of today's web browsers. By compromising a browser process and execute arbitrary code, and attacker could either be able to access the host system or bypass the SOP. The next subsections present the concepts of Sandboxes and Process and Origin Isolation, that are currently ensuring that low level attacks would not have dramatic impacts for end-users, and that SOP would not be "bypassable" at lower levels.
+Despite the implementation and support of the security specifications of the W3C, some lower level attacks could be carried out to escape the security mechanisms of today's web browsers. By compromising a browser process and executing arbitrary code, and attacker could either be able to access the host system or bypass the SOP. The next subsections present the concepts of Sandboxes and Process and Origin Isolation, that are currently ensuring that low level attacks would not have dramatic impacts for end-users, and that SOP would not be "bypassable" at lower levels.
 
 \subsection{Sandboxes}
 
@@ -799,24 +775,6 @@ We see here that a great part of the security on the web depend on web browser d
 In conclusion, we notice that, keeping the web secure, and protecting the users' privacy is a task that has to be handled by all actors in the industry.
 
 
-
-% if have a single appendix:
-%\appendix[Proof of the Zonklar Equations]
-% or
-%\appendix  % for no appendix heading
-% do not use \section anymore after \appendix, only \section*
-% is possibly needed
-
-% use appendices with more than one appendix
-% then use \section to start each appendix
-% you must declare a \section before using any
-% \subsection or using \label (\appendices by itself
-% starts a section numbered zero.)
-%
-
-% Can use something like this to put references on a page
-% by themselves when using endfloat and the captionsoff option.
-
 \begin{thebibliography}{1}
 
 \bibitem{website}
@@ -1052,55 +1010,4 @@ https://developer.mozilla.org/en-US/docs/Web/API/Web\_Workers\_API/Using\_web\_w
   \newpage
 \fi
 
-
-
-% trigger a \newpage just before the given reference
-% number - used to balance the columns on the last page
-% adjust value as needed - may need to be readjusted if
-% the document is modified later
-%\IEEEtriggeratref{8}
-% The "triggered" command can be changed if desired:
-%\IEEEtriggercmd{\enlargethispage{-5in}}
-
-% references section
-
-% can use a bibliography generated by BibTeX as a .bbl file
-% BibTeX documentation can be easily obtained at:
-% http://www.ctan.org/tex-archive/biblio/bibtex/contrib/doc/
-% The IEEEtran BibTeX style support page is at:
-% http://www.michaelshell.org/tex/ieeetran/bibtex/
-%\bibliographystyle{IEEEtran}
-% argument is your BibTeX string definitions and bibliography database(s)
-%\bibliography{IEEEabrv,../bib/paper}
-%
-% <OR> manually copy in the resultant .bbl file
-% set second argument of \begin to the number of references
-% (used to reserve space for the reference number labels box)
-
-% biography section
-% 
-% If you have an EPS/PDF photo (graphicx package needed) extra braces are
-% needed around the contents of the optional argument to biography to prevent
-% the LaTeX parser from getting confused when it sees the complicated
-% \includegraphics command within an optional argument. (You could create
-% your own custom macro containing the \includegraphics command to make things
-% simpler here.)
-%\begin{biography}[{\includegraphics[width=1in,height=1.25in,clip,keepaspectratio]{mshell}}]{Michael Shell}
-% or if you just want to reserve a space for a photo:
-
-% You can push biographies down or up by placing
-% a \vfill before or after them. The appropriate
-% use of \vfill depends on what kind of text is
-% on the last page and whether or not the columns
-% are being equalized.
-
-%\vfill
-
-% Can be used to pull up biographies so that the bottom of the last one
-% is flush with the other column.
-%\enlargethispage{-5in}
-
-
-
-% that's all folks
 \end{document}
