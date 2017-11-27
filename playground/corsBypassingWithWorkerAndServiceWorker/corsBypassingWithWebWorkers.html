@@ -1,0 +1,73 @@
+<html>
+  <head>
+  </head>
+  <body>
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function() {
+          navigator.serviceWorker.register('http://localhost:8888/sw.js').then(function(registration) {
+            console.log('Service worker registered with scope: ', registration.scope);
+          }, function(err) {
+            console.log('ServiceWorker registration failed: ', err);
+          });
+        });
+      }
+
+      var blobURL = URL.createObjectURL( new Blob([ '(',
+            function(){
+              self.addEventListener('message', function(e) {
+                var data = e.data;
+                  switch (data.cmd) {
+                        case 'start':
+                          self.postMessage('WORKER STARTED: ' + data.msg);
+                          break;
+                      case 'stop':
+                          self.postMessage('WORKER STOPPED: ' + data.msg);
+                          self.close(); // Terminates the worker.
+                          break;
+                      case 'xhr':
+                        try {
+                            var xhr=new XMLHttpRequest();
+                            xhr.open('GET', 'https://www.google.co.kr', true);
+                            xhr.onreadystatechange = function() {
+                                if (xhr.readyState == 4) {
+                                    self.postMessage(xhr.status + xhr.responseText);
+                                }
+                            };
+                            xhr.send(null);
+                        } catch (error) {
+                            self.postMessage("ERROR:"+error.message);
+                        };
+                        break;
+                      default:
+                        self.postMessage('Unknown command: ' + data.msg);
+                      };
+              }, false);
+            }.toString(),
+      ')()'], { type: 'application/javascript' } ) )
+
+      var worker = new Worker(blobURL);
+
+      function startWorker() {
+        worker.postMessage({'cmd': 'start', 'msg': 'Start'});
+      }
+
+      function stopWorker() {
+        worker.postMessage({'cmd': 'stop', 'msg': 'Stop'});
+      }
+
+      function xhrWorker() {
+        worker.postMessage({'cmd': 'xhr', 'msg': 'xhr'});
+      }
+
+      worker.addEventListener('message', function(e) {
+        document.getElementById('result').textContent = e.data;
+      }, false);
+    </script>
+    <button onclick="startWorker()">Start Worker</button>
+    <button onclick="stopWorker()">Stop Worker</button>
+    <button onclick="xhrWorker()">Trigger an XHR with the Worker</button>
+    <br>
+    <span id="result"></span>
+  </body>
+</html>

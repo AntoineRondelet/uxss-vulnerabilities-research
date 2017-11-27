@@ -4,46 +4,62 @@
 \usepackage[justification=centering]{caption}
 
 
-\ifCLASSINFOpdf
-  % \usepackage[pdftex]{graphicx}
-  % declare the path(s) where your graphic files are
-  % \graphicspath{{../pdf/}{../jpeg/}}
-  % and their extensions so you won't have to specify these with
-  % every instance of \includegraphics
-  % \DeclareGraphicsExtensions{.pdf,.jpeg,.png}
-\else
-  % or other class option (dvipsone, dvipdf, if not using dvips). graphicx
-  % will default to the driver specified in the system graphics.cfg if no
-  % driver is specified.
-  % \usepackage[dvips]{graphicx}
-  % declare the path(s) where your graphic files are
-  % \graphicspath{{../eps/}}
-  % and their extensions so you won't have to specify these with
-  % every instance of \includegraphics
-  % \DeclareGraphicsExtensions{.eps}
-\fi
-% graphicx was written by David Carlisle and Sebastian Rahtz. It is
-% required if you want graphics, photos, etc. graphicx.sty is already
-% installed on most LaTeX systems. The latest version and documentation can
-% be obtained at: 
-% http://www.ctan.org/tex-archive/macros/latex/required/graphics/
-% Another good source of documentation is "Using Imported Graphics in
-% LaTeX2e" by Keith Reckdahl which can be found as epslatex.ps or
-% epslatex.pdf at: http://www.ctan.org/tex-archive/info/
-%
+\usepackage{listings}
+\usepackage{color}
+\usepackage{soul}
+
+\definecolor{lightgray}{rgb}{.9,.9,.9}
+\definecolor{darkgray}{rgb}{.4,.4,.4}
+\definecolor{purple}{rgb}{0.65, 0.12, 0.82}
+
+\lstdefinelanguage{JavaScript}{
+  keywords={typeof, new, true, false, catch, function, return, null, catch, switch, var, if, in, while, do, else, case, break},
+  keywordstyle=\color{blue}\bfseries,
+  ndkeywords={class, export, boolean, throw, implements, import, this},
+  ndkeywordstyle=\color{darkgray}\bfseries,
+  identifierstyle=\color{black},
+  sensitive=false,
+  comment=[l]{//},
+  morecomment=[s]{/*}{*/},
+  commentstyle=\color{purple}\ttfamily,
+  stringstyle=\color{red}\ttfamily,
+  morestring=[b]',
+  morestring=[b]"
+}
+
+\lstset{
+   language=JavaScript,
+   backgroundcolor=\color{lightgray},
+   extendedchars=true,
+   basicstyle=\footnotesize\ttfamily,
+   showstringspaces=false,
+   showspaces=false,
+   numberstyle=\footnotesize,
+   numbersep=9pt,
+   tabsize=1,
+   breaklines=true,
+   showtabs=false,
+   captionpos=b
+}
+
 
 \begin{document}
 \title{IS593 Term Project \emph{"Find Universal Cross Site Scripting Vulnerabilities in Brave Browser"}}
 
-\author{Antoine RONDELET (20176461)}
+\author{Antoine RONDELET (20176461) \& Khady NGOM(20176440)}
 \maketitle
 \IEEEpeerreviewmaketitle
 
-\section{Introduction}
-Write the introduction at the end
-Finish the introduction by a list of keywords.
+\section*{Abstract}
 
-It might be good to begin the paper with a bit of context about UXSS research. See whether we manage to find some papers about it -> if yes: speak about previous work, if no: speak about the fact that we couldn't find anything and that we were surprised to see that no previous work were carried out to try to study the security mechanisms of browsers and that current UXSS investigations are carried out by either companies themselves or by isolated persons reporting bugs to companies. This paper is an attempt to study browser's vulnerability, especially Universal XSS vulnerabilities.
+\textbf{We study web security mechanisms and Universal Cross-Site Scripting (UXSS), one of the most threatening attack on the web. First, we introduce some background knowledge about web browsers, their role, the companies behind them, their design and their security mechanisms. \\
+We go on to present the UXSS threat and the impacts of such an attack. Then, we study reported UXSS vulnerabilities on the most popular web browsers. From this study, we extract some recurrent patterns found in the different attack scenarios, and conclude about web browser developers' common mistakes.\\
+In a next section, we present our attempts to break the Brave browser and explain our reasoning and our payloads. \\
+We conclude that UXSS vulnerabilities are a major threat to the security of users on the web. The incredible diversity of browsers running on different platforms make UXSS vulnerabilities likely to be found again in the future. Thus, their study should become a major concern for developers and researchers.}
+
+\bigskip
+
+\emph{Keywords: web security, web browser, Universal Cross-Site Scripting}
 
 \section{Web Browsers}
 
@@ -58,7 +74,7 @@ While the primary role of these pieces of software is to provide an easy way for
 \label{fig:marketShare}
 \end{figure}
 
-Around two decades after Netscape's Navigator and Window's Internet Explorer \emph{Browser wars}, the competition is still prevailing on the web browser market. The democratization of the use of the Web and, more recently, the introduction of HTML5, CSS3, and extensive client-side scripting to the World Wide Web, as well as more widespread use of smartphones and other mobile devices for browsing the web, lead to the apparition of dozens of browsers. From Mozilla's Firefox\footnote{https://www.mozilla.org/en-US/firefox/}, Google's Chrome\footnote{https://www.google.com/chrome/index.html}, Apple's Safari\footnote{https://www.apple.com/safari/} to Opera\footnote{http://www.opera.com/fr} for the most famous, the number of new browsers never ceases to increase. Today, as we are moving to the 4th industrial revolution - where data is moving astoundingly fast, and collected massively to be fed into \emph{Intelligent Agents} - some newcomers such as Brave\footnote{https://brave.com} or even Whale\footnote{http://whale.naver.com/en/} are trying to enter this disputed market and get their slice of the cake.
+Around two decades after Netscape's Navigator and Window's Internet Explorer \emph{"browser wars"}, the competition is still prevailing on the web browser market. The democratization of the use of the Web and, more recently, the introduction of HTML5, CSS3, extensive client-side scripting, as well as more widespread use of smartphones and other mobile devices for browsing the web, lead to the apparition of dozens of browsers. From Mozilla's Firefox\footnote{https://www.mozilla.org/en-US/firefox/}, Google's Chrome\footnote{https://www.google.com/chrome/index.html}, Apple's Safari\footnote{https://www.apple.com/safari/} to Opera\footnote{http://www.opera.com/fr} for the most famous, the number of new browsers never ceases to increase. Today, as we are moving to the 4th industrial revolution - where data is moving astoundingly fast, and collected massively to be fed into \emph{Intelligent Agents} - some newcomers such as Brave\footnote{https://brave.com} or even Whale\footnote{http://whale.naver.com/en/} are trying to enter this disputed market and get their slice of the cake.
 Although, figures \ref{fig:marketShare} and \ref{fig:monthlyUsage} agree on the fact that Google Chrome is the most widespread browser, other companies are working hard and hiring massively to try to dethrone Google's super star.
 
 \begin{figure}[h]
@@ -69,7 +85,7 @@ Although, figures \ref{fig:marketShare} and \ref{fig:monthlyUsage} agree on the 
 \end{figure}
 
 
-As opposed to Netscape's Navigator, today, most web browsers are free to use. Developing web browsers is not about making money anymore, but more about sculpting people's computing habits in a way that would benefit the companies behind them.
+As opposed to Netscape's Navigator, today, most web browsers are free to use. Developing web browsers is not about making money anymore, but more about sculpting people's computing habits in a way that would benefit the companies behind browsers development.
 As the market is quite competitive, developing a web browser can be seen as taking part into a race to developing the most features. This willingness to be different and attract people's attention often lead web browsers developers to implement features in a hurry. Such frequent releases sometimes unveil exploitable vulnerabilities and make browser's architecture more and more complex.
 
 \medskip
@@ -78,13 +94,13 @@ A taste of a web browser's design is provided in the next part of this paper.
 
 \subsection{Architecture}
 
-Despite the large variety of browsers available to surf the web, they are almost all following a general structure. This architecture, as shown in \cite{architectureWebBrowsers} can be decomposed into eight components, each of which has its very own functionality.
+Despite the large variety of browsers available to surf the web, most of them tend to follow a general structure. This architecture, as shown in \cite{architectureWebBrowsers} \cite{howBrowsersWork} can be decomposed into eight components, each of which has its very own functionality.
 
 \subsubsection{User Interface}
-The component in charge of the UI contains every piece of the browser that is not actually part of the webpage itself. Such piece can either be toolbars or even previous and next buttons for instance.
+The component in charge of the UI contains every piece of the browser that is not actually part of the webpage itself. Such piece can either be toolbars or Back and forward buttons for instance.
 
 \subsubsection{Browser Engine}
-The browser engine forms the interface that allows the User Interface to interact and manipulate elements of the rendering engine.
+The browser engine forms the interface that allows the User Interface to interact and manipulate elements of the rendering engine. It basically marshals actions between the UI and the rendering engine.
 
 \subsubsection{Rendering Engine}
 The rendering engine is responsible for producing a graphical representation of the document fetched from a specific URL. It parses and render documents written in HTML and applies styles specified by CSS.
@@ -93,18 +109,16 @@ The rendering engine is responsible for producing a graphical representation of 
 The data persistence subsystem is responsible for insuring the persistence of data when the browser needs it. For instance, a browser needs to save data locally to keep track of the user's bookmarks and cookies.
 
 \subsubsection{Networking}
-Since a browser fetches document from the Web, a browser needs to be able to have an access to the network. This access is provided by the networking module. It implements file transfer protocols such as HTTP and FTP. Moreover, this subsystem translates between different character sets, and resolves MIME media types for files\footnote{https://en.wikipedia.org/wiki/Media\_type}. In some cases, the networking module might also implement a cache of recently retrieved resources to ensure good performances when a user asks multiple times the same resource.
+Since a browser fetches document from the Web, a browser needs to be able to have access to the network. This access is provided by the networking module. It implements file transfer protocols such as HTTP and FTP. Moreover, this subsystem translates between different character sets, and resolves MIME media types for files\footnote{https://en.wikipedia.org/wiki/Media\_type}. In some cases, the networking module might also implement a cache of recently retrieved resources to ensure good performances when a user asks multiple times the same resource.
 
 \subsubsection{Javascript Interpreter}
-This module interprets Javascript\footnote{Programming language developed by Netscape in 1995 to make webpages interactive. More details can be found at https://en.wikipedia.org/wiki/JavaScript} code
+This module parses and executes Javascript\footnote{Programming language developed by Netscape in 1995 to make webpages interactive. More details can be found at https://en.wikipedia.org/wiki/JavaScript} code.
 
 \subsubsection{XML parser}
 The XML parser module is in charge of parsing XML documents into a Document Object Model (DOM) tree\footnote{https://en.wikipedia.org/wiki/Document\_Object\_Model}
 
 \subsubsection{Display Backend}
 The display backend subsystem provides primitives for drawing and windows. It also interfaces with the Operating System of the host machine.
-
-
 
 \begin{figure}[h]
 \centering
@@ -113,61 +127,653 @@ The display backend subsystem provides primitives for drawing and windows. It al
 \label{fig:browserStructure}
 \end{figure}
 
+While figure \ref{fig:browserStructure} shows the general web browser structure explained above, it is without saying that each browser has its particularities and its very own version of the aforementioned architecture.
+
+\medskip
+
+At this point, the reader should be able to have a taste of the complexity of web browsers. Such a compound of subsystems might be likely to expose several vulnerabilities either in the subsystems' implementation or in their interactions.
 
 \subsection{Security mechanisms}
-\subsubsection{SoP}
-\subsubsection{CORS}
-\subsubsection{Sandboxes}
-Speak about the role of sandboxes and speak about the difference between the security in Edge (window's side) and the google-chrome based browsers
+While, the Internet is a widespread information infrastructure, the Web is not only used to access and share resources, but is also hosting commercial activities. According to \emph{internetworldstats.com}\footnote{http://www.internetworldstats.com/stats.htm}, 51.7\% of the world population\footnote{This represent 3,885,567,619 people} is now using the Internet on a day to day basis. Albeit, a vast majority of Internet users are undoubtedly honest users, a few of them are malicious and carry out attacks on the network or publish malicious web pages on the web waiting for users to fetch them. From this point, a malicious page displayed in victims' browser could run malicious Javascript code trying to retrieve user's sensitive data. \\
+In fact, in general, many pages tend to be displayed in a user's browser at the same time (into tabs or iframes\footnote{https://developer.mozilla.org/en-US/docs/Web/HTML/Element/iframe}). Thus, they all live in the browser in the same time. 
 
-\section{Brave}
-Speak about the new features brought by Brave (speak about the company's policy to ensure privacy on the web and so on...) + the BAT principle and the new things that are brought by Brave and why we decided to study this web browser in particular
-+ Speak about other new browsers such as Whale and so on just to show that many actors are actually trying to take Google Chrome's market share.
+\medskip
+
+\emph{How about using the browser as a bridge for a malicious page to access sensitive data stored in other pages ?}
+
+\medskip
+
+Since browsers are the door that enable us to access web pages from a lot of sources every day, such a scenario would be a major threat for Internet users. Being able to keep browsers safe from such menaces is paramount to keep the web safe. In order to do so, web browsers developers developed very sophisticated security mechanisms to isolate web pages from one another.
+
+Moreover, modern web browsers need to support the latest and constantly evolving web standards. They should be capable of loading resources, while making sure that their level of security remains optimal. In consequence, as explained in \cite{browserSecurity}, web browsers are committed to implement most of the security specifications \cite{SOP} \cite{CORS} \cite{CSP} \cite{SRI} \cite{MixedContent} defined by the World Wide Web Consortium (W3C), such as:
+
+\medskip
+
+\subsubsection{Same Origin Policy (SOP)}
+
+The foundation of browsers security mechanisms is the notion of Same Origin Policy (referred to as SOP). Before looking at this important concept, we should first define what an origin is.
+
+\medskip
+
+In order to access a specific resource, a user has to specify its Uniform Resource Locator (URL)\footnote{Reference to a web resource that specifies its location on a computer network and a mechanism for retrieving it.}. This web address is a compound of different elements, as shown on figure \ref{fig:URL}. The protocol (or scheme) indicates which protocol the browser must use to retrieve the resource. The domain name is an alias for the IP address pointing to the Web server that should be requested. The port is a logical construct that identifies a specific process or a type of network service, on the web server that is responsible for serving the web resource. Moreover, the path, parameters and fragment are the path to the resource on the web server, extra parameters provided to the Web server and an anchor to a specific part of the resource itself, respectively.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.4\textwidth]{images/URL.png}
+\caption{URL anatomy}
+\label{fig:URL}
+\end{figure}
+
+\medskip
+
+With this in mind, defining what an origin is becomes trivial. Looking at the official definition of the W3C\footnote{https://www.w3.org/Security/wiki/Same\_Origin\_Policy}, an origin is defined by the scheme, host, and port of a URL.
+
+\medskip
+
+Now that we know what an origin is, the Same Origin Policy can be defined as a policy that ensures that documents retrieved from distinct origins are isolated from each other. Thus, even if users happened to visit malicious web sites, these fraudulent sites would not be able to interfere with the user's session with honest web sites.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.4\textwidth]{images/SOPTabs.png}
+\caption{Same Origin Policy preventing a malicious "tab" to access user's sensitive data}
+\label{fig:SOPTabs}
+\end{figure}
+
+\subsubsection{Cross-Origin Resource Sharing (CORS)}
+\label{CORSSection}
+
+In order to relax the SOP, the W3C specified the Cross-Origin Resource Sharing (CORS) which consists in specifying a white-list of trusted domains allowed to request restricted resources, by extending HTTP with a new origin request header. The CORS mechanism supports secure cross-domain requests and data transfers between browsers and web servers. \\
+
+Even though, the policy is defined by web server administrators, this security mechanism is used in modern browsers especially on APIs such as \emph{XMLHttpRequest} or \emph{Fetch} to help mitigate the risks of cross-origin HTTP requests and prevent a malicious user to access a resource he should not be able to access.
+
+\subsubsection{Content Security Policy (CSP)}
+
+The Content Security Policy allows website administrators to define a white-list in a HTTP header to specify trusted sources for delivering content. That way web authors can control resources the user agent is allowed to load for a given page.
+
+\subsubsection{Mixed Content Blocking}
+
+The mechanism of Mixed Content Blocking blocks insecure content on web pages that are considered secure. A "mixed" content can happen in the case where a user fetches a secure page over HTTPS, containing a HTTP content. Since data transiting over HTTP is not secure and can be eavesdropped, the Mixed Content Blocking mechanism will block this part of the web page. That way the page displayed to the user would be "safe from risks"\footnote{This section is placed into quotes because in web security, very few things (not to say nothing) are said to be unconditionally safe.}.
+
+\subsubsection{Subresource Integrity (SRI)}
+
+Subresource Integrity defines a mechanism by which user agents may verify that a fetched resource has been delivered without being altered. This process allows a User Agent to be sure that the requested resource is the one it received. SRI works by using hash functions. Website developers can associate a hash value with a specific resource. That way web browsers can compute the hash value of the received resource and compare them with the initial value provided by the website. The resource is then displayed only if the hash values are equal, i.e: the resource is valid. 
+
+\medskip
+\medskip
+
+Despite the implementation and support of the security specifications of the W3C, some lower level attacks could be carried out to escape the security mechanisms of today's web browsers. By compromising a browser process and executing arbitrary code, and attacker could either be able to access the host system or bypass the SOP. The next subsections present the concepts of Sandboxes and Process and Origin Isolation, that are currently ensuring that low level attacks would not have dramatic impacts for end-users, and that SOP would not be "bypassable" at lower levels.
+
+\subsection{Sandboxes}
+
+Sandboxes is a mechanism which consists in limiting vulnerabilities by isolating components of an application from each other and from the rest of the system. In a sandbox, components run with the minimum access privileges to system resources they need to perform their functions.
+By isolating complex components into sandboxes, web browser developers can diminish the impact vulnerabilities can have for the end-user. By limiting the damages an attacker can cause. \\
+
+Some additional pieces of information about Google Chrome's sandboxes are provided in \cite{browserSecurityWhitePaper}, and an extract is illustrated in figure \ref{fig:ChromeSandboxes}.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.4\textwidth]{images/SandboxesChrome.png}
+\caption{Left: Google Chrome Main Process Sandbox, Right: Google Chrome Render Sandbox}
+\label{fig:ChromeSandboxes}
+\end{figure}
+
+\subsection{Process and Origin Isolation}
+
+We studied the mechanism of Same Origin Policy earlier in this paper. This concept restricts access to data across webpages if they have different origins. While the SOP is generally implemented at a high level, an attacker able to achieve process-level attacks might be able to bypass the Same Origin Policy, and thus accessing resources of a different origin hosted in the same process. To void such scenarios, decided to host each origin in a different process. That way by preventing direct access between these processes, and applying the same-origin policy in the APIs used by these processes for inter-origin communications, the same-origin policy can be enforced at all levels in browsers. The idea here is to ensure a strong site isolation and establish strong security boundaries between web sites \cite{isolationChrome}.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.4\textwidth]{images/IsolationChrome.png}
+\caption{Site isolation in Chrome}
+\label{fig:ChromeIsolation}
+\end{figure}
 
 \section{Universal XSS}
-Describe what Universal XSS is, and explain the consequences it has.
 
-\section{Previous attacks and patterns used to defeat the security mechanisms of web browsers}
-Today web browsers are extremely complicated pieces of software (speak about complex architecture described in the section above). So there are potential vulnerabilities that escaped to the development teams and can be used by malicious users.
+Despite all the security mechanisms used in today's browsers, some people still manage to find vulnerabilities that allow them to bypass the same-origin policy generically. Such vulnerabilities can lead to what is called Universal Cross-site Scripting (UXSS).
+Before studying the Universal Cross Site Scripting attacks that have been carried out against modern web browsers, the next section defines what Cross Site Scripting (XSS) attacks are.
+
+\subsection{\emph{"Classic"} XSS attack}
+
+According to \cite{owaspXSS}, Cross-Site Scripting (XSS) attacks are a type of injection, in which malicious scripts are injected into benign and trusted web sites.
+Since the end user’s browser has no way to know whether the script should be trusted or not, it will execute the script. As a matter of fact, injected code are executed at the attacker’s tar get origin. Thus, the malicious script can access any cookies, session tokens, or other sensitive information retained by the browser and associated with this origin. These scripts can even rewrite the content of the HTML page.
+
+\bigskip
+
+\fbox{\begin{minipage}{22em}
+XSS attacks are injection attacks which exploit vulnerabilities in \textbf{web applications}.
+\end{minipage}}
+
+\bigskip
+
+In order to carry out a cross-site scripting attack, a malicious user exploit a vulnerability found in the victim web application. Such vulnerability can be a lack of user input sanitizing which allow the user to send an inline script that is going to be executed or a regular expression that would enable a malicious website to send malicious \emph{postMessages}  \cite{postMessagesXSS} to a victim website embedded in an \emph{iframe}, for instance. 
 
 \medskip
 
-Speak about the patterns we found in the different attack report we studied (CVE and Broken Browser and so on)
+Since XSS attacks are one of the most popular attacks against web applications, developers are highly encouraged to implement good practices in order to prevent any damage engendered by cross-site scripting attacks. Nevertheless, as SOP is implemented by web browsers, a malicious user able to find a vulnerability in a web browser could bypass every defense of a web application, and thus inject malicious payload to any web page origin.
 
-\section{Our attempts}
-Say that none of our attempts were successful but that we provide them as a record of our work. They might also be extended/adapted to carry out successful attack.
+\subsection{UXSS: A major threat}
+
+Universal XSS (UXSS) is a particular type of Cross-Site Scripting that has the ability to be triggered by exploiting flaws inside browsers, instead of leveraging the vulnerabilities against insecure web sites.
+
+\bigskip
+
+\fbox{\begin{minipage}{22em}
+UXSS attacks exploit vulnerabilities in \textbf{web browsers}.
+\end{minipage}}
+
+\bigskip
+
+In UXSS attacks, client-side vulnerabilities are exploited in a web browser or browser extensions to generate an XSS condition, which allows the malicious code to be executed, bypassing or disabling the security protection mechanisms on the web browser.
 
 \medskip
 
-Speak about what we tried, and why we tried it, and explain what we had in mind when we tried something (so that the reader can understand the attack more easily)
+The consequences of such an attack are pretty critical. In the case of a successful UXSS, the attacker doesn’t just get access to a compromised session on a vulnerable web page, but may get access to any session belonging to web pages currently opened (or cached) by the browser at the time the attack is triggered. UXSS does not need a vulnerable web page in order to trigger, and can penetrate web sessions belonging to secure, well written web pages. Thus, UXSS can create a vulnerability where there isn’t one !
 
 \medskip
 
-Conclude this section by saying that today's browsers are not trivially vulnerable (fortunately), however it is not because we didn't manage to find a vulnerability that no one is going to find one.
+While bypassing all the security mechanisms described above in this paper might appear impossible, 
+the attentive reader may remember that web browsers developers are in a popularity contest, and in order to be on top, need to implement numerous features over short periods of time. Even though security features are highly regarded, usability and integration features are usually easier to test and implement, and thus often done in priority. \\
+Furthermore, UXSS attacks can also be carried out using vulnerabilities in plugins. These make ensuring security of web browsers, an even more difficult task. Since a countless number of extensions are available to users, they all constitute a potential security hole exploitable by attackers.
+
+
+\section{Brave}
+
+Now that we have defined what UXSS was and studied the consequences of such attacks, we now need to define the environment we used to carry out our project. \\
+In order to conduct our study, we decided to choose the browser Brave\footnote{https://brave.com} which was first announced in January 2016. This free and open-source web browser is based on the Chromium\footnote{https://www.chromium.org} web browser. Brave is said to block website trackers, remove intrusive Internet advertisements, and also claims to improve online privacy by sharing fewer data with advertising customers. One specificity of Brave, is that the beta version is testing a new system to reward publishers, called Brave Payments. According to \cite{braveWikipedia}, this system allows users to optionally set a budget that they are willing to donate to the websites they visit. Brave then calculates the percentage assigned to each website through an algorithm and the publisher receives a transfer in bitcoins\footnote{https://bitcoin.org/en/}.
+
+\medskip
+
+Our willingness to carry out our project on Brave was due to the fact that this browser is pretty new (only one year) and still in Beta version. Moreover, the new features included into this browser and the small amount of reported vulnerabilities (see: figure \ref{fig:BraveReportedVulnerabilities}) opened the door for more vulnerabilities and made it a good candidate for our project.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.47\textwidth]{images/BraveReportedVulnerabilities.png}
+\caption{Brave Reported Vulnerabilities (top) compared to Google Chrome Reported Vulnerabilities (bottom) according to cvedetails.com}
+\label{fig:BraveReportedVulnerabilities}
+\end{figure}
+
+\subsection{Environment specifications and software version}
+
+Our project has been performed on a MacBook Air running macOS Sierra version 10.12.6, using the Brave version described in figure \ref{fig:BraveVersion}.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.4\textwidth]{images/BraveVersion.png}
+\caption{Brave version used during our project}
+\label{fig:BraveVersion}
+\end{figure}
+
+
+\subsection{Widening to other browsers}
+\label{otherBrowsers}
+
+Despite the fact that we first focused on Brave during this term project, we then decided to broaden our study to the other browsers listed below:
+
+\begin{itemize}
+\item \textbf{Whale} browser by Naver\footnote{http://whale.naver.com/en/}: version 1.0.37.16 (64-bit), released in October 23, 2017
+\item \textbf{Firefox Quantum} by Mozilla\footnote{https://www.mozilla.org/en-US/firefox/}: Version 57.0 (64 bits), released in November 14, 2017
+\item \textbf{Safari} by Apple: Version 10.1.2
+\end{itemize}
+
+
+\section{Our study}
+
+\subsection{Scope of our study}
+
+In the course of the last two months we investigated the causes of Universal Cross-Site Scripting in modern web browsers. As a consequence, we analyzed and studied the reported vulnerabilities that have been discovered on many browsers, in the course of the last years. 
+As a wide panel of platforms are being used in our connected devices nowadays, we decided to eliminate from our study all vulnerabilities reported on mobile platforms such as iOS\footnote{https://en.wikipedia.org/wiki/IOS} or Android\footnote{https://en.wikipedia.org/wiki/Android\_(operating\_system)}. Such decision was due to the fact that security mechanisms are not exactly the same in mobile platforms than in laptop operating systems.
+
+\medskip
+
+In this section of the paper, we try to summarize the attacks we studied before. Then we seek to extract patterns that emerge from the attack scenario we studied. We conclude this passage by listing some of our attempts to bypass the security mechanisms of web browsers.
+
+\subsection{Common Vulnerabilities and Exposures (CVE)}
+
+In the previous part of the paper we explained how difficult securing a web browser was. Moreover, browser developers have to release new features in small amount of time to stay ahead of the competition. This makes testing an arduous task. Ensuring a full coverage of the software is almost impossible.
+
+\medskip
+
+In order to prevent attackers from exploiting potential flaws in web browsers and threaten users, companies decided to set up \emph{bug bounty programs}\footnote{https://en.wikipedia.org/wiki/Bug\_bounty\_program}. Such scheme consist giving \emph{"bug hunters"} a financial compensation and a high recognition for the bugs they report. That way, developers cooperate with part of the community and are able to discover and resolve bugs before the general public is aware of them. This helps prevent incidents of widespread abuse. \\
+A majority, not to say all, of reported vulnerabilities have been classified in the Common Vulnerabilities and Exposures system which provides a reference-method for publicly known information-security vulnerabilities and exposures. \\
+
+Most of the vulnerabilities we studied during this two-month research work are actually extracted from the CVE system. \\
+
+In total we analyzed a set of nearly 80 vulnerabilities divided up as follow:
+
+\begin{itemize}
+\item 25 XSS vulnerabilities reported for Mozilla Firefox from 2012 to 2016
+\item 30 XSS vulnerabilities reported for Google Chrome from 2009 to 2017
+\item 7 XSS vulnerabilities reported for Internet Explorer and Edge from 2008 to 2016
+\item 16 XSS vulnerabilities reported for Opera from 2008 to 2013
+\item 1 XSS vulnerability reported for Brave in 2017
+\end{itemize}
+
+This set of vulnerabilities reported on 5 browsers in a time frame of 8 years, coupled with the study of disclosed vulnerabilities on web browser plugins, constituted the kernel upon which we based our study. The examination of these reported vulnerabilities helped us understand the different attack vectors used against web browsers. In addition, it helped us understand the security mechanisms that have incrementally been implemented in web browsers in response of these successive attacks.
+
+\medskip
+
+Further to the attack reports properly speaking, we took the time to read the discussions the development teams had on the vulnerability report, during the development of the patches. Not only following the developer's reasoning steps was very interesting, but also it made us realize the strict deadlines also referred to as \emph{"time-to-release"} the teams have to meet.
+
+
+\subsection{Originality of attack scenarios}
+
+The inspection of vulnerabilities revealed an astounding wide range of attack scenarios, all more originals than the others. Such a variety of vulnerabilities is undoubtedly due to the complexity of web browsers and the large amount of possible exploitable flaws. From Cross Origin Drag and Drop \cite{CVE-2013-2849}, to SOP bypass using Reading mode \cite{edgeReadingModeUXSS}, UXSS from local MHTML\footnote{https://en.wikipedia.org/wiki/MHTML} files \cite{CVE-2014-1747}, or even exploit of vulnerabilities in plugins \cite{uxssPDF} \cite{uxssKeybase}, attackers are always more and more originals and manage to find breaches where to execute malicious scripts.
+
+\medskip
+
+Nevertheless, although we observed a huge variety of attacks, our analysis unveiled some sort of patterns common to multiple successful attacks against web browsers.
+
+\subsection{Patterns of UXSS attacks}
+
+An interesting part of our work has consisted in trying to find patterns in UXSS attacks. Despite the incredible diversity we observed in the CVE entries we examined, some vulnerabilities appeared to be exploited more regularly than others. \\
+The following part of this section aims to list the popular attack vectors extracted from our study.
+
+\medskip
+
+\subsubsection*{\textbf{Extensions}}
+Browser extensions are plug-ins that extend the features provided by a web browser. Extensions can be downloaded by users and integrated to their browsers to improve the user interface, the security or for blocking advertisements for instance. Such pieces of software have the right to access everything in the browser. This is the reason why, one should be really careful when it comes to use extensions, since any malicious could bypass the SOP and access sensitive data without efforts. To protect their users, many browsers have online stores that allow users to find extensions that have previously been verified. At this point 3 scenarios arise:
+\begin{itemize}
+\item The user installs a malicious extension from a malicious store: This exposes the user to dramatic attacks and data leaks. The extension developer is able to bypass the browser security mechanisms and access user's private data.
+\item The user installs a malicious extension from a secure store: This case is less likely than the first case. Companies such as Google deployed mechanisms to detect malicious extensions and prevent them from being published on their store \cite{extensionsGoogle}. Nonetheless, in the case where a malicious extension manages to bypass all the checks, the consequences are the same as in the previous case. The user's private pieces of information are totally exposed to the attacker.
+\item The user installs an official\footnote{By official we mean "non-malicious"} extension from a secure store. This case is the most interesting in our case. In such circumstances the user should be free from risks. However, this is not the case. If the attacker could not manage to find any vulnerability in the browser before, he can now try to find one in the extension. By using this "non-malicious" extension, the user gives the attacker another chance to attack him. Such weaknesses in extensions have been reported in Adobe Reader\cite{adobeExtensionUXSS}, or Keybase \cite{uxssKeybase} for instance. Finally, vulnerabilities can also be found in the part of the browser responsible for integrating the extensions \cite{CVE-2015-7187} \cite{CVE-2017-5020}.
+
+\end{itemize}
+
+\medskip
+
+\subsubsection*{\textbf{Redirects}}
+
+HTTP redirects are a special kind of HTTP response used for numerous goals such as temporary redirection while site maintenance is ongoing for instance. While this mechanism is, in general, implemented server side, web developers who do not have access over the server, can implement it in their HTML page (HTML redirections) or in their Javascript client (Javascript redirections). \\
+Interestingly enough, carefully timed reloads and redirects can enable an attacker to bypass the SOP \cite{CVE-2015-0072}\footnote{In the PoC (https://blog.innerht.ml/ie-uxss/) of CVE-2015-0072, the author explains that JavaScript's single-threaded nature is actually used to freeze the browser with an alert box to actually manage to bypass the SOP}, \cite{CVE-2010-4045}, \cite{CVE-2009-3013}.
+
+\medskip
+
+\subsubsection*{\textbf{Diversity of URIs}}
+
+In order to ensure good performances, and/or in order to support some features, web browsers come with numerous URIs. The \emph{data} URI scheme, for instance, is a uniform resource identifier scheme that provides a way to include data in-line in web pages as if they were external resources. Moreover, the \emph{feed} URI scheme is a URI scheme designed to facilitate subscription to web feeds; and the \emph{about} URI is an internal URI scheme implemented in various Web browsers used to reveal internal state and built-in functions. Such a variety of URIs has been widely used by attackers to carry out their attacks. Domainless \emph{about:blank} URIs have been used to bypass the SOP in \cite{domainlessAboutBlank}, while \emph{feed:} and \emph{data:} URIs have been used to execute malicious javascript code \cite{CVE-2012-1966} \cite{CVE-2012-1965} \cite{CVE-2011-2609} \cite{CVE-2012-6463} \cite{CVE-2010-2665}.
+
+\medskip
+
+\subsubsection*{\textbf{XSS Auditor}}
+
+In order to avoid Cross-site Scripting attacks many web browsers implement a mechanism (XSS Auditor) using the \emph{X-XSS-Protection} HTTP header that is used to stop pages from loading when browsers detect reflected XSS attacks. In the case where the header is set to \emph{X-XSS-Protection: 1; mode=block}, once the auditor is triggered the response is blocked and a blank page is shown to the user.\footnote{https://www.virtuesecurity.com/blog/understanding-xss-auditor/}. This blocking mode in the XSS Auditor has also been an fairly "popular" attack vector used by attackers. Some scenarios exploited the fact that a page was blocked or not, to infer some secret information on a victim's page or to proceed to a document.referrer leakage \cite{CVE-2017-5045} \cite{CVE-2013-0909} \cite{CVE-2013-2848}
+
+\medskip
+
+\subsubsection*{\textbf{Cross Origin Drag and Drop/Copy and Paste}}
+
+In HTML5, Drag and Drop has been included as part of the standard. Thus, any element can be set as "draggable", and custom events can be defined by the web developer to refine the behavior of his page during a drag and drop from the user. However, such a feature can be used in a malicious fashion. Attackers actually found scenarios where cross Drag and Drop were possible and thus lead to XSS conditions \cite{CVE-2016-5226} \cite{CVE-2013-2849} \cite{CVE-2012-0455}.
+
+\medskip
+
+\subsubsection*{\textbf{Malicious attributes values for DOM elements}}
+
+The last method we observed, was frequently used to generate XSS conditions in web browsers was to confuse the browser with malicious names for DOM elements and/or malicious values for DOM elements' attributes. \\
+In such case, the web browser's behavior could be changed and some security mechanisms could be altered. \\
+Attacks that used this technique consisted in redefining global variable (variable clobbering\footnote{https://en.wikipedia.org/wiki/Clobbering}) \cite{frameBustingLocationClubbered}, escaping the browser XSS filters by writing some javascript payloads in the value of some DOM elements \cite{CVE-2013-2849}, or just naming an attribute with the name of a global variable \cite{CVE-2012-4209} \cite{CVE-2012-3994} \cite{CVE-2012-4194}
+
+\bigskip
+
+In addition of our observations during this research, \cite{uxssJSLeaks} provides an insighful analysis of UXSS vulnerabilities of the family of \emph{cross-origin JavaScript capability leaks}. In this paper, the authors carried out a study on WebKit\footnote{https://en.wikipedia.org/wiki/WebKit} and tried to detect and exploit when the browser leaked a JavaScript pointer from one security origin to another. They showed that the origins of such vulnerabilities came from the fact that the Document Object Model (DOM) and the JavaScript engine actually enforced the same-origin policy using two different security models: Access Control and Object-Capabilities. While Access Control, used by the DOM, prevents one website from accessing resources allocated to another website, the JavaScript engine enforces the same-origin policy using an object-capability discipline that prevents one website from obtaining JavaScript pointers to sensitive objects that belong to a foreign security origin. In their research they showed that is the browser leaked a JavaScript pointer from one security origin to another, this would lead to an exploitable vulnerability to bypass the SOP. 
+
+\medskip
+
+This study can actually be put into relation with the above section about \emph{Malicious attributes values for DOM elements}. Indeed, in this part we spoke about variable clobbering to prevent some security mechanisms to be triggered, such as frame busting scripts for instance. If, on the other hand, the attacker manages to overwrite some methods from a global Javascript object such as \emph{window} for instance, it would not be foolish to assume that, if invoked inside a victim iframe, this method would execute on behalf of the victim's origin. \\
+
+Thus, it appears that, is some circumstances, and in some browsers, global variables could be seen as \emph{bridges} between origins, and used by malicious users to attack the web browser.
+
+
+\subsection{Errors made by developers}
+
+After studying the reported vulnerabilities found on today's most famous web browsers, and after extracting some common attack vectors - or patterns - used to attack these pieces of software, let's try to figure out some mistakes made from web browser developers.
+
+\medskip
+
+While some attacks exploit vulnerabilities that might not be easily predictable by the browser developers, some attacks could, however, be "easily" avoided. Some common mistakes made by browser developers could be:
+
+\begin{itemize}
+\item Lack of sanitization of user input: Could lead to script injection in URIs for instance.
+\item Bad design of regular expression: Could allow a user to bypass some security checks. If the regular expression is case-sensitive, a user could use upper and lower case letters to short-circuit any checks for instance \cite{CVE-2012-0455}
+\item Divergence with specifications: Sometimes the specifications might add a lot of constraints on the developers. It might be tempting to "adapt" them. Nevertheless, such circumstances could create odd situations that could benefit an attacker \cite{CVE-2012-3985}
+\item Confusion/Negligence: As browsers support a large panel of extensions, some situations appear when it is difficult to know the party responsible for the implementation of some security mechanisms. In case where an ambiguity happens, some security checks might be missing, allowing a malicious user to attack the software.
+\item Inattention: By being focused on developing new features, web browser developers can mistakenly introduce regressions, and vulnerabilities that have already been patched. Thus, an attacker might be able to carry out an old attack on the browser.
+\end{itemize}
+
+\medskip
+
+\underline{\emph{Note:}} This list of potentials errors, is based on the messages exchanged on the bug report pages. 
+
+\subsection{Our attempts}
+
+In addition to studying the payloads used against modern web browsers, we tried to adapt some of the attacks we observed against the browser Brave\footnote{Note that all our attacks were finally widened to the web browsers listed in section \ref{otherBrowsers}. Since all browsers are different, one might have been vulnerable for an attack while others might have not.} in the hope to unveil a UXSS vulnerability. The following section presents our attempts.
+
+\medskip
+
+\underline{\emph{Note:}} For our attacks, we focused on crafting malicious html pages to render, or malicious payloads to inject in the user interface of the browser. Some more refined and advanced attacks, such as some fuzzing  against the Javascript interpreter for instance \cite{microsoftFuzzingOnv8}, could have been achieved, but they were out of the scope of our project.
+
+\subsubsection*{Executing malicious code in the PDF renderer plugin}
+
+As we mentioned earlier, vulnerabilities in plugins can be used in order to bypass some security mechanisms in web browsers. Our first attempt to find UXSS vulnerabilities in \emph{Brave} consisted trying to exploit plugins. We tried to reproduce and adapt the known vulnerability in Adobe PDF Reader \cite{uxssPDF} on Brave, which uses PDF Viewer (with the version 1.9.457). This attempt was, without any surprise, not successful, but it gave us the taste of what a malicious attacker could do to find UXSS vulnerabilities.
+
+\begin{lstlisting}[caption=The pattern we tried to use to execute malicious javascript using the PDF viewer]
+http://www.axmag.com/download/pdfurl-guide.pdf#<maliciousPaylaod>
+\end{lstlisting}
+
+\medskip
+
+Since \emph{Brave} proposes a limited number of extensions, we were extremely restricted. After a couple of research on the supported extensions, and after arguing in finding vulnerabilities, we decided to stop spending a lot of time on extensions. Thus, we moved on trying to attack the browser directly.
+
+\subsubsection*{Variables clobbering}
+
+The next step of our research to find UXSS vulnerabilities consisted in trying to redefine global javascript variables. Indeed, if we managed to redefine a javascript variable such as \emph{window} or \emph{location} for instance, we could be able to either alter the security of the browser (some security checks might fail \cite{frameBustingLocationClubbered}), or execute our own javascript code in the context of the victim's page \cite{uxssJSLeaks}. In fact, if we managed to redefine the method, of the \emph{window} object for instance, that is called in a victim page embedded in an \emph{iframe}, our malicious code would be executed on behalf of the victim page. 
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.4\textwidth]{images/clobberingAttempt.png}
+\caption{The browsers reject our attempt to clobber global variables}
+\label{fig:clobbering}
+\end{figure}
+
+Figure \ref{fig:clobbering} shows an attempt to redefine the variable \emph{window}. This attempt is not successful. The variable \emph{window} that we create does not shadow the global variable \emph{window}. As a consequence, when we call \emph{window}, our variable is not returned. Moreover, we see on this figure that we cannot redefine the property \emph{location} of the object \emph{window}. 
+
+\medskip
+
+We carried out other attempts, with different payloads, but none of them seemed to unveil a vulnerability.
+
+\subsubsection*{Exploiting the \emph{about:} URI}
+
+In order to support diverse features and in order to manage the settings of the browser, developers use a large panel of different URIs. Among them, the \emph{about} URI is used to reveal internal state and built-in functions. Here, our idea was to use this URI to bypass SOP. Our first objective was to figure out how browsers handled such URIs. 
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.4\textwidth]{images/AboutBlankSafari.png}
+\caption{The origin of \emph{about:blank} in Safari}
+\label{fig:aboutBlankSafari}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.4\textwidth]{images/AboutBlankBrave.png}
+\caption{The origin of \emph{about:blank} in Brave}
+\label{fig:aboutBlankBrave}
+\end{figure}
+
+As we can observe on figures \ref{fig:aboutBlankSafari} and \ref{fig:aboutBlankBrave}, in the case of Safari, \emph{about:blank} has not origin. However, in the case of Brave, it has an origin set to some sort of google chrome origin. \\
+
+Further to this result and some additional research, we figured out that \emph{about:blank} inherit the same security parameters as its caller.
+
+\medskip
+
+In the case of Safari, we saw that when \emph{about:blank} was opened from the "home page" of the browser, we managed to get a \emph{null} origin. Thus, we tried to use it to see how to browser behaved when a script from a \emph{null} origin tried to access resources of a web page embedded in an iframe. In other words, our goal here was to see whether Safari did strict origin checks or not. To do so, we embedded \emph{bing.com} into an iframe, and tried to execute malicious code in its context.\\
+
+Unfortunately, even our malicious scripts with a \emph{null} origin couldn't execute in the context of \emph{bing.com}. Nevertheless, we didn't stop here. We tried to define malicious events to see whether they could be executed in the context of our victim \emph{bing.com} web page.
+
+\begin{lstlisting}[caption=Our attempt to define malicious event on an embbeded victim web page, label={listing:maliciousEvent}]
+// Get the victim iframe
+var frame = document.getElementsByTagName('iframe')[0]
+
+// Define a malicious event 
+frame.onmouseover = function() {var script = document.createElement('script'); script.type = 'text/javascript'; var code = 'alert(document.cookie);'; script.appendChild(document.createTextNode(code)); document.body.appendChild(script);}
+\end{lstlisting}
+
+The idea here was to bind an event to an embedded website in an iframe, and to execute the function of the event every time it happens. For our tests we used the \emph{onmouseover} event, since this event is extremely likely to be triggered by the user. \\
+Unfortunately here, the script executes in the context of the parent origin. Thus, we could not access sensitive data from the iframe.
+
+
+\subsubsection*{Bookmarking malicious URIs and importing malicious bookmarks}
+
+In our "quest" to UXSS vulnerabilities, we tried to challenge all the features we thought about in the browsers. As all browsers provide users with a mean to bookmark the web pages of their choice, we tried to see whether we could find a vulnerability in this feature. 
+
+\medskip
+
+In general, users are provided with a lot of possibilities to manage their bookmarks. They can simply add a page, they can order them and classify them into folders, and they can even export and import them (see figure \ref{fig:bookmarkPage}). Knowing this, we were left with many options to find a weakness in the browser. \\
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.4\textwidth]{images/bookmarkPage.png}
+\caption{The bookmark page of Brave}
+\label{fig:bookmarkPage}
+\end{figure}
+
+
+We first tried to bookmark websites to which we added malicious scripts, as shown on \ref{fig:maliciousBookmark}. We then tried to enter malicious code in the different fields of the bookmark page (figure \ref{fig:bookmarkPage}). Our idea here was to see if we could be able to run malicious scripts in the context of the browser itself. Indeed, in the case where user input is not correctly handled (not correctly sanitized), the attacker might be able to run javascript with the privileges of the browser.
+
+\medskip
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.4\textwidth]{images/maliciousBookmark.png}
+\caption{A malicious bookmark which points to http://example.com and to which we added malicious javascript in the URL}
+\label{fig:maliciousBookmark}
+\end{figure}
+
+Our attempts to name bookrmarks folders with javascript code, input javascript in the search bar, and append scripts to URLs before bookmarking them were, once again, not successful.
+
+
+\subsubsection*{Bypassing CORS} 
+
+In our attempt to find a way to bypass the CORS\footnote{Cross-Origin Resources Sharing. See section \label{CORSSection}} mechanisms, we encountered a lot of difficulties. Thus, we tried to gradually improve our attack in order to finally find an exploitable vulnerability. \\
+The idea we came up with here was to try to set a malicious header in the request, in order to confuse the victim's web server. Indeed, we thought here that if we were able to set \emph{User-Agent}, \emph{Referer} or \emph{Origin} headers, the victim's web server might be fooled, and might send us the web page regardless of our malicious origin. However, it turned out that the browser refused to let us set such HTTP Headers in our requests. Further to this observation, we tried to perform an attack similar to HTTP Response Splitting\footnote{https://www.owasp.org/index.php/HTTP\_Response\_Splitting}. What if we could set malicious values to headers ? In fact, if we could find a way to change the \emph{User-Agent} indirectly by setting another HTTP header, we would be able to bypass the browser security mechanisms.
+
+\medskip
+
+\emph{\underline{Test 1:} Bypassing CORS with XMLHTTPRequest} \\
+\begin{lstlisting}[caption=Trying to set malicious headers with XMLHTTPRequest]
+var xhr = new XMLHttpRequest();
+xhr.open("GET", "https://www.google.co.kr", true);
+      
+// Trying to set a malicious header in our request
+var maliciousHeader = "accept-language";
+xhr.setRequestHeader(maliciousHeader, "value\%0AUser-Agent: curl/7.54.0");
+      
+xhr.onreadystatechange = function () {
+    if (xhr.readyState == XMLHttpRequest.DONE) {
+        if (xhr.status != 200 && xhr.status != 206) {
+            console.log("Oops ! Something went wrong :( (Status: " + xhr.status + ", Response: " + xhr.responseText + ")");
+        } else {
+            document.getElementById("tFrameWindow").innerHTML = xhr.responseText;
+        }
+        return;
+    }
+};
+xhr.send();
+\end{lstlisting}
+
+The idea in the code represented above was to use introduce a line break in the header value (\%0A is the URL encoding value of the line break\footnote{We used the URL encoding line break since headers name and values have to be composed of ASCII characters. Thus, we couldn't use \textbackslash n nor \textbackslash r for instance}) in order to create a malicious \emph{User-Agent} header. That way we would be able to fetch the victim's page. Unfortunately as shown on figure \ref{fig:maliciousHeadersValues}, the result was not the one we expected.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.47\textwidth]{images/maliciousHeadersValues.png}
+\caption{The resulting request headers from our attempt to fake the User-Agent}
+\label{fig:maliciousHeadersValues}
+\end{figure}
+
+\medskip
+
+In the attempt shown above, we tried to set the value of the http header \emph{accept-language} which is a standard HTTP header. However, we know that the \emph{Access-Control-Request-Headers} HTTP header is set in the preflight\footnote{https://developer.mozilla.org/en-US/docs/Glossary/preflight\_request} request when one tries to fetch a cross origin resource. Thus, instead of setting a maliciously crafted header value, we tried to set a malicious custom header name that would be then used as a value for the \emph{Access-Control-Request-Headers} HTTP header (figure \ref{fig:maliciousHeadersNames})
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.47\textwidth]{images/maliciousHeadersNames.png}
+\caption{The result of our attempt to set malicious custom header names}
+\label{fig:maliciousHeadersNames}
+\end{figure}
+
+
+As we can see on figure \ref{fig:maliciousHeadersNames}, our attempt to set malicious headers was not successful. It seems that the specifications\footnote{http://tools.ietf.org/html/rfc2616\#section-4.2} have been well implemented in the browser. Thus, no vulnerability seems to be usable here to attack the software. \\
+
+Note that many more headers and names values have been tested to try to bypass the security checks of the browser. Moreover, we also tested the attacks aforementioned using the \emph{Fetch} API\footnote{https://developer.mozilla.org/en-US/docs/Web/API/Fetch\_API/Using\_Fetch} with \emph{cors} and \emph{no-cors} modes, however, the results were the same.
+
+\medskip
+
+\emph{\underline{Test 2:} Bypassing CORS with a Web Worker}
+
+After trying to bypass cross origin resource sharing security mechanisms using \emph{XMLHTTPRequest} and \emph{Fetch}, and after studying the CVE-2013-1714, we decided to learn more about web workers and see whether we could use them to fetch a cross origin resource. According to \cite{webWorkers}, web workers are simple mean for web content to run scripts in background threads. The worker thread can perform tasks without interfering with the user interface. \\
+Thus we tried to see whether a request initiated from a web worker was ruled by the same constraints as "classical" requests, and see whether we could use these workers to attack the browser. The principle of our attack consisted in delegating the \emph{XMLHTTPRequest} to the worker thread a see whether we could fetch a cross origin resource\footnote{Our code for this attack scenario can be found at: https://github.com/KAIST-IS593-WEBSEC/UXSS-Vulnerabilities-Project/blob/develop-report/playground/corsBypassingWithWebWorkers.html}. As shown of figure \ref{fig:corsWithWebWorkers} the request was initiated by our worker (which tried to set malicious headers), but unfortunately the result was the same as the previous attempts presented above. 
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.47\textwidth]{images/corsWithWebWorkers.png}
+\caption{The request initiated by our web worker (blob:null/a036ed6f-601c-433a-994c-ed0e43c28498:26)}
+\label{fig:corsWithWebWorkers}
+\end{figure}
+
+
+\medskip
+
+\emph{\underline{Test 3:} Bypassing CORS with a Web Worker and a Service Worker}
+
+Finally, after all our attempts and some further research, we tried to use a service worker as a proxy of our requests. Such a service worker would intercept all our requests and would modify them in a malicious fashion in order to bypass the CORS security mechanisms. \\
+Indeed according to Mozilla's web page, service workers essentially act as proxy servers that sit between web applications, and the browser and network (see figures \ref{fig:corsWithServiceWorkers} and \ref{fig:serviceAndWebWorker}). They are intended to enable the creation of effective offline experiences, intercepting network requests and taking appropriate action based on whether the network is available and updated assets reside on the server. \\
+With this in mind, we tried in this scenario to implement a service worker that would intercept and unmarshal all the requests, and modify them with malicious information (fake/malicious headers for instance) before marshaling them again and executing them.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.47\textwidth]{images/corsWithServiceWorkers.png}
+\caption{The service worker intercepting and replaying the worker request as it is}
+\label{fig:corsWithServiceWorkers}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.47\textwidth]{images/serviceAndWebWorker.png}
+\caption{Our page with the service and the web worker}
+\label{fig:serviceAndWebWorker}
+\end{figure}
+
+In order to carry out this attack, we needed to deploy our files on a web server which served pages for the domain \emph{localhost} (with port 8888 in our case). The code of the service worker has been written in the \emph{sw.js} file which is partially presented in the listing \ref{listing:serviceWorker}
+
+
+\begin{lstlisting}[caption=Trying to set malicious headers with a "malicious" service worker, label={listing:serviceWorker}]
+self.addEventListener('fetch', function(event) {
+    event.respondWith(
+        modifyRequest(event.request)
+    );
+});
+
+function modifyRequest(request) {
+    serialize(request).then(function(serialized) {
+        deserialize(serialized).then(function(request) {
+            // Send the malicious/modified request
+            return fetch(request);
+        });
+    });
+}
+
+function serialize(request) {
+    // Create our "own" headers
+    var headers = {};
+    for (var entry of request.headers.entries()) {
+        headers[entry[0]] = entry[1];
+        
+        // Add to existing headers, our malicious data
+        headers["User-Agent"] = "curl";
+        headers["Origin"] = "google.com";
+        headers["TestHeader"] = "testValue";
+    }
+    var serialized = {
+        url: request.url,
+        headers: headers, // Add our headers to the request that will be sent to the web server
+        method: request.method,
+        mode: request.mode,
+        credentials: request.credentials,
+        cache: request.cache,
+        redirect: request.redirect,
+        referrer: request.referrer
+    };  
+    if (request.method !== 'GET' && request.method !== 'HEAD') {
+        return request.clone().text().then(function(body) {
+            serialized.body = body;
+            return Promise.resolve(serialized);
+        });
+    }
+    return Promise.resolve(serialized);
+}
+
+function deserialize(data) {
+    return Promise.resolve(new Request(data.url, data));
+}
+\end{lstlisting}
+
+In the code above (listing \ref{listing:serviceWorker})\footnote{Our code for this attempt is derived from the answers provided in: https://stackoverflow.com/questions/43813770/how-to-intercept-all-http-requests-including-form-submits}, we tried to execute requests from isolated threads in order to see how to browser handled such cases in term of SOP. The goal here was to see how these workers were considered, whether they had no origin, and if so whether we could use it to bypass the security mechanisms. In this case, we can see on figure \ref{fig:serviceAndWebWorker} that the service worker's origin is also \emph{localhost:8888}. However, despite this, we wanted to see how the browser reacted when we tried to actually modify the content of the request in order to set malicious headers to trick the victim web server. If, despite the origin associated with our service worker, the browser allowed us to modify the requests and replay them, then we would have a full bypass of the CORS security mechanism. This would lead to dramatic vulnerabilities. Indeed, if one manages to bypass the CORS mechanism, this means two things:
+
+\begin{itemize}
+\item Our request would be executed, and with a good setting of headers, we should be able to fool the victim's web server such that it sends us the web page we want to embed in the HTTP response.
+\item Upon the reception of the response, we should be able to use our service worker to capture the response first, and modify it by injecting malicious code into it, before it is actually forwarded to the renderer and displayed to the user. At this point, the attacker has an immense power over the victim since he can inject malicious code in the rendered page that will execute on the context of the victim web page's origin, leading to a full bypass of SOP.
+\end{itemize}
+
+\medskip
+
+This being said, we tried to carry our the attack scenario described above, using the code listed in \ref{listing:serviceWorker}. Unfortunately, after numerous attempts, we couldn't manage to have this attack work as expected. 
+
+
+\subsection{Results and difficulties encountered}
+
+In the previous section, we presented our attempts to find UXSS vulnerabilities in the browser Brave\footnote{Note that the entire list of our attempts can be found on the Github page of our project: https://github.com/KAIST-IS593-WEBSEC/UXSS-Vulnerabilities-Project/tree/master}. Considering that all of these experiments have proven fruitless this shows that today's web browsers do not seem to be trivially vulnerable. Nonetheless, our failure to find flaws on the web browsers does not mean that they are totally secure. Some vulnerabilities might exists and might be found with further research. 
+
+\medskip
+
+Looking back at the "project proposal" we did a few months ago, the results are pretty different from what was expected. This is due to multiple factors:
+
+\begin{itemize}
+\item The diversity of vulnerabilities, and the astounding number of different payloads we found: Such diversity made it very difficult for us (not to say impossible) to build a tool to build potential UXSS payloads. Indeed, as we had to occasion to show in this paper, a web browser is an extremely complex piece of software which can be attacked in a countless number of ways.
+\item Our "lack" of knowledge of web technologies (and javascript) at the beginning of the project: We decided such a challenging project in order to learn about modern browsers and the security mechanisms that protect us when we browse the web every day. From this point of view, the result is extremely positive. We read a lot, we tested a lot, and we learnt a lot about web security along this project. Nevertheless, this initial poverty of knowledge slowed our progression a lot. Before trying to find vulnerabilities we had to read a lot and learn a lot about browsers, in order to have a sufficient basis of knowledge to finally come up with our own payloads and ideas. A seasoned web security engineer would have had a lot more knowledge about the latest features and latest tools that could be explored to find a flaw in the browser. As an example, we learnt about \emph{web workers} and \emph{service workers} at the very end of the project. While we had the chance to explore this possibility in our project, we may still don't know plenty of features of web browsers that may lead to UXSS vulnerabilities.
+\item The diversity and the complexity of web browsers: This point echoes the first ideas of this list. Indeed, today web browsers are extremely complex. Thus trying to attack them without prior knowledge is a pretty tough endeavor. Once again the purpose of this project was to learn about browsers, but having sufficient prior knowledge about modern browsers implementation and architecture would undoubtedly diminish our workload.
+\item
+\end{itemize}
+
+\medskip
+
+Despite the difficulties encountered, the heavy work we furnished and the absence of vulnerabilities found, we believe that this project has been extremely interesting. From personal points of view, we learnt a lot. From web browser's architecture, to web security and web programming, this term project exposed us to almost all the notions we studied in the IS593 course. This was also the occasion to be challenged by a "real life" attack scenario, and the occasion to read about previous attacks. The diversity of attacks we studied coupled with the study case taught in IS593 during the term, gave us a taste of what was possible and some lessons about how to attack a system. Being students in information security, such knowledge is definitely extremely valuable and will, without any doubt, play a role when we will have to conceive secure systems by ourselves.
+
+\medskip
+
+Moreover, from a broader perspective, we noticed that the number of resources about Universal Cross-Site Scripting was pretty limited on the web. We found numerous papers about web browsers security mechanisms, however, the number of papers studying ways to bypass these mechanisms can be counted on one hand. As we mentioned earlier in this paper, most of UXSS vulnerabilities are reported as part of \emph{Bug Bounty Programs}, and if some of them are reported by researcher teams, a majority of such vulnerabilities are reported by passionate people all around the world. That is the reason why, our project could be considered as an invitation to study UXSS in a more academic way. Despite the lack of tangible results, this work could be used as a basis to build further research upon.
+
 
 \section{Conclusion}
-Despite the fact that we didn't manage to find any vulnerability on the web browsers, some persons might be able to find some. It is important to remember that browsers act as a last rampart against malicious users/attackers. As many browsers are on the market today, the teams developing them are in a perpetual race against each other. The best browser is the most secure one with the most features to provide their users. However, as features are added to a browser, it is paramount to keep in mind the aspect of security.
 
-\section{IDEAS for the paper}
+In conclusion of this paper, we saw that today, many web browsers coexists. Thus, we said that developers maintaining these pieces of software needed to develop new numerous features in small amount of time, in order for their browser to be the must appreciated and the most used. 
+
+\medskip
+
+Today, the most used web browser is Google Chrome, and many companies are pushing forward with fast development pace to catch up with Chrome. While most of these browsers are free, making sure that a high number of internet users use their browser is a fundamental matter for companies. Indeed, browsers help big companies shaping the way people browse the web, and can prove to have tremendous impact for these firms.
+
+\medskip
+
+Since we use the internet to achieve sensitive operations, on a day to day basis, web browsers play a crucial role in keeping the web safe. They are the door that protect us from the wild and insecure world that is the web. As a consequence, these pieces of software need to respect the specifications defined by the W3C, and implement suitable security mechanisms. However, we saw that a tradeoff had to be found between developing features dedicated to improve user's use of the browser and security. Such compromise, coupled with the high complexity of web browsers design open a breach for attackers. The latter can find vulnerabilities in browsers, leading to what we called Universal Cross-Site Scripting (UXSS). Moreover, we showed how critical such vulnerabilities could be. In fact, UXSS flaws would provide an attacker to bypass security mechanisms of the browser, and thus access users' sensitive data despite all protection mechanisms implemented by web application developers. \\
+Finding ways to mitigate such vulnerabilities is thus paramount to keep the web safe. Nonetheless, we showed that protecting a complex software like a browser was extremely hard. That is the reason why companies created \emph{Bug Bounty Programs} which aim to remunerate people who report found vulnerabilities. The reported vulnerabilities are then stored in a database called Common Vulnerabilities and Exposures (CVE) and maintained by the MISTRE. This database acts as a record of vulnerabilities, and was the basis we carried out our project upon. The analysis of this database of vulnerability provided us with a myriad of pieces of information, and echoed the different notions studied in IS593 this term. From clickjacking, XSS, CSRF, UI timing attacks, or even browser extensions vulnerabilities, everything has been used to defeat browsers mechanisms. This incredible diversity of browsers and the astounding number of attack scenarios made the development of a "malicious payload generator" tool extremely complex, which is why we didn't manage to deliver it.
+
+\medskip
+
+After studying number of reported vulnerabilities in the CVE, we proposed to extract recurrent patterns used in attacks against different browsers. Furthermore, based on the reading of the core development teams' messages on the bug reports, we worked on pinpointing some common mistakes done by developers that led to vulnerabilities in their software. The next step of our work consisted in crafting our own payloads and finding some potentially dangerous attack scenarios to find UXSS vulnerabilities in the Brave browser. At this point, even after a couple of weeks of studying CVE records and reading online sources, our knowledge basis restrained us and slowed us down. None of the attacks we attempted worked, and we are persuaded that we just scratched the surface of what was possible. Further these deceiving results, the income of this research has been quite positive. We learnt a lot about cutting edge web security technology and about the web technologies. Furthermore, we studied plenty of attack scenario which truly helped us deeply understand not only the notions broached in IS593, but also on how to attack a software and about the common mistakes developers tend to make. 
+
+\medskip
+
+Looking at the current situation and harsh competition in the sector of web browsers, it would not be foolish to assume that UXSS vulnerabilities are still going to be found and reported. We focused our research on laptop browsers, but it worth mentioning that plenty vulnerabilities have also been found on iOS and Android platforms. \\
+Being aware of such risks is a first step toward more security mechanisms. Even if UXSS vulnerabilities are found in browsers, web applications developers should do their best to follow up the news in security, and keep their web applications secure. The simple fact to set HTTPOnly cookies can make attacker's endeavors much more difficult than expected.
 
 
+\section{Further research}
 
-% if have a single appendix:
-%\appendix[Proof of the Zonklar Equations]
-% or
-%\appendix  % for no appendix heading
-% do not use \section anymore after \appendix, only \section*
-% is possibly needed
+As we spoke about the small amount of academic work about UXSS in this paper, we consider our research as an invitation for more in-depth work about this type of vulnerability. This paper could constitute a basis upon which carry out further work.
 
-% use appendices with more than one appendix
-% then use \section to start each appendix
-% you must declare a \section before using any
-% \subsection or using \label (\appendices by itself
-% starts a section numbered zero.)
-%
+\medskip
 
-% Can use something like this to put references on a page
-% by themselves when using endfloat and the captionsoff option.
+Finally, we showed that UXSS vulnerabilities were critical to keep the web secure. Nevertheless, some other attacks threaten the web as we know it. During our research we studied other sort of attacks that constitute real threats for our privacy on the web. The first paper we wanted to mention is called \ul{"Imperfect Forward Secrecy: How Diffie-Hellman Fails in Practice"} and has been written by a team of French and American researchers. This research put the accent on the danger to keep using export-cryptography (DHE\_EXPORT) to secure our communications. In addition of explaining their attack (Logjam) used to compute a solution of the Diffie-Hellman Problem\footnote{https://en.wikipedia.org/wiki/Diffie–Hellman\_problem} in "real time", they explained how dangerous weak keys and how misconfigurations could potentially help states decrypt our HTTPS traffic, and access our personal data. This paper has a fundamental impact since it shows the gap between cryptographers and web server administrators, and pinpoints how misunderstandings can compromise people privacy on the web. 
+
+\medskip
+
+In addition of our research, we also studied how Side-Channel information leakage could actually be huge threats for our privacy on the web. The first paper \ul{"Side-Channel Leaks in Web Applications: a Reality Today, a Challenge Tomorrow"} by Shuo Chen et. al. and published in 2010 studied how side-channel information such as packet size and packet timestamp could provide an attacker with valuable clues on what the user is doing. The main idea underlined in this paper is that an eavesdropper is able to infer what actions the user undertakes on a web page, despite encryption. Unlike the paper presented above, the idea here is not to "break" encryption but to use other "observable" sources of information. \\
+Last, the paper \ul{"Loophole: Timing Attacks on Shared Event Loops in Chrome"} by Pepe Vila et. al., published in 2017 exploit a information leak from the shared event loops in Google Chrome to infer the activity of the user on the web. \\
+More than just describing specific attacks, these two papers raise a fundamental idea: not only web browsers should implement security mechanisms and security checks to prevent UXSS attacks from happening, but also, they should protect their users from any kind of Side-Channel attacks.
+
+\medskip
+
+We see here that a great part of the security on the web depend on web browser developers. Since their pieces of software are used by billions of people every day, they should put the emphasis on implementing all the security mechanisms necessary to protect the end-users. However, we just saw in this section that attackers could benefit from misconfigurations of web server administrators to break a weak encryption and access people's sensitive data. Last, one can also use some "side-channel" sources of information to infer the actions of a user on a web page, and thus, acquiring sensitive data about the user. \\ 
+In conclusion, we notice that, keeping the web secure, and protecting the users' privacy is a task that has to be handled by all actors in the industry.
+
 
 \begin{thebibliography}{1}
 
@@ -175,12 +781,228 @@ Despite the fact that we didn't manage to find any vulnerability on the web brow
 https://www.brokenbrowser.com/uxss-edge-domainless-world/
 
 \bibitem{paper1}
-MJ Rees
+MJ Rees,
 \textit{Evolving the Browser Towards a Standard User Interface Architecture}, 2001
 
+\bibitem{DOM}
+W3C,
+\textit{Document Object Model (DOM)},
+https://www.w3.org/DOM/
+
 \bibitem{architectureWebBrowsers}
-Alan Grosskurth, and Michael W. Godfrey
+Alan Grosskurth, and Michael W. Godfrey,
 \textit{A reference architecture for web browsers}, 2006
+
+\bibitem{howBrowsersWork}
+Tali Garsiel and Paul Irish,
+\textit{How Browsers Work: Behind the scenes of modern web browsers}, 2011
+
+\bibitem{browserSecurity}
+Christoph Kerschbaumer,
+\textit{Enforcing Content Security by Default within Web Browsers}, IEEE, 2016
+
+\bibitem{SOP}
+W3C,
+\textit{Same Origin Policy (SOP)},
+https://www.w3.org/Security/wiki/Same\_Origin\_Policy
+
+\bibitem{CORS}
+W3C,
+\textit{Cross-Origin Resource Sharing (CORS)},
+https://www.w3.org/Security/wiki/CORS
+
+\bibitem{CSP}
+W3C,
+\textit{Content Security Policy (CSP)},
+https://www.w3.org/TR/CSP/
+
+\bibitem{SRI}
+W3C,
+\textit{Subresource Integrity},
+https://www.w3.org/TR/SRI/
+
+\bibitem{MixedContent}
+W3C,
+\textit{Mixed Content},
+https://www.w3.org/TR/mixed-content/
+
+\bibitem{browserSecurityWhitePaper}
+Markus Vervier, Michele Orrù, Berend-Jan Wever, Eric Sesterhenn,
+\textit{Browser Security White Paper},
+X41 D-SEC GmbH, 2017
+ 
+ 
+\bibitem{browserSecurityWhitePaper2}
+Mario Heiderich,
+\textit{Browser Security White Paper},
+Cure53, 2017
+
+\bibitem{isolationChrome}
+The Chromium Projects,
+\textit{Site Isolation},
+https://www.chromium.org/developers/design-documents/site-isolation
+
+\bibitem{uxssPDF}
+Ofer Shezaf,
+\textit{The Universal XSS PDF Vulnerability},
+OWASP IL Chapter leader
+
+\bibitem{uxssKeybase}
+\textit{Universal Cross-Site Scripting in Keybase Chrome extension},
+https://hackerone.com/reports/232432
+ 
+\bibitem{webSecurityFoundation}
+Devdatta Akhawe, Adam Barth, Peifung E. Lam, John Mitchell and Dawn Song,
+\textit{Towards a Formal Foundation of Web Security}
+ 
+\bibitem{javascriptSecurity}
+Nataliia Bielova,
+\textit{Survey on JavaScript security policies and their enforcement mechanisms in a web browser}
+The Journal of Logic and Algebraic Programming, 2013
+
+\bibitem{owaspXSS}
+OWASP,
+\textit{Cross-site Scripting (XSS)},
+https://www.owasp.org/index.php/Cross-site\_Scripting\_(XSS),
+2016
+
+\bibitem{postMessagesXSS}
+Son. et al. 
+\textit{The Postman Always Rings Twice: Attacking and Defending postMessage in HTML5 Websites}, 
+NDSS, 2013
+
+\bibitem{uxssAcunetix}
+Acunetix,
+\textit{Universal Cross-site Scripting (UXSS): The Making of a Vulnerability},
+https://www.acunetix.com/blog/articles/universal-cross-site-scripting-uxss/,
+2014
+
+\bibitem{braveWikipedia}
+Wikipedia: Brave,
+\textit{Brave (web browser)}
+https://en.wikipedia.org/wiki/Brave\_(web\_browser),
+2016
+
+\bibitem{microsoftFuzzingOnv8}
+Microsoft Offensive Security Research team,
+\textit{Browser security beyond sandboxing},
+https://blogs.technet.microsoft.com/mmpc/2017/10/18/browser-security-beyond-sandboxing/,
+2017
+
+\bibitem{xXssHeader}
+Mozilla,
+\textit{X-XSS-Protection},
+https://developer.mozilla.org/fr/docs/Web/HTTP/Headers/X-XSS-Protection,
+2017
+
+\bibitem{CVE-2013-2849}
+CVE-2013-2849,
+\textit{Cross-Origin Copy \& Paste / Drag \& Drop allowing XSS},
+https://bugs.chromium.org/p/chromium/issues/detail?id=171392,
+2013
+
+\bibitem{edgeReadingModeUXSS}
+Manuel Caballero
+\textit{SOP bypass courtesy of the reading mode (Edge)},
+https://www.brokenbrowser.com/sop-bypass-abusing-read-protocol/,
+2017
+
+\bibitem{CVE-2014-1747}
+CVE-2014-1747,
+\textit{UXSS from a local MHTML file},
+https://bugs.chromium.org/p/chromium/issues/detail?id=330663,
+2014
+
+\bibitem{uxssJSLeaks}
+UC Berkeley,
+\textit{Cross-Origin JavaScript Capability Leaks: Detection, Exploitation, and Defense}
+
+
+\bibitem{extensionsGoogle}
+Google,
+\textit{Trends and Lessons from Three Years Fighting Malicious Extensions}
+
+\bibitem{adobeExtensionUXSS}
+CVE-2011-2107
+
+\bibitem{CVE-2015-7187}
+CVE-2015-7187
+
+\bibitem{CVE-2017-5020}
+CVE-2017-5020
+
+\bibitem{CVE-2015-0072}
+CVE-2015-0072
+
+\bibitem{CVE-2010-4045}
+CVE-2010-4045
+
+\bibitem{CVE-2009-3013}
+CVE-2009-3013
+
+\bibitem{domainlessAboutBlank}
+Manuel Caballero,
+\textit{SOP bypass / UXSS – Adventures in a Domainless World (Edge)},
+2017
+
+\bibitem{CVE-2012-1966} 
+CVE-2012-1966
+
+\bibitem{CVE-2012-1965} 
+CVE-2012-1965
+
+\bibitem{CVE-2011-2609} 
+CVE-2011-2609
+
+\bibitem{CVE-2012-6463} 
+CVE-2012-6463
+
+\bibitem{CVE-2010-2665}
+CVE-2010-2665
+
+\bibitem{CVE-2017-5045}
+CVE-2017-5045
+
+\bibitem{CVE-2013-0909}
+CVE-2013-0909
+
+\bibitem{CVE-2013-2848}
+CVE-2013-2848
+
+\bibitem{CVE-2016-5226} 
+CVE-2016-5226
+
+\bibitem{CVE-2013-2849} 
+CVE-2013-2849
+
+\bibitem{CVE-2012-0455}
+CVE-2012-0455
+
+\bibitem{frameBustingLocationClubbered}
+Gustav Rydstedt, Elie Bursztein, Dan Boneh and Collin Jackson,
+\textit{Busting Frame Busting:
+a Study of Clickjacking Vulnerabilities on Popular Sites},
+
+\bibitem{CVE-2012-4209}
+CVE-2012-4209
+
+\bibitem{CVE-2012-3994}
+CVE-2012-3994
+
+\bibitem{CVE-2012-4194}
+CVE-2012-4194
+
+\bibitem{CVE-2012-0455}
+CVE-2012-0455
+
+\bibitem{CVE-2012-3985}
+CVE-2012-3985
+
+\bibitem{webWorkers}
+Mozilla,
+\textit{Using Web Workers},
+https://developer.mozilla.org/en-US/docs/Web/API/Web\_Workers\_API/Using\_web\_workers,
+
 
 \end{thebibliography}
 
@@ -188,57 +1010,4 @@ Alan Grosskurth, and Michael W. Godfrey
   \newpage
 \fi
 
-
-
-% trigger a \newpage just before the given reference
-% number - used to balance the columns on the last page
-% adjust value as needed - may need to be readjusted if
-% the document is modified later
-%\IEEEtriggeratref{8}
-% The "triggered" command can be changed if desired:
-%\IEEEtriggercmd{\enlargethispage{-5in}}
-
-% references section
-
-% can use a bibliography generated by BibTeX as a .bbl file
-% BibTeX documentation can be easily obtained at:
-% http://www.ctan.org/tex-archive/biblio/bibtex/contrib/doc/
-% The IEEEtran BibTeX style support page is at:
-% http://www.michaelshell.org/tex/ieeetran/bibtex/
-%\bibliographystyle{IEEEtran}
-% argument is your BibTeX string definitions and bibliography database(s)
-%\bibliography{IEEEabrv,../bib/paper}
-%
-% <OR> manually copy in the resultant .bbl file
-% set second argument of \begin to the number of references
-% (used to reserve space for the reference number labels box)
-
-% biography section
-% 
-% If you have an EPS/PDF photo (graphicx package needed) extra braces are
-% needed around the contents of the optional argument to biography to prevent
-% the LaTeX parser from getting confused when it sees the complicated
-% \includegraphics command within an optional argument. (You could create
-% your own custom macro containing the \includegraphics command to make things
-% simpler here.)
-%\begin{biography}[{\includegraphics[width=1in,height=1.25in,clip,keepaspectratio]{mshell}}]{Michael Shell}
-% or if you just want to reserve a space for a photo:
-
-% You can push biographies down or up by placing
-% a \vfill before or after them. The appropriate
-% use of \vfill depends on what kind of text is
-% on the last page and whether or not the columns
-% are being equalized.
-
-%\vfill
-
-% Can be used to pull up biographies so that the bottom of the last one
-% is flush with the other column.
-%\enlargethispage{-5in}
-
-
-
-% that's all folks
 \end{document}
-
-
