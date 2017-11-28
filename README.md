@@ -1,148 +1,135 @@
 # UXSS-Vulnerabilities-Project
-This project is carried by Antoine Rondelet and Ndeye Khady Ngom and ought to study and find UXSS vulnerabilities in the Brave Browser.
 
-Here is the version of Brave we are using to carry out our project:
+This project is carried by Antoine Rondelet and Ndeye Khady Ngom. 
+It aims to study and find UXSS vulnerabilities in the Brave Browser.
+
+## Working environment
+
+### Machine used to carry out the research
+
+MacBook Air (13-inch, Early 2014), running macOS Sierra v10.12.6
+
+### Version of Brave
+
 ![Brave version](.github/BraveVersion.png)
 
-## Ideas to explore to try to find vulnerabilities:
-*Legend:* :x: means that we tried but this was unsuccessful, :white_check_mark: means that we tried, and it worked.
+### Extension of our work to other web browsers
 
-- Tried to embed a website into an iFrame using XMLHttpRequest and tried to modify the headers of the request to try to modify the "Referer" and "User-Agent" headers and thus bypass the X-Frame-Options header of the "victim"/embedded website :x:
+- Whale browser by Naver: Version 1.0.37.16 (64-bit), released in October 23, 2017
+- Firefox Quantum by Mozilla: Version 57.0 (64 bits), released in November 14, 2017
+- Safari by Apple: Version 10.1.2
 
-- Tried to bypass CORS using both XMLHTTPRequest and the fetch API, with custom headers but couldn't manage to have my request AND my crafted headers sent... (see: ./playground/corsByPassing.html for the code of my attempt) :x:
+## List of our attempts to find vulnerabilities:
 
-- Tried to add JS payload in the form of `testwebsite.com/test.pdf#<javascriptPayload>`
-  - Without using any character escaping :x:
-  - Using character escaping technics specified in https://www.owasp.org/index.php/XSS_Filter_Evasion_Cheat_Sheet :x:
-  - Using "js-fuck" syntax (Javascript code written using only symbols) :x:
+*Note*: The list of malicious HTML pages we crafted in order to carry out this research can be found in the `./playground/` repository.
 
-- Brave comes with some supported extensions. We should try to find if some vulnerabilities can be exploited in these extensions, and see if they can constitute a threat for the browser (like in https://events.ccc.de/congress/2006/Fahrplan/attachments/1158-Subverting_Ajax.pdf for instance) **--> TODO**
+- __XMLHTTPRequest__: Embed a website into an iFrame using `XMLHttpRequest`, by trying to modify the HTTP headers of the request. For instance, we could try to modify the `Referer` and `User-Agent` headers. Such modifications would allow us to bypass the `X-Frame-Options` policy of a victim website.
 
-- Test whether it is possible to prevent Frame Busting scripts from working by doing variable clobbering (like in paper "Busting Frame Busting:
-a Study of Clickjacking Vulnerabilities on Popular Sites") :x: This won't work since, it will only prevent some websites to escape the iFrame (Only the websites that don't use the `X-Frame-Options` header will be affected). However, this is NOT a vulnerability of the browser since the SOP is not bypassed once we embedded the website. So this is not going to help us trying to bypass the SOP for instance.
+- __Fetch__: Embed a website into an iFrame using the `Fetch` API, by trying to modify the HTTP headers of the request. For instance, we could try to modify the `Referer` and `User-Agent` headers. Such modifications would allow us to bypass the `X-Frame-Options` policy of a victim website.
 
-- Look at headers management on the code source of the browser and see if we can modify the "Referer" and/or the "User-Agent" **--> TODO**
+- __Extensions__: Study Brave's extensions in order to find a vulnerability. According to the small number of extensions supported by Brave, and looking at the reported vulnerabilities on Adobe Reader, we tried to find vulnerabilities in the "PDF viewer" plugin. Thus, we added JS payload after anchors in URLs, in the form of `testwebsite.com/test.pdf#<javascriptPayload>`, in order to see the behavior of the pdf viewer. Such attempts allowed us to see if malicious code could be executed. To do so, we tested multiple methods to write our payloads:
+  - For the first attempt, we didn't use character escaping for the payload. We just wrote it as is (ex: `<script>alert(1)</script>`)
+  - Then, we used character escaping technics specified in (https://www.owasp.org/index.php/XSS_Filter_Evasion_Cheat_Sheet) in order to craft a malicious paylaod. Note that none of these attempts lead to satisfactory results.
+  - Finally, we tried to generate an XSS condition by "encoding" our payloads in "JSFuck" (http://www.jsfuck.com). This method consisted in bypassing all XSS filters mechanisms by writing javascript code with only 6 characaters. For instance `alert(1)` is equivalent to `[][(![]+[])[+[]]+([![]]+[][[]])[+!+[]+[+[]]]+(![]+[])[!+[]+!+[]]+(!![]+[])[+[]]+(!![]+[])[!+[]+!+[]+!+[]]+(!![]+[])[+!+[]]][([][(![]+[])[+[]]+([![]]+[][[]])[+!+[]+[+[]]]+(![]+[])[!+[]+!+[]]+(!![]+[])[+[]]+(!![]+[])[!+[]+!+[]+!+[]]+(!![]+[])[+!+[]]]+[])[!+[]+!+[]+!+[]]+(!![]+[][(![]+[])[+[]]+([![]]+[][[]])[+!+[]+[+[]]]+(![]+[])[!+[]+!+[]]+(!![]+[])[+[]]+(!![]+[])[!+[]+!+[]+!+[]]+(!![]+[])[+!+[]]])[+!+[]+[+[]]]+([][[]]+[])[+!+[]]+(![]+[])[!+[]+!+[]+!+[]]+(!![]+[])[+[]]+(!![]+[])[+!+[]]+([][[]]+[])[+[]]+([][(![]+[])[+[]]+([![]]+[][[]])[+!+[]+[+[]]]+(![]+[])[!+[]+!+[]]+(!![]+[])[+[]]+(!![]+[])[!+[]+!+[]+!+[]]+(!![]+[])[+!+[]]]+[])[!+[]+!+[]+!+[]]+(!![]+[])[+[]]+(!![]+[][(![]+[])[+[]]+([![]]+[][[]])[+!+[]+[+[]]]+(![]+[])[!+[]+!+[]]+(!![]+[])[+[]]+(!![]+[])[!+[]+!+[]+!+[]]+(!![]+[])[+!+[]]])[+!+[]+[+[]]]+(!![]+[])[+!+[]]]((![]+[])[+!+[]]+(![]+[])[!+[]+!+[]]+(!![]+[])[!+[]+!+[]+!+[]]+(!![]+[])[+!+[]]+(!![]+[])[+[]]+(![]+[][(![]+[])[+[]]+([![]]+[][[]])[+!+[]+[+[]]]+(![]+[])[!+[]+!+[]]+(!![]+[])[+[]]+(!![]+[])[!+[]+!+[]+!+[]]+(!![]+[])[+!+[]]])[!+[]+!+[]+[+[]]]+[+!+[]]+(!![]+[][(![]+[])[+[]]+([![]]+[][[]])[+!+[]+[+[]]]+(![]+[])[!+[]+!+[]]+(!![]+[])[+[]]+(!![]+[])[!+[]+!+[]+!+[]]+(!![]+[])[+!+[]]])[!+[]+!+[]+[+[]]])()` is JSFuck syntax.
 
-- In the Brave code base, they escape "javascript" to avoid any javascript URL, using a non-case sensitive regex and an exact match on "javascript": Is there anything we can do to try to bypass such a regex ? Look into it
-  - Already tried:
-    - JAVASCRIPT :x:
-    - JAVA%20SCRIPT :x:
-    - %4A%41%56%41%53%43%52%49%50%54 (URL encoding of "JAVASCRIPT") :x:
+- __Variable Clobbering__: In this attack scenario, we wanted to see whether it was possible to prevent frame busting scripts from working by over writing some global javascript variable commonly used to write frame busting scripts (the assumption here was that victim web apps didn't defined `X-Frame-Options` policies.) (reference: "Busting Frame Busting: a Study of Clickjacking Vulnerabilities on Popular Sites"). __Note that__ we extended this technique by trying to redefine the `window` javascript variable or some of its methods. Our idea here was to over-write methods of this object that are likely to be called by an embedded website in an iFrame. Such scenario would enable use to have some javascript (the body of the method we redefine) to be executed in the context of the victim's website.
 
-- Embed a page with a X-Frame-Options: SAMEORIGIN header. Change the location of the current tab and block it directly via a javascript event, so that the parent's origin can match the origin of the website we try to embed, and abort the chnage of location instantaneously to stay on "malicious" page and have the good origin to bypass the SOP :x:
+- __Bypassing javascript schemes__: We realized thats `javascript:` URIs were handled in a special manner in the Brave browser. This handling is done thanks to a regular expression that matches the word `javascript` in the URL. The idea here was to bypass this security mechanism, and try to define a `javascript` URI whch would not be detected by the regular expression. Such scenario could expose the browser to some vulnerabilities, adn help us building refined attack scenarios on top of it. In order to bypass the regular expression check, we tried to define `javascript` URI by:
+    - Using upper case scheme: `JAVASCRIPT`
+    - Splitting the scheme into 2 parts seprated by a space: `JAVA%20SCRIPT`
+    - Using URL encoding to encode "javascript" `%4A%41%56%41%53%43%52%49%50%54`
+
+- __Freeze the browser to execute malicious code__: The idea here was to try to embed a page with a `X-Frame-Options:` header set to `SAMEORIGIN`. Then, we tried to change the `location` of the parent page to the same origin as the page we wanted to embed. Newt, we blocked the browser directly via a javascript event. In that case, we wanted to see whether the parent's origin could match the origin of the website we wanted to embedded. The idea here was to benefit from the fact that the browser was frozen to set the `origin` of the parent page to the `origin` of the victim website, while blocking the redirect and being able to execute malicious code in the context of the victim webpage. This would have led to a full SOP bypass.
 
 - Find more information about "Fuzzing" and try to see whether we could apply this method in our case (generate semi-valid JS to corrumpt V8 for instance) **--> TODO**
   - See: https://github.com/v8/v8/tree/master/test/fuzzer
   - Video Talk: https://www.youtube.com/watch?v=qTkYDA0En6U
 
-- Change the domain of the document to try to set it to the victim's origin by doing `document.domain="victim.com%3A80"` since `document.domain` set an empty port by default :x:
+- __Change the domain maliciously__: This attempt was a bit naive but is worth mentionning here as part of the record of our work. The idea here was to try to make the parent origin match the origin of a victim/embedded website. In our case, the domain was not a prefix of the targeted website's domain, so te attempt was rejected. However, we know that when we called the `document.domain` setter, the port number was erased. Thus we tried to see whether we could maliciously set the port number in the `document.domain`. The idea here was to run `document.domain="victim.com%3A80"` (with `%3A` the URL encoding of `:`) to try to set the port number, and maybe find a way to make origins match.
 
-- Investigate whether we could trigger a malicious behavior after bookmarking a page launched from a maliciously crafted URL (see: https://bugs.chromium.org/p/chromium/issues/detail?id=639126) **--> TODO**
+- __Bookmark feature__: We investigated whether we could trigger a malicious behavior after bookmarking a page launched from a maliciously crafted URL. The idea here was to bookmark a page like `www.example.com/<script>alert(1)</script>`, and see whether we could trigger an XSS condition by "bookrmarking" this malicious URL. Moreover, we tried to input malicious javascript code in the multiple fields available on the bookmark setting pag of Brave. Thsi idea was to see whether the user inputs were handled/sanitized properly. If this wasn't the case, this would have been the opportunity for us to try and run malicious code with the priviledges of the browser.
 
-- Using dialog box: freezes the browser and allow to bypass SOP **--> TODO**
-
-- Tried to create a domainless `about:blank` page: Couldn't manage to reproduce https://www.brokenbrowser.com/uxss-edge-domainless-world/ (and, https://www.brokenbrowser.com/uxss-ie-domainless-world/, https://www.brokenbrowser.com/sop-bypass-uxss-tweeting-like-charles-darwin/) the domain is empty when I swith to `about:blank` using a link. Thus, when I try to embed a website into the iFrame -> frame busting since origins are different. :x:
-Note: While trying to reproduce this scenario, I realized the different behavior between Safari and Brave (see pictures below):
+- __Domainless page__: Here, we tried to create a domainless `about:blank` page. The purpose of this scenario was to see whether a domainless page could actually bypass the SOP mechanism of the browser. We wanted to see whether the origin checks included the case of a `null` origin.
+While trying to reproduce this scenario, we realized different behaviors between Safari (first image) and Brave (second image):
 ![About Blank in Safari](.github/AboutBlankSafari.png)
 ![About Blank in Brave](.github/AboutBlankBrave.png)
 
-In the case of Safari, about blank has not origin. However, in the case of Brave, about blank has an origin, which makes this attack unlikely to happen...
 
-Note: With Safari, I managed to include bing.com into an iFrame on my about:blank page. The I tried many commands to try to execute code in this iFrame:
+After further research, we found that `about:blank` pages inherited the security mechanisms from the pag they were called from. Thus, as Brave "home"/"default" page actually comes from a chrome extension, the `about:blank` page inherited its origin.
+
+
+In the case of Safari, `about:blank` called from the "home" page has not origin. 
+We then decided to continue the attack scenario with Safari. We managed to include `bing.com` into an iFrame on our `about:blank` page. 
+From this point, we tried many commands to try to execute code in this victim iFrame:
+
+A first idea was to define malicious events on the iframe and see if the associated functions could be executed in the context of the iframe:
+
 ```
 var frame = document.getElementsByTagName('iframe')[0]
 
-frame.onmouseover = function() {var script = document.createElement('script'); script.type = 'text/javascript'; var code = 'alert("hello world!");'; script.appendChild(document.createTextNode(code)); document.body.appendChild(script);}
-```
-
-```
-var frame = document.getElementsByTagName('iframe')[0]
-
-frame.onmouseover = function() {var script = document.createElement('script'); script.type = 'text/javascript'; var code = 'alert("hello world!");'; script.appendChild(document.createTextNode(code)); document.body.appendChild(script);}
+frame.onmouseover = function() {
+  var script = document.createElement('script'); 
+  script.type = 'text/javascript'; 
+  var code = 'alert("hello world!");'; 
+  script.appendChild(document.createTextNode(code)); 
+  document.body.appendChild(script);
+}
 ```
 
 or
 
 ```
-frame.onmouseover = function() {var script = document.createElement('script'); script.type = 'text/javascript'; var code = 'var string = "cookie: " + document.cookie; alert(string);'; script.appendChild(document.createTextNode(code)); document.body.appendChild(script);}
+frame.onmouseover = function() {
+  var script = document.createElement('script'); 
+  script.type = 'text/javascript'; 
+  var code = 'var string = "cookie: " + document.cookie; alert(string);'; 
+  script.appendChild(document.createTextNode(code)); 
+  document.body.appendChild(script);}
 ```
 
-I tried to access `var innerDoc = frame.contentDocument || frame.contentWindow.document` the content of the iFrame, but Safari didn't let me do it...
+Without surprise, such events were executed in the context of the parent. In fact, when we tried to access the actual content of the iframe, by doing:
+`var innerDoc = frame.contentDocument || frame.contentWindow.document`, the browser threw exceptions to block our actions.
 
-Then I tried to copy the variable `frame` into another variable: `var mFrame = Object.create(frame);`, `var tfrBody = HTMLBodyElement(mFrame.contentDocument);`, in order to find a way to access the value of `frame.contentDocument` but all my attempts were rejected by Safari...
-
-Also tried to block the browser while trying to change the location protocol and access the HTML elements inside the iFrame, didn't work either...:
+Then we tried to copy the variable `frame` into another variable to see whether we could find ways to access the value of the frame's `contentDocument`: 
 ```
-window.setTimeout('alert("Blocking"); document.location.protocol = "http:"; var frame = document.getElementsByTagName("iframe")[0]; var bodyTarget = frame.contentDocument.getElementsByTagName("body")[0]; document.getElementById("savedValue").innerHTML = bodyTarget.innerHTML', 400);
+var mFrame = Object.create(frame);
+var tfrBody = HTMLBodyElement(mFrame.contentDocument);
 ```
 
-- To explore: if we enter: `data:text/html,<script>alert("test")</script>`, then this code is executed in the browser. See what we can do with it (access some sensitive data ? escape from sandbox ? Read some data on other tabs ? Create a tab using this script and read data in it ? Embed a page and execute malicious code ?) **--> TODO**
+We finally tried to block the browser while trying to change the location and access the HTML elements inside the iFrame:
+```
+window.setTimeout('alert("Blocking"); 
+document.location.protocol = "http:"; 
+var frame = document.getElementsByTagName("iframe")[0]; 
+var bodyTarget = frame.contentDocument.getElementsByTagName("body")[0]; 
+document.getElementById("savedValue").innerHTML = bodyTarget.innerHTML', 400);
+```
 
-- If we set the URL to `data:text/html,`, then if we open the developer console, and we do `document.body.innerHTML = '<iframe src="http://www.bing.com/images/search?q=microsoft+edge"></iframe>'`, then we can embed Bing on this page. I don't know what we can do with it, we need to investigate. At least, we should remember that we can execute some javascript under the `data:text/html,` URI. This can be useful... **--> TODO: Further research**
+- __Data URI__: We realized that if we entered: `data:text/html,<script>alert("test")</script>`, this code was executed in the Brave browser. From this observation, we tried a myriad of manipulations to see to which extend we could use this URI to create a XSS condition. We set the URL to `data:text/html,`, and then opened the developer console. We then embedded a website into an iframe by doing `document.body.innerHTML = '<iframe src="http://www.bing.com/images/search?q=microsoft+edge"></iframe>'`. However, at this point we were in the same situation as we were in Safari with the domainless `about:blank` URI. Unfortunately, we couldn't find concrete attack scenarios in which we could use this URI to bypass the SOP
 
-- Impossible to reproduce: https://www.brokenbrowser.com/sop-bypass-uxss-stealing-credentials-pretty-fast/ :x:
+- __History API__: We tried to use the "history API" to change the URL of the page without reloading it. The idea here was to see whether we were able to change the origin without actually being redirected or without reloading the page (`window.history.pushState("test", "Title", "about:passwords");`). Reference: https://stackoverflow.com/questions/3338642/updating-address-bar-with-new-url-without-hash-or-reloading-the-page.
 
-- See whether we could include the `about:passwords` into the `about:blank` page and try to execute malicious javascript that could retrieve the victim's data. I don't know whether it's possible or not. I tried to include `about:passwords` into a frame on the `about:blank` page, and it didn't work. Then I tried to clobber the `location` variable to prevent any frame busting from `about:passwords`. But this didn't work either. In order to clobber the `location` variable, I did `var location = 'test'`, but it changes the location of the document (looks like `location` is a singleton). Moreover, I tried to do `window.__defineSetter__("location", function(){})` but it didn't work either (error message saying thta I couldn't redefine `location`). I don't know whether focusing on these `"about:"` URI could be a good idea or not, but since they have no domain and the same protocol, we migth manage to do something. **Answer:** Yes we can embed `about:passwords` into any other `about:[page]` page since they have the same origin (`chrome-extension://mnojpmjdmbbfmejpflffifhffcmidifd/about-[page].html`). But this is not SoP bypassing... :x:
+- __About URI__: We tried to use the different setting pages provided by the browser (like `about:bookmarks`, `about:passwords`) to see whether we could embed other setting pages. The idea here was to see whether an attacker can start an attack from the `about:bookmarks` page, and manage to embed the `about:passwords` into this page. Our first idea was to benefit from the fact that this pages had the same origin, for the attacker to access all the victim's passwords from the bookmark page. Unfortunately, this scenario was a bit far fetched and proved to be unsuccessful. 
 
-- Tried to use the `"history API"` to change the URL of the page without reloading it, but I couldn't exploit it to bypass the SoP... `window.history.pushState("test", "Title", "about:passwords");` (see: https://stackoverflow.com/questions/3338642/updating-address-bar-with-new-url-without-hash-or-reloading-the-page) :x:
+- __Drag and Drop API__: The idea here was to find a way to drag some malicious JS code and drop it into the victim iframe. In such case, we would have  chance that the malcious would be executed in the context of the victim page. 
 
-- The page `about:bookmarks` offers a lot of possibilities: --> No way to execute malicious code inside this page (from another page) because of the `document.location` that is equal to `chrome-extension://mnojpmjdmbbfmejpflffifhffcmidifd/about-bookmarks.html` :x:
-  - Import bookmarks from HTML file
-  - Export bookmarks on user computer
-  - Search for bookmarks --> This search tab can handle regex !! see whether we can use it to do malicious stuffs
-Try to see whether such features could be used in a malicious manner to find a vulnerability that could be a threat for the user (steal bookmarks, write malicious data on user's computer, and so on...)
-
-- Couldn't manage to exploit the `about:[page]` pages, since their origin is `chrome-extension://mnojpmjdmbbfmejpflffifhffcmidifd/about-about.html`. Those endpoints have their own origin that is an origin with a randomly looking string (which is not random btw), and which a `chrome-extension` protocol. So trying to access the content of such pages is equivalent than trying to bypass the SOP... No shortcut here... :x:
-
-- Couldn't manage to drag and DROP data from the parent to an embedded iFrame. The idea here was to find a way to drag some malicious JS code adn drop it into the iFrame, so that it can execute it. If I was able to drop a script as simple as `alert(document.cookie)`, I would have accessed the cookie of the victim/embedded site --> :x: (see ./playground/dragAndDropMaliciousCode.html)
-
-- Couldn't manage to fire an event defined in the parent, in the embedded frame. The idea here was to trigger an event from the inside of the frame each time the user's mous ewent over the frame (onmouseover for instance). Here are the commands I did: :x:
+- __Events (2)__: We tried to use events a second time, but without creating script nodes this time. The idea here was to trigger an event from the inside of the frame each time the user's mouse went over the frame (onmouseover for instance). Such scenario is detailled below:
   - Open Brave and go to `data:text/html,`
   - Embed Bing in an iFrame on the page: `document.body.innerHTML = '<iframe src="http://www.bing.com/images/search?q=microsoft+edge"></iframe>'`
   - Select the iFrame: `var iframe = document.getElementsByTagName('iframe')[0];`
-  - Define your event: `iframe.onmouseover = alert(iframe.innerHTML);` (Note: We can also try to append a script into the iFrame, but it will be appended outside the actual document (outside head and body tags...))
+  - Define your event: `iframe.onmouseover = alert(iframe.innerHTML);` (Note that here, we can also try to append a script into the iFrame, but we realized that the script was actually appended outside the actual document (before the `head` and `body` tags...))
 
-- Tried to bookmark a malicious page that points to `<script>alert("1");</script>` and renamed the bookmark `<script>alert("1");</script>`. Neither JS executed :x:
-
-- Did further attempts to "fool" the browser by defining custom "malicious" HEADERS. See more details in `playground/corsByPassingWithXMLHTTPRequest.html`. Note that all the attemps carried out in the `playground/corsByPassingWithXMLHTTPRequest.html` file have also been tried using the fetch API using both `cors` and `no-cors` modes. While the case of `cors` mode, is equivalent to the case of `XMLHTTPRequest`, when we use `no-cors` and when we define personalized headers (also the case when we define personalized headers with `XMLHTTPRequest`), the header `access-control-request-headers:` is set and send to the server. After noticing it, I saw that the "header names" of the headers I defined where given as value of `access-control-request-headers`. So I tried to craft malicious header names to try to make the browser add new headers with my forged values. Nevertheless, the result was the same as before... :x:
-Below the screenshot of the attempt to modify the Headers VALUES:
+- __Malicious (custom) header names and values__: The idea here was to "fool" the browser by defining custom "malicious" HTTP headers. We realized that we were able to set custom HTTP headers whose names were set as value of the `access-control-request-headers:` HTTP header (in the case of `no-cors` mode). Thus, we tried to define malicious header names and see whether we could use this information to add malicious data in our request.
+Below the screenshot of the attempt to modify the Headers VALUES (`cors` mode):
 
 ![Try to forge malicious Headers' values](.github/maliciousHeadersValues.png)
 
-Below the screenshot of the attempt to modify the Headers NAMES:
+Below the screenshot of the attempt to modify the Headers NAMES (`no-cors` mode):
 
 ![Try to forge malicious Headers' names](.github/maliciousHeadersNames.png)
 
-- Other trials to bypass CORS using workers and service workers can be found in `playground`. The idea here was:
-  - To initiate a request from a worker, where workers are: "Web Workers makes it possible to run a script operation in background thread separate from the main execution thread of a web application. The advantage of this is that laborious processing can be performed in a separate thread, allowing the main (usually the UI) thread to run without being blocked/slowed down" --> So the request would be executed from a backgroudn threat. This doesn't work however :x:
-  - The "evolution" of the scenario aforementioned was to setup a ServiceWorker in order to intercept the outgoing GET requests and try to modify the headers in order to bypass the CORS. In order to carry out this attempt, we needed a webserver to host our html page and the javascript code of our ServiceWorker. To do so, we used MAMP version 4.2.1 for macOS. Our code has been written based on what we found on: https://stackoverflow.com/questions/43813770/how-to-intercept-all-http-requests-including-form-submits and https://www.html5rocks.com/en/tutorials/workers/basics/#toc-inlineworkers. Despite all our attempts, this attack was not succesfull and we couldn't manage to modify our request as we wanted :x:
+- __Web workers and service workers__: Web workers enable to run scripts in background thread that are separated from the main execution thread of a web application. So we tried to see how the browser behaved when an `XMLHTTPRequest`/`Fetch` request trying to alter HTTP headers was triggered from a web worker. Indeed, the idea here was to see whether the SOP checks were applying to web workers in the same extend as they apply when a request is initiated by the main thread. Later, we defined a service worker dedicated to intercept all our requests, and which aimed to modify the request with malicious headers, leading to a full bypass of CORS mechanisms. If this bypass were possible, we would have been able to implement a function to modify the responses in the service worker, and maybe, we would have been able to inject malicious scripts in the response, which could have lead to a full SOP bypass.
 
+## Contact
 
-TO SAY IN THE REPORT:
-- See Webkit vulnerabilities
--> mistakes people tend to make
--> See whether a vuln could not be applied to another browser
--> insight and concept summarize dev error and factors
-
-
-### Bonus : If no vulnerabilities found, inject a vulnerable plugin and proceed to UXSS attack. (Usable in the real world through phishing)
-
-## Resources
-
-### Interesting resources
-
-- https://www.linkedin.com/pulse/abusing-insecure-cors-bypassing-csrf-protection-without-pundir
-
-### IE
-
-- https://www.brokenbrowser.com/revealing-the-content-of-the-address-bar-ie/
-
-### Safari - Webkit
-
-- https://github.com/Bo0oM/CVE-2017-7089/blob/master/index.html
-
-### Chrome
-
-- https://blogs.technet.microsoft.com/mmpc/2017/10/18/browser-security-beyond-sandboxing/
-- https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2016-5181
-
+If you detected any mistake, or have any question about our research, please do not hesitate to contact us at: rondelet.antoine@gmail.com
