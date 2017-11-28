@@ -20,10 +20,6 @@
 
 - __Freeze the browser to execute malicious code__: The idea here was to try to embed a page with a `X-Frame-Options:` header set to `SAMEORIGIN`. Then, we tried to change the `location` of the parent page to the same origin as the page we wanted to embed. Newt, we blocked the browser directly via a javascript event. In that case, we wanted to see whether the parent's origin could match the origin of the website we wanted to embedded. The idea here was to benefit from the fact that the browser was frozen to set the `origin` of the parent page to the `origin` of the victim website, while blocking the redirect and being able to execute malicious code in the context of the victim webpage. This would have led to a full SOP bypass.
 
-- Find more information about "Fuzzing" and try to see whether we could apply this method in our case (generate semi-valid JS to corrumpt V8 for instance) **--> TODO**
-  - See: https://github.com/v8/v8/tree/master/test/fuzzer
-  - Video Talk: https://www.youtube.com/watch?v=qTkYDA0En6U
-
 - __Change the domain maliciously__: This attempt was a bit naive but is worth mentionning here as part of the record of our work. The idea here was to try to make the parent origin match the origin of a victim/embedded website. In our case, the domain was not a prefix of the targeted website's domain, so te attempt was rejected. However, we know that when we called the `document.domain` setter, the port number was erased. Thus we tried to see whether we could maliciously set the port number in the `document.domain`. The idea here was to run `document.domain="victim.com%3A80"` (with `%3A` the URL encoding of `:`) to try to set the port number, and maybe find a way to make origins match.
 
 - __Bookmark feature__: We investigated whether we could trigger a malicious behavior after bookmarking a page launched from a maliciously crafted URL. The idea here was to bookmark a page like `www.example.com/<script>alert(1)</script>`, and see whether we could trigger an XSS condition by "bookrmarking" this malicious URL. Moreover, we tried to input malicious javascript code in the multiple fields available on the bookmark setting pag of Brave. Thsi idea was to see whether the user inputs were handled/sanitized properly. If this wasn't the case, this would have been the opportunity for us to try and run malicious code with the priviledges of the browser.
@@ -108,6 +104,14 @@ Below the screenshot of the attempt to modify the Headers NAMES (`no-cors` mode)
 ![Try to forge malicious Headers' names](.github/maliciousHeadersNames.png)
 
 - __Web workers and service workers__: Web workers enable to run scripts in background thread that are separated from the main execution thread of a web application. So we tried to see how the browser behaved when an `XMLHTTPRequest`/`Fetch` request trying to alter HTTP headers was triggered from a web worker. Indeed, the idea here was to see whether the SOP checks were applying to web workers in the same extend as they apply when a request is initiated by the main thread. Later, we defined a service worker dedicated to intercept all our requests, and which aimed to modify the request with malicious headers, leading to a full bypass of CORS mechanisms. If this bypass were possible, we would have been able to implement a function to modify the responses in the service worker, and maybe, we would have been able to inject malicious scripts in the response, which could have lead to a full SOP bypass.
+
+## Further research
+
+- __Fuzzing__: Browser security beyond sandboxing, Microsoft Research, 2017 (https://blogs.technet.microsoft.com/mmpc/2017/10/18/browser-security-beyond-sandboxing/)
+- __Side Channel Leaks__:
+  - "Loophole: Timing Attacks on Shared Event Loops in Chrome", Pepe Vila et. al., USENIX, 2017
+  - "Side-Channel Leaks in Web Applications: A Reality Today, a Challenge Tomorrow", Shuo Chen et. al., IEEE, 2010
+- __Weak encryption schemes__: "Imperfect Forward Secrecy: How Diffie-Hellman Fails in Practice"
 
 ## Contact
 
