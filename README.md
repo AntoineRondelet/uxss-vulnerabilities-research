@@ -23,10 +23,10 @@ MacBook Air (13-inch, Early 2014), running macOS Sierra v10.12.6
 
 ## Organization of the project
 
-- The list of all the UXSS vulnerabilities we analyzed as part of this research can be found in `uxssDB.md`
+- The list of all the UXSS vulnerabilities we analyzed as part of this research can be found in [uxssDB.md](https://github.com/KAIST-IS593-WEBSEC/UXSS-Vulnerabilities-Project/blob/master/uxssDB.md)
 
-- The list of our attempts to find UXSS vulnerabilities can be found in `attempts.md`
+- The list of our attempts to find UXSS vulnerabilities can be found in [attempts.md](https://github.com/KAIST-IS593-WEBSEC/UXSS-Vulnerabilities-Project/blob/master/attempts.md)
 
-- Our project proposal can be found at `./deliverable/proposal.pdf`
+- Our project proposal can be found at [deliverable/proposal.pdf](https://github.com/KAIST-IS593-WEBSEC/UXSS-Vulnerabilities-Project/blob/master/deliverable/proposal.pdf)
 
-- The paper of our project can be found at `./deliverable/paper.pdf`
+- The paper of our project can be found at [deliverable/paper.pdf](https://github.com/KAIST-IS593-WEBSEC/UXSS-Vulnerabilities-Project/blob/master/deliverable/paper.pdf)
