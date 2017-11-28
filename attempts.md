@@ -1,25 +1,4 @@
-# UXSS-Vulnerabilities-Project
-
-This project is carried by Antoine Rondelet and Ndeye Khady Ngom. 
-It aims to study and find UXSS vulnerabilities in the Brave Browser.
-
-## Working environment
-
-### Machine used to carry out the research
-
-MacBook Air (13-inch, Early 2014), running macOS Sierra v10.12.6
-
-### Version of Brave
-
-![Brave version](.github/BraveVersion.png)
-
-### Extension of our work to other web browsers
-
-- Whale browser by Naver: Version 1.0.37.16 (64-bit), released in October 23, 2017
-- Firefox Quantum by Mozilla: Version 57.0 (64 bits), released in November 14, 2017
-- Safari by Apple: Version 10.1.2
-
-## List of our attempts to find vulnerabilities:
+# Record of our attempts to find vulnerabilities:
 
 *Note*: The list of malicious HTML pages we crafted in order to carry out this research can be found in the `./playground/` repository.
 
